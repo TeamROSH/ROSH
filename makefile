@@ -1,5 +1,11 @@
 all: compile_boot compile_kernel run
 
+clean_output:
+	@rm -rf compiled/
+	@mkdir compiled/
+	@rm -rf objects/
+	@mkdir objects/
+
 compile_boot:
 	@echo "Compiling boot..."
 	@nasm -fbin boot/boot_sect.s -o compiled/boot_sect.bin
