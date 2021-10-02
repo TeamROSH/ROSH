@@ -14,6 +14,7 @@ _start:
 	mov sp, bp
 
 	call load_kernel
+	call switch_pm
 
 [bits 16]
 load_kernel:
@@ -22,6 +23,11 @@ load_kernel:
 	mov dl, [BOOT_DRIVE]
 	call disk_load		; load kernel
 	ret
+
+[bits 32]
+run_kernel:
+	call KERNEL_OFFSET		; run kernel main
+	jmp $
 
 ; load functions
 %include "boot/disk_load.s"

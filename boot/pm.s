@@ -20,3 +20,5 @@ init_pm:
     ; update stack
     mov ebp, 0x90000
     mov esp, ebp
+
+    call run_kernel         ; run kernel
