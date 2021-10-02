@@ -13,6 +13,16 @@ _start:
 	mov bp, 0x9000
 	mov sp, bp
 
+	call load_kernel
+
+[bits 16]
+load_kernel:
+	mov bx, KERNEL_OFFSET		; read and store at 0x1000
+	mov dh, 16
+	mov dl, [BOOT_DRIVE]
+	call disk_load		; load kernel
+	ret
+
 ; Boot padding
 times 510 - ($-$$) db 0
 dw 0xaa55
