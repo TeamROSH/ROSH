@@ -23,6 +23,11 @@ load_kernel:
 	call disk_load		; load kernel
 	ret
 
+; load functions
+%include "boot/disk_load.s"
+%include "boot/gdt.s"
+%include "boot/pm.s"
+
 ; Boot padding
 times 510 - ($-$$) db 0
 dw 0xaa55
