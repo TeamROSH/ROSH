@@ -13,6 +13,7 @@ _start:
 	mov bp, 0x9000
 	mov sp, bp
 
+	call console_setup
 	call load_kernel
 	call switch_pm
 
@@ -22,6 +23,15 @@ load_kernel:
 	mov dh, 16
 	mov dl, [BOOT_DRIVE]
 	call disk_load		; load kernel
+	ret
+
+[bits 16]
+console_setup:
+	pusha
+	mov ah, 0x00
+	mov al, 0x03  ; text mode 80x25 16 colours
+	int 0x10
+	popa
 	ret
 
 [bits 32]
