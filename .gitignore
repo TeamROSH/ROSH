@@ -17,3 +17,5 @@
 ### Ignore Compiled Folders ###
 compiled/
 objects/
+*.bin
+*.o
