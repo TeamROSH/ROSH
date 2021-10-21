@@ -2,6 +2,7 @@
 #define GDT_H
 #include "types.h"
 
+#define GDT_ENTRIES 5
 typedef struct 
 {
     uint16_t limit; // 20 bit maximum addressable unit
@@ -18,5 +19,13 @@ typedef struct{
 uint16_t limit;   //table limit 
 uint base;  //first gdt entry
 }__attribute__((packed)) GDTPointer;
+
+/*
+    This function initaize the gdt
+    Input - none
+    Output - none 
+*/
+void gdt_initialize();
+
 
 #endif
