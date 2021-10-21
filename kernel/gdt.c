@@ -3,7 +3,6 @@
 GDTEntry gdtEntries[GDT_ENTRIES];
 GDTPointer gdtPointer;
 
-void gdt_initialize();
 
 void gdt_initialize()
 {
