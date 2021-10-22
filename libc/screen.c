@@ -15,7 +15,7 @@ void putc(char c)
 {
 	if (cursor < ROWS * COLS)		// if screen not full
 	{
-		if (c != '\n' && c != '\t')
+		if (c != '\n' && c != '\t' && c != '\r')
 		{
 			char* pos = getaddr();		// get pos of char
 			pos[0] = c;		// print char
@@ -32,12 +32,16 @@ void putc(char c)
 		}
 		else if (c == '\t')
 		{
-			if (cursor < ROWS * COLS - TAB)
+			if (cursor < ROWS * COLS - TAB)		// if room of tab
 				moveCursor(TAB);
 			else
 			{
 				// scroll option
 			}
+		}
+		else if (c == '\r')
+		{
+			moveCursor(-(cursor % COLS));		// move to the start of the line
 		}
 	}
 	else

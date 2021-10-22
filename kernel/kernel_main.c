@@ -9,8 +9,8 @@ void main() {
 	puts(numstr);
 	puti(num);
 	putc('\n');
-	for (int i = 0; i < 30; i++)
-		puts(welcome);
+	puts("End of Line");
+	puts("\rLOL");
 
 	while (1) {}
 }
