@@ -1,3 +1,4 @@
+[bits 16]
 ; print a string using BIOS interrupt
 ; Input: bx - string address
 boot_print:
