@@ -4,6 +4,7 @@
 #include <stdint.h>
 #define REG_SCREEN_CTRL 0x3d4
 #define REG_SCREEN_DATA 0x3d5
+#define TAB 4
 
 int cursor = 0;
 
@@ -14,9 +15,30 @@ void putc(char c)
 {
 	if (cursor < ROWS * COLS)		// if screen not full
 	{
-		char* pos = getaddr();		// get pos of char
-		pos[0] = c;		// print char
-		moveCursor(1);
+		if (c != '\n' && c != '\t')
+		{
+			char* pos = getaddr();		// get pos of char
+			pos[0] = c;		// print char
+			moveCursor(1);
+		}
+		else if (c == '\n')
+		{
+			if (cursor / COLS + 1 < ROWS)
+				moveCursor(COLS - (cursor % COLS));		// set cursor to start of next line
+			else
+			{
+				// scroll option
+			}
+		}
+		else if (c == '\t')
+		{
+			if (cursor < ROWS * COLS - TAB)
+				moveCursor(TAB);
+			else
+			{
+				// scroll option
+			}
+		}
 	}
 	else
 	{
