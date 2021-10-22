@@ -13,8 +13,14 @@ void putc(char c);
 
 /*
 	print a string to the screen
-	Input: the strint to print (ends with \0)
+	Input: the string to print (ends with \0)
 */
 void puts(char* str);
+
+/*
+	print a number to the screen
+	Input: the number to print
+*/
+void puti(int n);
 
 #endif

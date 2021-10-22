@@ -1,5 +1,6 @@
 #include "screen.h"
 #include "string.h"
+#include "../kernel/ports.h"
 #include <stdint.h>
 #define REG_SCREEN_CTRL 0x3d4
 #define REG_SCREEN_DATA 0x3d5
@@ -51,5 +52,17 @@ void puts(char* str)
 	for (int i = 0; i < len; i++)		// for every char in string
 	{
 		putc(str[i]);		// print it
+	}
+}
+
+void puti(int n)
+{
+	int size = digits(n), temp = 0;
+	for (int i = 0; i < size; i++)		// for every digit
+	{
+		temp = n;
+		for (int j = 0; j < size - i - 1; j++)		// get digit
+			temp /= 10;
+		putc((char)(temp % 10 + ASCII_NUM_OFFSET));		// print it
 	}
 }
