@@ -5,6 +5,12 @@ jmp _start
 KERNEL_OFFSET equ 0x1000	; load kernel here
 BOOT_DRIVE db 0
 
+; messages
+MSG_RM db "Starting boot from Real Mode...", 0
+MSG_CONSOLE db "Console initiated.", 0
+MSG_KERNEL db "Loading Kernel from disk...", 0
+MSG_PM db "Switching to Protected Mode...", 0
+
 [bits 16]
 _start:
 	mov [BOOT_DRIVE], dl	; BIOS sets boot drive on dl
