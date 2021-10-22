@@ -3,9 +3,9 @@
 
 void main() {
 	char welcome[] = "Welcome to ROSH! This is a number: ";
-	puts(welcome);
+	print(welcome);
 	int num = 2265;
-	puti(num);
+	print(num);
 
 	while (1) {}
 }

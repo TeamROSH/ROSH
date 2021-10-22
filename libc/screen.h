@@ -4,6 +4,7 @@
 #define SCREEN 0xb8000
 #define ROWS 25
 #define COLS 80
+#define print(value) _Generic(value, int: puti, char*: puts, char: putc)(value)
 
 /*
 	print a char to the screen
