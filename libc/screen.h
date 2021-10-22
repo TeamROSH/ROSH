@@ -1,5 +1,9 @@
-#ifndef PRINTSH
-#define PRINTSH
+#ifndef SCREENH
+#define SCREENH
+
+#define SCREEN 0xb8000
+#define ROWS 25
+#define COLS 80
 
 /*
 	print a char to the screen
