@@ -28,4 +28,5 @@ uint base;  //first gdt entry
 void gdt_initialize();
 
 
+
 #endif

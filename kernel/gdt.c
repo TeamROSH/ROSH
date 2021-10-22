@@ -3,9 +3,15 @@
 GDTEntry gdtEntries[GDT_ENTRIES];
 GDTPointer gdtPointer;
 
+extern void load_gdt(uint);
+
 
 void gdt_initialize()
 {
+
+    //initialize gdt pointer
+    gdtPointer.limit = sizeof(GDTEntry) * GDT_ENTRIES - 1;
+    gdtPointer.base = (uint)&gdtEntries[0];
 
     //first segment is empty
     gdtEntries[0].limit = 0x0;
@@ -32,22 +38,24 @@ void gdt_initialize()
     gdtEntries[2].baseHigh = 0x0;
 
     //user code segment 
-    gdtEntries[2].limit = 0xFFFF;
-    gdtEntries[2].baseLow = 0x0;
-    gdtEntries[2].baseMiddle = 0x0;
-    gdtEntries[2].access = 0xFA;
-    gdtEntries[2].granularity = 0xCF;
-    gdtEntries[2].baseHigh = 0x0;     
+    gdtEntries[3].limit = 0xFFFF;
+    gdtEntries[3].baseLow = 0x0;
+    gdtEntries[3].baseMiddle = 0x0;
+    gdtEntries[3].access = 0xFA;
+    gdtEntries[3].granularity = 0xCF;
+    gdtEntries[3].baseHigh = 0x0;     
 
     //user data segment 
-    gdtEntries[2].limit = 0xFFFF;
-    gdtEntries[2].baseLow = 0x0;
-    gdtEntries[2].baseMiddle = 0x0;
-    gdtEntries[2].access = 0xF2;
-    gdtEntries[2].granularity = 0xCF;
-    gdtEntries[2].baseHigh = 0x0;  
+    gdtEntries[4].limit = 0xFFFF;
+    gdtEntries[4].baseLow = 0x0;
+    gdtEntries[4].baseMiddle = 0x0;
+    gdtEntries[4].access = 0xF2;
+    gdtEntries[4].granularity = 0xCF;
+    gdtEntries[4].baseHigh = 0x0;  
 
-    //initialize gdt pointer
-    gdtPointer.limit = sizeof(GDTEntry) * GDT_ENTRIES - 1;
-    gdtPointer.base = (uint)&gdtEntries[0];
+    
+
+    //loading the new gdt into memory
+    load_gdt((uint)&gdtPointer);
 }
+
