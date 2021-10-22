@@ -13,6 +13,7 @@ compile_boot:
 compile_libc:
 	@echo "Compiling libc..."
 	@i386-elf-gcc -ffreestanding -c libc/screen.c -o objects/screen.o
+	@i386-elf-gcc -ffreestanding -c libc/string.c -o objects/string.o
 	
 compile_kernel:
 	@echo "Compiling kernel..."

@@ -2,8 +2,8 @@
 #include <stdint.h>
 
 void main() {
-	char a = 'V';
-	putc(a);
+	char welcome[] = "Welcome to ROSH!";
+	puts(welcome);
 
 	while (1) {}
 }

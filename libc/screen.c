@@ -1,4 +1,5 @@
 #include "screen.h"
+#include "string.h"
 #include <stdint.h>
 #define REG_SCREEN_CTRL 0x3d4
 #define REG_SCREEN_DATA 0x3d5
@@ -42,4 +43,13 @@ void moveCursor(int n)
     outb(REG_SCREEN_DATA, (uint8_t)(cursor & 0xff));
 	outb(REG_SCREEN_CTRL, 14);
     outb(REG_SCREEN_DATA, (uint8_t)((cursor >> 8) & 0xff));
+}
+
+void puts(char* str)
+{
+	int len = strlen(str);		// get string length
+	for (int i = 0; i < len; i++)		// for every char in string
+	{
+		putc(str[i]);		// print it
+	}
 }
