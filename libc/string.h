@@ -5,21 +5,22 @@
 
 /*
 	get length of str
-	Input: char array
-	Output: str length
+	@param str: str to check
+	@return length of string
 */
 int strlen(char* str);
 
 /*
 	int to array
-	Input: int, char pointer to string result
+	@param num: the int to convert
+	@param res: pointer to string
 */
 void itoa(int num, char* res);
 
 /*
 	get number of digits from int
-	Input: number
-	Output: number of digits
+	@param num: number to check
+	@return number of digits
 */
 int digits(int num);
 

@@ -7,19 +7,19 @@
 
 /*
 	print a char to the screen
-	Input: the char to print
+	@param c: char to print
 */
 void putc(char c);
 
 /*
 	print a string to the screen
-	Input: the string to print (ends with \0)
+	@param str: string to print
 */
 void puts(char* str);
 
 /*
 	print a number to the screen
-	Input: the number to print
+	@param n: number to print
 */
 void puti(int n);
 
