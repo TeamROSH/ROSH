@@ -1,4 +1,4 @@
-all: compile_boot compile_kernel run
+all: clean_output compile_boot compile_kernel run
 
 clean_output:
 	@rm -rf compiled/
