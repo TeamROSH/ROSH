@@ -9,6 +9,9 @@ void idt_gate_initialize(uint32_t gate_num, uint32_t base, uint16_t selector, ui
 
 void idt_initialize()
 {
+    //initializing idt pointer
+    g_idt_pointer.base = (uint32_t)&g_idt_gates[0];
+    g_idt_pointer.limit = sizeof(idt_gate) * IDT_ENTRIES - 1; 
 
 }
 

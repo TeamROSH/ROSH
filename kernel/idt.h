@@ -6,7 +6,7 @@
 
 typedef struct {
    uint16_t base_low; // base bits 0-15
-   uint16_t selector;  //16 or 32 bit mod
+   uint16_t selector;  // load kernel code segment from the gdt according to selector
    uint8_t zero;      // unused,
    uint8_t flags;      // intterupt flags
    uint16_t base_high; // base bits 16-31
@@ -29,7 +29,7 @@ void idt_initialize();
     @param base: isr (or irq) function base address
 
 */
-void idt_gate_initialize(int gate_num,
+void idt_gate_initialize(uint32_t gate_num,
  uint32_t base, 
  uint16_t selector, 
  uint8_t flags);
