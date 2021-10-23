@@ -6,10 +6,11 @@
 #define REG_SCREEN_DATA 0x3d5
 #define TAB 4
 
-int cursor = 0;
-
 char* getaddr();
 void moveCursor(int n);
+int get_cursor_position(void);
+
+int cursor = 0;
 
 void putc(char c)
 {
@@ -91,4 +92,19 @@ void puti(int n)
 			temp /= 10;
 		putc((char)(temp % 10 + ASCII_NUM_OFFSET));		// print it
 	}
+}
+
+int get_cursor_position(void)
+{
+    int pos = 0;
+    outb(0x3D4, 0x0F);
+    pos |= inb(0x3D5);
+    outb(0x3D4, 0x0E);
+    pos |= ((int)inb(0x3D5)) << 8;
+    return pos;
+}
+
+void initConsole()
+{
+	cursor = get_cursor_position();
 }

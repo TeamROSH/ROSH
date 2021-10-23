@@ -23,4 +23,9 @@ void puts(char* str);
 */
 void puti(int n);
 
+/*
+	init the console cursor
+*/
+void initConsole();
+
 #endif
