@@ -1,4 +1,4 @@
-all: clean_output compile_boot compile_kernel run
+all: clean_output compile_boot compile_libc compile_kernel run
 
 clean_output:
 	@rm -rf compiled/
@@ -10,19 +10,19 @@ compile_boot:
 	@echo "Compiling boot..."
 	@nasm -fbin boot/boot_sect.s -o compiled/boot_sect.bin
 
+compile_libc:
+	@echo "Compiling libc..."
+	@i386-elf-gcc -ffreestanding -c libc/screen.c -o objects/screen.o
+	@i386-elf-gcc -ffreestanding -c libc/string.c -o objects/string.o
+	
 compile_kernel:
 	@echo "Compiling kernel..."
 	@nasm kernel/load_gdt.s -f elf -o objects/load_gdt.o
 	@i386-elf-gcc -ffreestanding -c kernel/gdt.c -o objects/gdt.o
-
 	@i386-elf-gcc -ffreestanding -c kernel/kernel_main.c -o objects/kernel_main.o
+	@i386-elf-gcc -ffreestanding -c kernel/ports.c -o objects/ports.o
 	@nasm kernel/kernel_entry.s -f elf -o objects/kernel_entry.o
-	@i386-elf-ld -o compiled/kernel_main.bin -Ttext 0x1000 objects/kernel_entry.o objects/kernel_main.o objects/gdt.o objects/load_gdt.o --oformat binary
-
-
-
-
-	
+	@i386-elf-ld -o compiled/kernel_main.bin -Ttext 0x1000 objects/*.o --oformat 
 
 run:
 	@echo "Launching..."
