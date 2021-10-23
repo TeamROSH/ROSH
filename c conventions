@@ -1,0 +1,27 @@
+c conventions 
+
+1.function documantation in header file-
+
+/*
+
+	Describing the function
+	Input - paramenters to the function
+	Output - function output
+*/
+void function()
+
+2.function name convention -
+
+lower case separated by underscore
+void some_function()
+
+3.local variable name convention- 
+lower case separated by underscore
+
+int some_variable;
+
+4. global variable name convention-
+
+start with g_ resumed by lower case separated by underscore
+
+int g_some_global_variable;

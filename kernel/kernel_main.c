@@ -1,5 +1,6 @@
 #include "../libc/screen.h"
 #include <stdint.h>
+#include "gdt.h"
 
 /*
 	print ROSH logo
@@ -15,6 +16,9 @@ void main() {
 	putc('\n');
 	puts("End of Line");
 	puts("\rLOL");
+
+	//initializing gdt
+	gdt_initialize();
 
 	while (1) {}
 }
