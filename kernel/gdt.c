@@ -3,7 +3,7 @@
 gdt_entry g_gdt_entries[GDT_ENTRIES];
 gdt_pointer g_gdt_pointer;
 
-extern void load_gdt(uint);
+extern void load_gdt(uint32_t);
 
 
 void gdt_initialize()
@@ -11,7 +11,7 @@ void gdt_initialize()
 
     //initialize gdt pointer
     g_gdt_pointer.limit = sizeof(gdt_entry) * GDT_ENTRIES - 1;
-    g_gdt_pointer.base = (uint)&g_gdt_entries[0];
+    g_gdt_pointer.base = (uint32_t)&g_gdt_entries[0];
 
     //first segment is empty
     g_gdt_entries[0].limit = 0x0;
@@ -56,6 +56,6 @@ void gdt_initialize()
     
 
     //loading the new gdt into memory
-    load_gdt((uint)&g_gdt_pointer);
+    load_gdt((uint32_t)&g_gdt_pointer);
 }
 

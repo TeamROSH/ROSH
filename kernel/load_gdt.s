@@ -1,7 +1,7 @@
 [GLOBAL load_gdt]
 
 load_gdt:
-    mov eax, [esp+4]  
+    mov eax, [esp+4]
     lgdt [eax]         ; Load GDT Register with GDT 
     mov ax, 0x10
     mov ds, ax         ; Reload all the data descriptors with Data selector  

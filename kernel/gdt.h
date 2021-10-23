@@ -1,6 +1,6 @@
 #ifndef GDT_H
 #define GDT_H
-#include "types.h"
+#include <stdint.h>
 
 #define GDT_ENTRIES 5
 typedef struct 
@@ -17,13 +17,11 @@ typedef struct
 //points to gdt table
 typedef struct{
 uint16_t limit;   //table limit 
-uint base;  //first gdt entry
+uint32_t base;  //first gdt entry
 }__attribute__((packed)) gdt_pointer;
 
 /*
     This function initaize the gdt
-    Input - none
-    Output - none 
 */
 void gdt_initialize();
 
