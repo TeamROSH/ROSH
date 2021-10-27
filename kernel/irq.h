@@ -1,7 +1,10 @@
 #ifndef IRQ_H
 #define IRQ_H
 
+#include "screen.h"
+
 #define IDT_ENTRIES 256
+
 #define IRQ0 32
 #define IRQ1 33
 #define IRQ2 34
@@ -28,7 +31,7 @@ typedef struct {
 
 }registers_t;
 
-typedef void (interrupt_handler*)(registers_t* registers);
+typedef void (*interrupt_handler)(registers_t registers);
 
 /*
     initializes the pic 

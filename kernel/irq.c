@@ -33,5 +33,10 @@ void irq_handler(registers_t registers)
     {
         g_interrupt_handlers[registers.interrupt_num](registers);
     }
+    //if no handler for irq
+    else
+    {
+        puts("invalid irq called");
+    }
 
 }
