@@ -1,6 +1,6 @@
 #include "../libc/screen.h"
 #include <stdint.h>
-#include "gdt.h"
+#include "GDT/gdt.h"
 
 /*
 	print ROSH logo

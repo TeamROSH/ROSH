@@ -1,7 +1,7 @@
 #ifndef IRQ_H
 #define IRQ_H
 
-#include "screen.h"
+#include "../../libc/screen.h"
 
 #define IDT_ENTRIES 256
 
