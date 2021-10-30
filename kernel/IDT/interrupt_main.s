@@ -52,3 +52,5 @@ irq_main:
 	iret			; pop and return
 
 %include "kernel/IDT/defines.s"
+%include "kernel/IDT/isr_handlers.s"
+%include "kernel/IDT/irq_handlers.s"

@@ -31,6 +31,7 @@ global isr28
 global isr29
 global isr30
 global isr31
+global isr128
 
 ; define global IRQs
 global irq0

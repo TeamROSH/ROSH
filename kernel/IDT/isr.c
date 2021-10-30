@@ -16,7 +16,7 @@ void isr_handler(registers_t registers)
     }
 }
 
-void set_interrupt(uint8_t interrupt_num, interrupt_handler, interrupt)
+void set_interrupt(uint8_t interrupt_num, interrupt_handler interrupt)
 {
     g_interrupt_handlers[interrupt_num] = interrupt;
 }
