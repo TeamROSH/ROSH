@@ -68,6 +68,11 @@ void idt_initialize()
 	idt_gate_initialize(47,(uint32_t)irq15,0x8,0x8e);
 	idt_gate_initialize(128,(uint32_t)isr128,0x8,0x8e);
 
+	for (int i = 0; i < IDT_ENTRIES; i++)
+	{
+		set_interrupt(i, &general_handler);
+	}
+
     load_idt((uint32_t)&g_idt_pointer);
 }
 

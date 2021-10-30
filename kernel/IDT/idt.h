@@ -1,7 +1,7 @@
 #ifndef IDT_H
 #define IDT_H
 #include <stdint.h>
-#include "irq.h"
+#include "isr.h"
 
 #define IDT_ENTRIES 256
 
