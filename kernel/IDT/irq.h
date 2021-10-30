@@ -42,7 +42,7 @@ void pic_initialize();
 
 /*
     This function handles irq according to the irq type
-    @registers: registers values 
+    @param registers: registers values 
 */
 void irq_handler(registers_t registers);
 
