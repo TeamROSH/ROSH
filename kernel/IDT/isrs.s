@@ -24,3 +24,6 @@ isr_main:
 	popa			; Restore state
 	add esp, 8		; clean pushed bytes (error, ISR number)
 	iret			; pop and return
+
+
+%include "kernel/IDT/defines.s"
