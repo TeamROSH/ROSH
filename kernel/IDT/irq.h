@@ -33,7 +33,7 @@ typedef struct {
 
 }registers_t;
 
-typedef void (*interrupt_handler)(registers_t registers);
+typedef void (*interrupt_handler)(registers_t* registers);
 
 /*
     initializes the pic 
@@ -44,6 +44,6 @@ void pic_initialize();
     This function handles irq according to the irq type
     @param registers: registers values 
 */
-void irq_handler(registers_t registers);
+void irq_handler(registers_t* registers);
 
 #endif

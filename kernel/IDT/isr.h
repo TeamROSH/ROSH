@@ -5,13 +5,13 @@
     This function handles idt interrupt
     @param registers: registers values 
 */
-void isr_handler(registers_t registers);
+void isr_handler(registers_t* registers);
 
 /*
 	print interrupt error
 	@param registers: registers values
 */
-void general_handler(registers_t registers);
+void general_handler(registers_t* registers);
 
 /*
     This function sets interrpt handler in the interrupt handlers array
