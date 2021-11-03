@@ -22,8 +22,15 @@
 #define DELETE_SYMBOL      0xE9
 
 /*
-    
+    This function handels keyboard input 
 */
 void keyboard_handler();
+
+/*
+    This function parses keyboard input symbol into ascii
+    input_symbol: keyboard symbol
+    return: ascii representation 
+*/
+uint8_t patse_to_ascii(uint8_t input_symbol);
 
 #endif
