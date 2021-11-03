@@ -2,13 +2,12 @@
 #define KEYBOARD_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "../ports.h"
+#include "../../libc/screen.h"
 
 #define KEYBOARD_INPUT_PORT 0X60
-<<<<<<< HEAD
 #define KEYBOARD_OUTPUT_PORT 0x20
-=======
->>>>>>> 570d96e6c927c9943c79eff113b49735d364c608
 
 #define UNKNOWN_SYMBOL 0
 #define NUM_OF_SYMBOLS 256
@@ -35,9 +34,8 @@ void keyboard_handler();
     input_symbol: keyboard symbol
     return: ascii representation 
 */
-uint8_t patse_to_ascii(uint8_t input_symbol);
+uint8_t symbol_to_ascii(uint8_t input_symbol);
 
-<<<<<<< HEAD
 /*
     This function initializes the keyboard symbol array
 */
@@ -47,9 +45,6 @@ void keyboard_initialize();
     This function checks whether the char is printable and prints it
     input_char: the charater that will be checked and printed
 */
-void keyboard_putc(uint8_t input_char);
+bool keyboard_putc(uint8_t input_char);
 
 #endif
-=======
-#endif
->>>>>>> 570d96e6c927c9943c79eff113b49735d364c608

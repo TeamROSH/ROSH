@@ -34,25 +34,25 @@ void keyboard_initialize()
     g_symbol_arr[0x2D] = 'x'; g_symbol_arr[0x2E] = 'c'; g_symbol_arr[0x2F] = 'v';
     g_symbol_arr[0x30] = 'b'; g_symbol_arr[0x31] = 'n'; g_symbol_arr[0x32] = 'm';
     g_symbol_arr[0x33] = ','; g_symbol_arr[0x34] = '.'; g_symbol_arr[0xF]= '\t';
-    g_symbol_arr[0x35] = '/';g_symbol_arr[0x39] = ' '; [0x49] = PAGEUP_SYMBOL;
-  [0x51] = PAGEDOWN_SYMBOL; [0x47] = HOME_SYMBOL; [0x4F] = END_SYMBOL;
-  [0x52] = INSERT_SYMBOL; [0x53] = DELETE_SYMBOL; [0x48] = UP_SYMBOL; [0x50] = DOWN_SYMBOL;
-  [0x4B] = LEFT_SYMBOL; [0x4D] = RIGHT_SYMBOL;
+    g_symbol_arr[0x35] = '/';g_symbol_arr[0x39] = ' '; g_symbol_arr[0x49] = PAGEUP_SYMBOL;
+    g_symbol_arr[0x51] = PAGEDOWN_SYMBOL; g_symbol_arr[0x47] = HOME_SYMBOL; g_symbol_arr[0x4F] = END_SYMBOL;
+    g_symbol_arr[0x52] = INSERT_SYMBOL; g_symbol_arr[0x53] = DELETE_SYMBOL; g_symbol_arr[0x48] = UP_SYMBOL; 
+    g_symbol_arr[0x50] = DOWN_SYMBOL; g_symbol_arr[0x4B] = LEFT_SYMBOL; g_symbol_arr[0x4D] = RIGHT_SYMBOL;
 }
 
 uint8_t symbol_to_ascii(uint8_t input_symbol)
 {
-    return g_symbol_arr(input_symbol);
+    return g_symbol_arr[input_symbol];
 }
 
 bool keyboard_putc(uint8_t input_char)
 {
     if(input_char != 0 && input_char < 0x40)
     {
-        putc(symbol_to_ascii(input_char));
+        putc((char)symbol_to_ascii(input_char));
         return true;
     }
-    retrun false;
+    return false;
 }
 
 void keyboard_handler()
@@ -63,8 +63,8 @@ void keyboard_handler()
     //if key pressed 
     if(input_symbol < 0x80)
     {
-        ascii_input  = symbol_to_ascii(input_symbol);
-        keyboard_putc(input_symbol);
+        ascii_input  = symbol_to_ascii((uint8_t)input_symbol);
+        keyboard_putc((uint8_t)input_symbol);
     }
     
     // sending ack to pic 
