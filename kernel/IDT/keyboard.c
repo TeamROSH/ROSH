@@ -61,7 +61,7 @@ void keyboard_handler(registers_t* registers)
     // getting symbol from pic 
     uint8_t input_symbol = inb(KEYBOARD_INPUT_PORT);
     //if key pressed 
-    if(input_symbol < 0x80)
+    if(input_symbol < 0x80 && input_symbol != 0)
     {
         ascii_input  = symbol_to_ascii((uint8_t)input_symbol);
         keyboard_putc((uint8_t)input_symbol);

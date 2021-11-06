@@ -21,10 +21,10 @@ compile_kernel:
 	@i386-elf-gcc -ffreestanding -c kernel/kernel_main.c -o objects/kernel/kernel_main.o
 	@i386-elf-gcc -ffreestanding -c kernel/ports.c -o objects/ports.o
 	@i386-elf-gcc -ffreestanding -c kernel/GDT/gdt.c -o objects/gdt.o
+	@i386-elf-gcc -ffreestanding -c kernel/IDT/keyboard.c -o objects/keyboard.o
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/irq.c -o objects/irq.o
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/idt.c -o objects/idt.o
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/isr.c -o objects/isr.o
-	@i386-elf-gcc -ffreestanding -c kernel/IDT/keyboard.c -o objects/keyboard.o
 	@nasm kernel/kernel_entry.s -f elf -o objects/kernel/kernel_entry.o
 	@nasm kernel/IDT/interrupt_main.s -f elf -o objects/interrupt_main.o
 	@nasm kernel/GDT/load_gdt.s -f elf -o objects/load_gdt.o

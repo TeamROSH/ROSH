@@ -36,7 +36,8 @@ typedef void (*interrupt_handler)(registers_t* registers);
 
 
 /*
-    This function handels keyboard input 
+    This function handels keyboard input
+    registers: registers values 
 */
 void keyboard_handler(registers_t* registers);
 

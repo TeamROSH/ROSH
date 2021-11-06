@@ -11,16 +11,22 @@ void printLogo();
 void main() {
 	// initializing gdt
 	gdt_initialize();
+	// initializing idt
 	idt_initialize();
+	//initializing keyboard
+	keyboard_initialize();
+
 	initConsole();		// init cursor
 	printLogo();		// print ROSH
-	int x =1/0;
+
+	//int x = 1 / 0;
+
 	while (1) {}
 }
 
 void printLogo()
 {
-	char logo[] = "GDT initialized.\nKernel Loaded.\n\n"
+	char logo[] = "Kernel Loaded.\nGDT initialized.\nIDT initialized.\n\n"
 				"\t\t\t\t\t\t\t______ _____ _____ _   _ \n"
 				"\t\t\t\t\t\t\t| ___ \\  _  /  ___| | | |\n"
 				"\t\t\t\t\t\t\t| |_/ / | | \\ `--.| |_| |\n"
