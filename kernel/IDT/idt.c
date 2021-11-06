@@ -73,7 +73,7 @@ void idt_initialize()
 	{
 		set_interrupt(i, general_handler);
 	}
-
+	set_interrupt(33, keyboard_handler);
     load_idt((uint32_t)&g_idt_pointer);
 }
 

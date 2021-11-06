@@ -1,6 +1,7 @@
 #include "../libc/screen.h"
 #include <stdint.h>
 #include "GDT/gdt.h"
+#include "IDT/idt.h"
 
 /*
 	print ROSH logo
@@ -10,10 +11,10 @@ void printLogo();
 void main() {
 	// initializing gdt
 	gdt_initialize();
-
+	idt_initialize();
 	initConsole();		// init cursor
 	printLogo();		// print ROSH
-
+	int x =1/0;
 	while (1) {}
 }
 

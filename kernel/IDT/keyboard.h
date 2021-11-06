@@ -24,10 +24,21 @@
 #define INSERT_SYMBOL      0xE8
 #define DELETE_SYMBOL      0xE9
 
+typedef struct {
+    uint32_t es;
+    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; // pusha
+    uint32_t interrupt_num, err_code;             
+    uint32_t eip, cs, eflags, user_esp, ss;           //cpu pushes
+
+}registers_t;
+
+typedef void (*interrupt_handler)(registers_t* registers);
+
+
 /*
     This function handels keyboard input 
 */
-void keyboard_handler();
+void keyboard_handler(registers_t* registers);
 
 /*
     This function parses keyboard input symbol into ascii

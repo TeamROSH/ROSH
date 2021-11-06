@@ -55,7 +55,7 @@ bool keyboard_putc(uint8_t input_char)
     return false;
 }
 
-void keyboard_handler()
+void keyboard_handler(registers_t* registers)
 {
     uint8_t ascii_input = 0;
     // getting symbol from pic 

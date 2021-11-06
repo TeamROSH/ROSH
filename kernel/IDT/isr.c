@@ -64,6 +64,6 @@ void set_interrupt(uint8_t interrupt_num, interrupt_handler interrupt)
 }
 
 void general_handler(registers_t* registers)
-{
-	puts(exceptions[registers->interrupt_num]);
+{	
+    puts(exceptions[registers->interrupt_num]);
 }
