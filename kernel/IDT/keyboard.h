@@ -28,6 +28,9 @@
 #define SHIFT_PRESS 0xF
 #define ALT_PRESS 0x12
 #define CAPSLOCK_PRESS 0x13
+#define CTRL_RELEASE 0x9D
+#define SHIFT_RELEASE 0xAA
+#define ALT_RELEASE 0xB8
 
 
 /*

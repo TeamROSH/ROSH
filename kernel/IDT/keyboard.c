@@ -46,6 +46,7 @@ void keyboard_initialize()
     g_symbol_arr[0x51] = PAGEDOWN_SYMBOL; g_symbol_arr[0x47] = HOME_SYMBOL; g_symbol_arr[0x4F] = END_SYMBOL;
     g_symbol_arr[0x52] = INSERT_SYMBOL; g_symbol_arr[0x53] = DELETE_SYMBOL; g_symbol_arr[0x48] = UP_SYMBOL; 
     g_symbol_arr[0x50] = DOWN_SYMBOL; g_symbol_arr[0x4B] = LEFT_SYMBOL; g_symbol_arr[0x4D] = RIGHT_SYMBOL;
+	g_symbol_arr[0x9D] = CTRL_RELEASE; g_symbol_arr[0xAA] = SHIFT_RELEASE; g_symbol_arr[0xB8] = ALT_RELEASE;
 }
 
 uint8_t symbol_to_ascii(uint8_t input_symbol)
@@ -55,13 +56,14 @@ uint8_t symbol_to_ascii(uint8_t input_symbol)
 
 int keyboard_putc(uint8_t input_char)
 {
-    if(input_char >= 0x20 && input_char < 0x40)
+    if(input_char != 0x1D && input_char != 0x2A && input_char != 0x38 && 
+		input_char != 0x3A && input_char < 0x40)
     {
         putc((char)symbol_to_ascii(input_char));
         return true;
     }
 	else {
-		non_char_print(input_char);
+		non_char_print((char)symbol_to_ascii(input_char));
 	}
     return false;
 }
@@ -72,7 +74,7 @@ void keyboard_handler(registers_t* registers)
     // getting symbol from pic 
     uint8_t input_symbol = inb(KEYBOARD_INPUT_PORT);
     //if key pressed 
-    if(input_symbol < 0x80 && input_symbol != 0)
+    if(input_symbol != 0)
     {
         ascii_input  = symbol_to_ascii((uint8_t)input_symbol);
         keyboard_putc((uint8_t)input_symbol);

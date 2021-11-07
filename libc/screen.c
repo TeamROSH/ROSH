@@ -7,7 +7,6 @@
 #define TAB 4
 #define FALSE 0
 #define TRUE !FALSE
-#define bool char
 
 char* getaddr();
 void moveCursor(int n);
@@ -15,15 +14,24 @@ int get_cursor_position(void);
 int print_special(char c);
 int printable(char c);
 void up_putc(char c);
+char key_replacement(char c);
 
 int cursor = 0;
-bool key_flags[] = {FALSE, FALSE, FALSE, FALSE};		// ctrl shift alt CapsLock
+char key_flags[] = {FALSE, FALSE, FALSE, FALSE};		// ctrl shift alt CapsLock
+char shift_replacements[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+							21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, ' ', '!', '"', '#', '$', '%',
+							'&', '\'', '(', ')', '*', '+', '<', '_', '>', '?', ')', '!', '@', '#', '$',
+							'%', '^', '&', '*', '(', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C', 'D',
+							'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+							'U', 'V', 'W', 'X', 'Y', 'Z', '{', '|', '}', '^', '_', '~', 'A', 'B', 'C', 'D',
+							'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+							'U', 'V', 'W', 'X', 'Y', 'Z', '{', '|', '}', '~', 0};
 
 void putc(char c)
 {
 	if (!print_special(c) && cursor < ROWS * COLS)
 	{
-		up_putc(c);
+		up_putc(key_replacement(c));
 	}
 	else if (cursor == ROWS * COLS)
 	{
@@ -191,5 +199,50 @@ void non_char_print(uint8_t c)
 			if (cursor < ROWS * COLS - 1)
 				moveCursor(1);
 			break;
+		case CTRL_PRESS:
+			key_flags[0] = TRUE;
+			break;
+		case SHIFT_PRESS:
+			key_flags[1] = TRUE;
+			break;
+		case ALT_PRESS:
+			key_flags[2] = TRUE;
+			break;
+		case CAPSLOCK_PRESS:
+			key_flags[3] = !key_flags[3];
+			break;
+		case CTRL_RELEASE:
+			key_flags[0] = FALSE;
+			break;
+		case SHIFT_RELEASE:
+			key_flags[1] = FALSE;
+			break;
+		case ALT_RELEASE:
+			key_flags[2] = FALSE;
+			break;
 	}
+}
+
+/*
+	get the correct char to print (Shift + key...)
+	@param c: char got
+	@returns actual char
+*/
+char key_replacement(char c)
+{
+	if (key_flags[1] && key_flags[3])		// shift & CapsLock
+		if (c >= 97 && c <= 121)		// if lower case letter
+			return c;
+		else
+			return shift_replacements[(int)c];
+	else if (key_flags[1])		// shift
+		return shift_replacements[(int)c];
+	else if (key_flags[3])		// CapsLock
+		if (c >= 97 && c <= 121)		// if lower case letter
+			return shift_replacements[(int)c];
+		else
+			return c;
+	else
+		return c;
+
 }
