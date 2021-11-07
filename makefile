@@ -20,9 +20,16 @@ compile_kernel:
 	@echo "Compiling kernel..."
 	@i386-elf-gcc -ffreestanding -c kernel/kernel_main.c -o objects/kernel/kernel_main.o
 	@i386-elf-gcc -ffreestanding -c kernel/ports.c -o objects/ports.o
-	@i386-elf-gcc -ffreestanding -c kernel/gdt.c -o objects/gdt.o
+	@i386-elf-gcc -ffreestanding -c kernel/GDT/gdt.c -o objects/gdt.o
+	@i386-elf-gcc -ffreestanding -c kernel/IDT/time.c -o objects/time.o
+	@i386-elf-gcc -ffreestanding -c kernel/IDT/keyboard.c -o objects/keyboard.o
+	@i386-elf-gcc -ffreestanding -c kernel/IDT/irq.c -o objects/irq.o
+	@i386-elf-gcc -ffreestanding -c kernel/IDT/idt.c -o objects/idt.o
+	@i386-elf-gcc -ffreestanding -c kernel/IDT/isr.c -o objects/isr.o
 	@nasm kernel/kernel_entry.s -f elf -o objects/kernel/kernel_entry.o
-	@nasm kernel/load_gdt.s -f elf -o objects/load_gdt.o
+	@nasm kernel/IDT/interrupt_main.s -f elf -o objects/interrupt_main.o
+	@nasm kernel/GDT/load_gdt.s -f elf -o objects/load_gdt.o
+	@nasm kernel/IDT/load_idt.s -f elf -o objects/load_idt.o
 	@i386-elf-ld -o compiled/kernel_main.bin -Ttext 0x1000 objects/kernel/*.o objects/*.o --oformat binary
 
 run:

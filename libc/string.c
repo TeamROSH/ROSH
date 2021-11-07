@@ -29,5 +29,5 @@ int digits(int num)
 		num /= 10;
 		i++;
 	}
-	return i;
+	return i == 0 ? 1 : i;
 }
