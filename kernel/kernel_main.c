@@ -20,8 +20,9 @@ void main() {
 	printLogo();		// print ROSH
 
 	//int x = 1 / 0;
+	int i = 0;
+	print_time_seconds();
 
-	while (1) {}
 }
 
 void printLogo()

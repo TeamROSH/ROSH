@@ -1,6 +1,7 @@
 #ifndef TIME_H
 #define TIME_H
 #include <stdint.h>
+#include "../../libc/screen.h"
 
 typedef struct {
     uint32_t es;
@@ -18,5 +19,10 @@ typedef void (*interrupt_handler)(registers_t* registers);
     registers: registers values
 */
 void time_handler(registers_t* registers);
+
+/*
+    This function prints the curr time in seconds
+*/
+void print_time_seconds();
 
 #endif
