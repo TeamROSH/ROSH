@@ -6,6 +6,8 @@ idt_pointer g_idt_pointer;
 
 extern void load_idt(uint32_t);
 extern void keyboard_handler(registers_t* registers);
+extern void time_handler(registers_t* registers);
+
 void idt_initialize();
 void idt_gate_initialize(uint32_t gate_num, uint32_t base, uint16_t selector, uint8_t flags);
 
@@ -72,12 +74,13 @@ void idt_initialize()
 
 	for (int i = 0; i < IDT_ENTRIES; i++)
 	{
-		if(i != 32)
+		if(i != 32 && i != 33)
 		{
 			set_interrupt(i, general_handler);
 		}
-	}
-	set_interrupt(32, keyboard_handler);
+	
+	set_interrupt(32, time_handler);}
+	set_interrupt(33, keyboard_handler);
     load_idt((uint32_t)&g_idt_pointer);
 }
 

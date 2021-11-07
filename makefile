@@ -21,6 +21,7 @@ compile_kernel:
 	@i386-elf-gcc -ffreestanding -c kernel/kernel_main.c -o objects/kernel/kernel_main.o
 	@i386-elf-gcc -ffreestanding -c kernel/ports.c -o objects/ports.o
 	@i386-elf-gcc -ffreestanding -c kernel/GDT/gdt.c -o objects/gdt.o
+	@i386-elf-gcc -ffreestanding -c kernel/IDT/time.c -o objects/time.o
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/keyboard.c -o objects/keyboard.o
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/irq.c -o objects/irq.o
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/idt.c -o objects/idt.o
