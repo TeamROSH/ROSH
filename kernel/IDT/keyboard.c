@@ -6,7 +6,6 @@ uint8_t g_keyboard_input[NUM_OF_SYMBOLS];
 void keyboard_handler();
 uint8_t symbol_to_ascii(uint8_t input_symbol);
 void keyboard_initialize();
-bool keyboard_putc(uint8_t input_char);
 
 
 
@@ -45,16 +44,6 @@ uint8_t symbol_to_ascii(uint8_t input_symbol)
     return g_symbol_arr[input_symbol];
 }
 
-bool keyboard_putc(uint8_t input_char)
-{
-    if(input_char != 0 && input_char < 0x40)
-    {
-        putc((char)symbol_to_ascii(input_char));
-        return true;
-    }
-    return false;
-}
-
 void keyboard_handler(registers_t* registers)
 {
     uint8_t ascii_input = 0;
@@ -64,7 +53,7 @@ void keyboard_handler(registers_t* registers)
     if(input_symbol < 0x80 && input_symbol != 0)
     {
         ascii_input  = symbol_to_ascii((uint8_t)input_symbol);
-        keyboard_putc((uint8_t)input_symbol);
+        putc((char)symbol_to_ascii(input_symbol));
     }
     
     // sending ack to pic 

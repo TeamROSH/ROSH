@@ -5,10 +5,14 @@
 #define REG_SCREEN_CTRL 0x3d4
 #define REG_SCREEN_DATA 0x3d5
 #define TAB 4
+#define FALSE 0
+#define TRUE !FALSE
 
 char* getaddr();
 void moveCursor(int n);
 int get_cursor_position(void);
+int print_special(char c);
+int printable(char c);
 
 int cursor = 0;
 
@@ -16,33 +20,11 @@ void putc(char c)
 {
 	if (cursor < ROWS * COLS)		// if screen not full
 	{
-		if (c != '\n' && c != '\t' && c != '\r')
+		if (!print_special(c))
 		{
 			char* pos = getaddr();		// get pos of char
 			pos[0] = c;		// print char
 			moveCursor(1);
-		}
-		else if (c == '\n')
-		{
-			if (cursor / COLS + 1 < ROWS)
-				moveCursor(COLS - (cursor % COLS));		// set cursor to start of next line
-			else
-			{
-				// scroll option
-			}
-		}
-		else if (c == '\t')
-		{
-			if (cursor < ROWS * COLS - TAB)		// if room of tab
-				moveCursor(TAB);
-			else
-			{
-				// scroll option
-			}
-		}
-		else if (c == '\r')
-		{
-			moveCursor(-(cursor % COLS));		// move to the start of the line
 		}
 	}
 	else
@@ -53,7 +35,7 @@ void putc(char c)
 
 /*
 	get pointer of screen cursor
-	Output: pointer of char
+	@returns pointer of char
 */
 char* getaddr()
 {
@@ -62,7 +44,7 @@ char* getaddr()
 
 /*
 	move cursor n steps
-	Input: n - number of steps to move
+	@param n: number of steps to move
 */
 void moveCursor(int n)
 {
@@ -107,4 +89,55 @@ int get_cursor_position(void)
 void initConsole()
 {
 	cursor = get_cursor_position();
+}
+
+/*
+	print a special character
+	@param c: the char to print
+	@returns was special character printed
+*/
+int print_special(char c)
+{
+	switch (c)
+	{
+		case '\n':
+			if (cursor / COLS + 1 < ROWS)
+				moveCursor(COLS - (cursor % COLS));		// set cursor to start of next line
+			else
+			{
+				// scroll option
+			}
+			return TRUE;
+		case '\t':
+			if (cursor < ROWS * COLS - TAB)		// if room of tab
+				moveCursor(TAB);
+			else
+			{
+				// scroll option
+			}
+			return TRUE;
+		case '\r':
+			moveCursor(-(cursor % COLS));		// move to the start of the line
+			return TRUE;
+		case '\b':
+			if (cursor > 0)
+			{
+				moveCursor(-1);		// delete last insert
+				putc('\0');
+				moveCursor(-1);
+			}
+			return TRUE;
+		default:
+			return !printable(c);
+	}
+}
+
+/*
+	return if char is printable
+	@param c: the char to print
+	@returns is printable
+*/
+int printable(char c)
+{
+	return c >= 20 && c <= 126;		// between space and ~ in ascii table
 }
