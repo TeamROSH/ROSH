@@ -74,12 +74,10 @@ void idt_initialize()
 
 	for (int i = 0; i < IDT_ENTRIES; i++)
 	{
-		if(i != 32 && i != 33)
-		{
-			set_interrupt(i, general_handler);
-		}
+		set_interrupt(i, general_handler);
+	}
 	
-	set_interrupt(32, time_handler);}
+	set_interrupt(32, time_handler);
 	set_interrupt(33, keyboard_handler);
     load_idt((uint32_t)&g_idt_pointer);
 }

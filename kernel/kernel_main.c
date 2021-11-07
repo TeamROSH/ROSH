@@ -18,11 +18,6 @@ void main() {
 
 	initConsole();		// init cursor
 	printLogo();		// print ROSH
-
-	//int x = 1 / 0;
-	int i = 0;
-	print_time_seconds();
-
 }
 
 void printLogo()
