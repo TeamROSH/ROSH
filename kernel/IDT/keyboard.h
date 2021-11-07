@@ -49,6 +49,6 @@ void keyboard_initialize();
     This function checks whether the char is printable and prints it
     input_char: the charater that will be checked and printed
 */
-bool keyboard_putc(uint8_t input_char);
+int keyboard_putc(uint8_t input_char);
 
 #endif

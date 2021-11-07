@@ -1,7 +1,7 @@
 #include "screen.h"
 #include "string.h"
 #include "../kernel/ports.h"
-#include <stdint.h>
+#include "../kernel/IDT/keyboard.h"
 #define REG_SCREEN_CTRL 0x3d4
 #define REG_SCREEN_DATA 0x3d5
 #define TAB 4
@@ -13,21 +13,17 @@ void moveCursor(int n);
 int get_cursor_position(void);
 int print_special(char c);
 int printable(char c);
+void up_putc(char c);
 
 int cursor = 0;
 
 void putc(char c)
 {
-	if (cursor < ROWS * COLS)		// if screen not full
+	if (!print_special(c) && cursor < ROWS * COLS)
 	{
-		if (!print_special(c))
-		{
-			char* pos = getaddr();		// get pos of char
-			pos[0] = c;		// print char
-			moveCursor(1);
-		}
+		up_putc(c);
 	}
-	else
+	else if (cursor == ROWS * COLS)
 	{
 		// scroll option
 	}
@@ -123,7 +119,7 @@ int print_special(char c)
 			if (cursor > 0)
 			{
 				moveCursor(-1);		// delete last insert
-				putc('\0');
+				up_putc('\0');
 				moveCursor(-1);
 			}
 			return TRUE;
@@ -140,4 +136,58 @@ int print_special(char c)
 int printable(char c)
 {
 	return c >= 20 && c <= 126;		// between space and ~ in ascii table
+}
+
+/*
+	print a char to the screen (private unprotected version)
+	@param c: char to print
+*/
+void up_putc(char c)
+{
+	char* pos = getaddr();		// get pos of char
+	pos[0] = c;		// print char
+	moveCursor(1);
+}
+
+void non_char_print(uint8_t c)
+{
+	switch (c)
+	{
+		case PAGEUP_SYMBOL:
+			moveCursor(-cursor);		// bring to the top
+			break;
+		case PAGEDOWN_SYMBOL:
+			moveCursor((ROWS - 1) * COLS - cursor);		// bring to last line
+			break;
+		case HOME_SYMBOL:
+			moveCursor(-(cursor % COLS));		// move to the start of the line
+			break;
+		case END_SYMBOL:
+			moveCursor(COLS - (cursor % COLS) - 1);		// set cursor to end of line
+			break;
+		case INSERT_SYMBOL:
+			break;
+		case DELETE_SYMBOL:
+			if (cursor < ROWS * COLS - 1){
+				up_putc('\0');
+				moveCursor(-1);
+			}
+			break;
+		case UP_SYMBOL:
+			if (cursor >= COLS)
+				moveCursor(-COLS);
+			break;
+		case DOWN_SYMBOL:
+			if (cursor <= ((ROWS - 1) * COLS - 1))
+				moveCursor(COLS);
+			break;
+		case LEFT_SYMBOL:
+			if (cursor > 0)
+				moveCursor(-1);
+			break;
+		case RIGHT_SYMBOL:
+			if (cursor < ROWS * COLS - 1)
+				moveCursor(1);
+			break;
+	}
 }

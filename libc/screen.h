@@ -1,6 +1,7 @@
 #ifndef SCREENH
 #define SCREENH
 
+#include <stdint.h>
 #define SCREEN 0xb8000
 #define ROWS 25
 #define COLS 80
@@ -27,5 +28,11 @@ void puti(int n);
 	init the console cursor
 */
 void initConsole();
+
+/*
+	print non char (Arrows, etc.)
+	@param c: the character
+*/
+void non_char_print(uint8_t c);
 
 #endif
