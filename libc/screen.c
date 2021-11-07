@@ -7,6 +7,7 @@
 #define TAB 4
 #define FALSE 0
 #define TRUE !FALSE
+#define bool char
 
 char* getaddr();
 void moveCursor(int n);
@@ -16,6 +17,7 @@ int printable(char c);
 void up_putc(char c);
 
 int cursor = 0;
+bool key_flags[] = {FALSE, FALSE, FALSE, FALSE};		// ctrl shift alt CapsLock
 
 void putc(char c)
 {
@@ -135,7 +137,7 @@ int print_special(char c)
 */
 int printable(char c)
 {
-	return c >= 20 && c <= 126;		// between space and ~ in ascii table
+	return c >= 32 && c <= 126;		// between space and ~ in ascii table
 }
 
 /*

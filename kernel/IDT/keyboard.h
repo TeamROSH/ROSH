@@ -24,7 +24,10 @@
 #define PAGEDOWN_SYMBOL    0xE7
 #define INSERT_SYMBOL      0xE8
 #define DELETE_SYMBOL      0xE9
-
+#define CTRL_PRESS 0x11
+#define SHIFT_PRESS 0xF
+#define ALT_PRESS 0x12
+#define CAPSLOCK_PRESS 0x13
 
 
 /*
