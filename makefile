@@ -16,6 +16,7 @@ compile_libc:
 	@i386-elf-gcc -ffreestanding -c libc/screen.c -o objects/screen.o
 	@i386-elf-gcc -ffreestanding -c libc/string.c -o objects/string.o
 	@i386-elf-gcc -ffreestanding -c libc/memory.c -o objects/memory.o
+	@i386-elf-gcc -ffreestanding -c libc/system.c -o objects/system.o
 	
 compile_kernel:
 	@echo "Compiling kernel..."
