@@ -91,5 +91,10 @@ void heap_free(Heap* heap, void* addr)
 
 void initKernelHeap()
 {
-	heap_init(g_kernelHeap, 0x10000, 1024 * 3 * 4096);
+	heap_init(&g_kernelHeap, 0x10000, 1024 * 3 * 4096);
+}
+
+void* kmalloc(uint32_t size)
+{
+	return heap_malloc(&g_kernelHeap, size);
 }

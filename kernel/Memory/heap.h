@@ -64,4 +64,11 @@ void heap_free(Heap* heap, void* addr);
 */
 void initKernelHeap();
 
+/*
+	allocate memory
+	@param size: the size of memory
+	@returns pointer to the memory
+*/
+void* kmalloc(uint32_t size);
+
 #endif
