@@ -2,6 +2,7 @@
 #define FALSE 0
 #define TRUE !FALSE
 #define CHECKSUM 0x552F60B2
+#define NULL 0
 
 Heap g_kernelHeap;
 
@@ -17,7 +18,7 @@ void heap_init(Heap* heap, uint32_t base, uint32_t size)
 void heap_pushNode(Heap* heap, HeapNode* node)
 {
 	node->next = NULL;			// clear next since added to the end
-	node->prev = head->tail;	// add to end
+	node->prev = heap->tail;	// add to end
 	if (heap->head == NULL)		// if heap empty
 		heap->head = node;			// add to beginning
 	else						// if heap not empty
@@ -35,7 +36,7 @@ void heap_popNode(Heap* heap)
 	}
 	else
 	{
-		heap->nextFree = heap->tail;	// reset next free
+		heap->nextFree = (uint32_t)(heap->tail);	// reset next free
 		heap->tail = heap->tail->prev;	// clear last
         heap->tail->next = NULL;		// make prev the new last
 	}

@@ -6,8 +6,8 @@
 typedef struct HeapNode
 {
 	uint8_t free;		// is free node?
-	HeapNode* next;		// next node of heap
-	HeapNode* prev;		// previous node of heap
+	struct HeapNode* next;		// next node of heap
+	struct HeapNode* prev;		// previous node of heap
 	uint32_t dataSize;	// node data size
 	uint32_t checksum;	// security. must always be CHECKSUM const
 	void* data;			// the data
