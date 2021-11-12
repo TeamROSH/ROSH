@@ -1,13 +1,14 @@
 #include "../libc/screen.h"
+#include "../libc/system.h"
 #include <stdint.h>
 #include "GDT/gdt.h"
 #include "IDT/idt.h"
-#include "Memory/heap.h"
 
 /*
 	print ROSH logo
 */
 void printLogo();
+void kernelShutdown();
 
 void main() {
 	gdt_initialize();		// initializing gdt
@@ -31,4 +32,15 @@ void printLogo()
 				"\t\t\t\t  Roei Aviad and Yoav Shaham's Operating System!\n\nPress any key to start!\n";
 	puts(logo);
 	clearOnPrint();			// !!! no prints after this line !!!
+}
+
+/*
+	clean shutdown
+*/
+void kernelShutdown()
+{
+	kfree(getTrackerUp());
+	kfree(getTrackerDown());
+	
+	shutdown();
 }

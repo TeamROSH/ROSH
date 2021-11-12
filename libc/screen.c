@@ -347,3 +347,13 @@ void scrollScreen(int direction)
 		}
 	}
 }
+
+char* getTrackerUp()
+{
+	return screenTrackerUp;
+}
+
+char* getTrackerDown()
+{
+	return screenTrackerDown;
+}
