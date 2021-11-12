@@ -45,4 +45,16 @@ void clearOnPrint();
 */
 void clearConsole();
 
+/*
+	screenTrackerUp getter
+	@returns screenTrackerUp
+*/
+char* getTrackerUp();
+
+/*
+	screenTrackerDown getter
+	@returns screenTrackerDown
+*/
+char* getTrackerDown();
+
 #endif

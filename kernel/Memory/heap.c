@@ -95,11 +95,14 @@ void heap_free(Heap* heap, void* addr)
 void* heap_realloc(Heap* heap, void* addr, uint32_t size)
 {
 	if ((uint32_t)addr < heap->base || (uint32_t)addr > heap->base + heap->size)		// if not in heap
-		return NULL;
+		return heap_malloc(heap, size);
 
 	HeapNode* node = (HeapNode*)(addr - sizeof(HeapNode));		// get node from data pointer
 	if (node->checksum != CHECKSUM)		// check checksum to prevent buffer overflow
-		return NULL;
+		return heap_malloc(heap, size);
+	
+	if (node->free == TRUE)		// if no node taken already
+		return heap_malloc(heap, size);
 
 	if (node->dataSize >= size)		// if node has already enough space
 		return node->data;				// return same node
