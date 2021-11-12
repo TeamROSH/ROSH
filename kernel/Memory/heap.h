@@ -9,6 +9,7 @@ typedef struct HeapNode
 	HeapNode* next;		// next node of heap
 	HeapNode* prev;		// previous node of heap
 	uint32_t dataSize;	// node data size
+	uint32_t checksum;	// security. must always be CHECKSUM const
 	void* data;			// the data
 } HeapNode;
 
@@ -50,5 +51,12 @@ void heap_popNode(Heap* heap);
 	@returns pointer to the data
 */
 void* heap_malloc(Heap* heap, uint32_t size);
+
+/*
+	free address in heap
+	@param heap: pointer to the heap struct
+	@param addr: address to free
+*/
+void heap_free(Heap* heap, void* addr);
 
 #endif

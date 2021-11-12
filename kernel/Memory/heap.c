@@ -1,6 +1,7 @@
 #include "heap.h"
 #define FALSE 0
 #define TRUE !FALSE
+#define CHECKSUM 0x552F60B2
 
 void heap_init(Heap* heap, uint32_t base, uint32_t size)
 {
@@ -28,9 +29,11 @@ void heap_popNode(Heap* heap)
 	{
 		heap->head = NULL;					// clear heap
 		heap->tail = NULL;
+		heap->nextFree = heap->base;		// reset next free
 	}
 	else
 	{
+		heap->nextFree = heap->tail;	// reset next free
 		heap->tail = heap->tail->prev;	// clear last
         heap->tail->next = NULL;		// make prev the new last
 	}
@@ -45,6 +48,7 @@ void* heap_malloc(Heap* heap, uint32_t size)
 		node = (HeapNode*)heap->nextFree;		// allocate free space for the node
 		node->free = FALSE;						// node is not free
 		node->dataSize = size;					// set data size
+		node->checksum = CHECKSUM;				// set checksum
 		node->data = (void*)(heap->nextFree + sizeof(HeapNode));		// allocate free space for the data
 
 		heap_pushNode(heap, node);				// push the node to the heap
@@ -65,6 +69,20 @@ void* heap_malloc(Heap* heap, uint32_t size)
 				node = node->next;			// continue iterate if not found
 		}
 	}
-
 	return NULL;		// if got here - no free memory was found
+}
+
+void heap_free(Heap* heap, void* addr)
+{
+	if ((uint32_t)addr < heap->base || (uint32_t)addr > heap->base + heap->size)		// if not in heap
+		return;
+
+	HeapNode* node = (HeapNode*)(addr - sizeof(HeapNode));		// get node from data pointer
+	if (node->checksum != CHECKSUM)		// check checksum to prevent buffer overflow
+		return;
+
+	if (node == heap->tail)		// if last
+		heap_popNode(heap);			// remove last
+	else						// if not last
+		node->free = TRUE;			// mark as free
 }
