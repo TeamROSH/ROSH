@@ -16,6 +16,14 @@ void main() {
 	initConsole();			// init cursor
 	initKernelHeap();		// init heap
 
+	int* ptr = (int*)kmalloc(sizeof(int));
+	*ptr = 5;
+	puti(*ptr);
+	ptr = (int*)krealloc(ptr, 2 * sizeof(int));
+	ptr[1] = 10;
+	puti(ptr[0]);
+	puti(ptr[1]);
+
 	printLogo();		// print ROSH
 }
 
