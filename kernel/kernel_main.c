@@ -16,19 +16,6 @@ void main() {
 	initConsole();			// init cursor
 	initKernelHeap();		// init heap
 
-	int size = 4;
-	int* pNum = (int*)kmalloc(sizeof(int));
-	for (int i = 0; i < size; i++)
-	{
-		pNum[i] = 200 + i * 10;
-	}
-	for (int i = 0; i < size; i++)
-	{
-		puti(pNum[i]);
-		putc('\n');
-	}
-	kfree(pNum);
-
 	printLogo();		// print ROSH
 }
 
