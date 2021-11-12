@@ -98,3 +98,8 @@ void* kmalloc(uint32_t size)
 {
 	return heap_malloc(&g_kernelHeap, size);
 }
+
+void kfree(void* addr)
+{
+	heap_free(&g_kernelHeap, addr);
+}

@@ -71,4 +71,10 @@ void initKernelHeap();
 */
 void* kmalloc(uint32_t size);
 
+/*
+	free allocated memory
+	@param addr: address to free
+*/
+void kfree(void* addr);
+
 #endif
