@@ -35,4 +35,14 @@ void initConsole();
 */
 void non_char_print(uint8_t c);
 
+/*
+	if called, console will be cleared on char print
+*/
+void clearOnPrint();
+
+/*
+	clear the console
+*/
+void clearConsole();
+
 #endif

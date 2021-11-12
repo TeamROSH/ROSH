@@ -17,6 +17,7 @@ void up_putc(char c);
 char key_replacement(char c);
 
 int cursor = 0;
+int clear = FALSE;
 char key_flags[] = {FALSE, FALSE, FALSE, FALSE};		// ctrl shift alt CapsLock
 char shift_replacements[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
 							21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, ' ', '!', '"', '#', '$', '%',
@@ -29,10 +30,14 @@ char shift_replacements[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 
 void putc(char c)
 {
-	if (!print_special(c) && cursor < ROWS * COLS)
+	if (clear)
 	{
-		up_putc(key_replacement(c));
+		clear = FALSE;
+		clearConsole();
+		return;
 	}
+	if (!print_special(c) && cursor < ROWS * COLS)
+		up_putc(key_replacement(c));
 	else if (cursor == ROWS * COLS)
 	{
 		// scroll option
@@ -95,6 +100,7 @@ int get_cursor_position(void)
 void initConsole()
 {
 	cursor = get_cursor_position();
+	clear = FALSE;
 }
 
 /*
@@ -245,4 +251,17 @@ char key_replacement(char c)
 	else
 		return c;
 
+}
+
+void clearOnPrint()
+{
+	clear = TRUE;
+}
+
+void clearConsole()
+{
+	char* screen = (char*)SCREEN;
+	for (int i = 0; i < ROWS * COLS * 2; i += 2)
+		*(screen + i) = 0;
+	moveCursor(-cursor);
 }
