@@ -22,5 +22,12 @@ typedef struct Heap
 	HeapNode* tail;		// last node
 } Heap;
 
+/*
+	init the heap
+	@param heap: pointer to the heap struct
+	@param base: base address for heap
+	@param size: size of heap
+*/
+void heap_init(Heap* heap, uint32_t base, uint32_t size);
 
 #endif
