@@ -37,4 +37,10 @@ void heap_init(Heap* heap, uint32_t base, uint32_t size);
 */
 void heap_pushNode(Heap* heap, HeapNode* node);
 
+/*
+	remove the last node
+	@param heap: pointer to the heap struct
+*/
+void heap_popNode(Heap* heap);
+
 #endif

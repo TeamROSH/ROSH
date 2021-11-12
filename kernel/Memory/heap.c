@@ -19,3 +19,17 @@ void heap_pushNode(Heap* heap, HeapNode* node)
 		heap->tail->next = node;	// set prev's next to node
 	heap->tail = node;			// add to end
 }
+
+void heap_popNode(Heap* heap)
+{
+	if (heap->head == heap->tail)		// if first is last - one left
+	{
+		heap->head = NULL;					// clear heap
+		heap->tail = NULL;
+	}
+	else
+	{
+		heap->tail = heap->tail->prev;	// clear last
+        heap->tail->next = NULL;		// make prev the new last
+	}
+}
