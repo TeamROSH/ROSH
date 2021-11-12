@@ -3,6 +3,8 @@
 #define TRUE !FALSE
 #define CHECKSUM 0x552F60B2
 
+Heap g_kernelHeap;
+
 void heap_init(Heap* heap, uint32_t base, uint32_t size)
 {
 	heap->base = base;
@@ -85,4 +87,9 @@ void heap_free(Heap* heap, void* addr)
 		heap_popNode(heap);			// remove last
 	else						// if not last
 		node->free = TRUE;			// mark as free
+}
+
+void initKernelHeap()
+{
+	heap_init(g_kernelHeap, 0x10000, 1024 * 3 * 4096);
 }

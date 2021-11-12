@@ -59,4 +59,9 @@ void* heap_malloc(Heap* heap, uint32_t size);
 */
 void heap_free(Heap* heap, void* addr);
 
+/*
+	init the kernel heap
+*/
+void initKernelHeap();
+
 #endif
