@@ -5,6 +5,7 @@ page_directory* g_page_directory;
 
 void allow_paging();
 uint page_to_address(uint page_number);
+uint address_to_page(uint address);
 void initialize_page_table_entry(page_table_entry* table_entry,
 uint address,
 uint8_t present,    
@@ -18,6 +19,10 @@ uint8_t pat,
 uint8_t global,     
 uint8_t avl);
 
+uint address_to_page(uint address)
+{
+    return (address - PAGES_START_ADDR) / PAGE_SIZE;
+}
 
 uint page_to_address(uint page_number)
 {
