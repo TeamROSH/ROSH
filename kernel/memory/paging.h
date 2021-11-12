@@ -2,6 +2,8 @@
 #define PAGING_H
 #include <stdint.h>
 
+#include "memorylayout.h"
+
 typedef struct {
     uint8_t present : 1;    //one bit is entry present
     uint8_t rw : 1;         // read write or read only
@@ -25,5 +27,11 @@ typedef struct{
 typedef struct{
     page_directory_entery[1024];
 } page_directory;
+
+
+/*
+    This function changes the cr0 register value in order to allow paging
+*/
+void allow_paging();
 
 #endif
