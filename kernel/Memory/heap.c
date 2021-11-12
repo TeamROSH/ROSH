@@ -1,8 +1,10 @@
 #include "heap.h"
+#include "../../libc/memory.h"
 #define FALSE 0
 #define TRUE !FALSE
 #define CHECKSUM 0x552F60B2
 #define NULL 0
+#define min(a, b) ((a) < (b) ? (a) : (b))
 
 Heap g_kernelHeap;
 
@@ -88,6 +90,28 @@ void heap_free(Heap* heap, void* addr)
 		heap_popNode(heap);			// remove last
 	else						// if not last
 		node->free = TRUE;			// mark as free
+}
+
+void* heap_realloc(Heap* heap, void* addr, uint32_t size)
+{
+	if ((uint32_t)addr < heap->base || (uint32_t)addr > heap->base + heap->size)		// if not in heap
+		return NULL;
+
+	HeapNode* node = (HeapNode*)(addr - sizeof(HeapNode));		// get node from data pointer
+	if (node->checksum != CHECKSUM)		// check checksum to prevent buffer overflow
+		return NULL;
+
+	if (node->dataSize >= size)		// if node has already enough space
+		return node->data;				// return same node
+	else
+	{
+		void* data = heap_malloc(heap, size);		// allocate new node
+		if (data == NULL)			// if failed allocating
+			return NULL;
+		memcpy(data, node->data, min(node->dataSize, size));		// copy memory
+		heap_free(heap, node->data);		// free old memory
+		return data;		// return new address
+	}
 }
 
 void initKernelHeap()

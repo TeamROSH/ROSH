@@ -60,6 +60,15 @@ void* heap_malloc(Heap* heap, uint32_t size);
 void heap_free(Heap* heap, void* addr);
 
 /*
+	re-allocate <size> to the heap
+	@param heap: pointer to the heap struct
+	@param addr: address of allocated memory
+	@param size: the size of the data to add
+	@returns pointer to the data
+*/
+void* heap_realloc(Heap* heap, void* addr, uint32_t size);
+
+/*
 	init the kernel heap
 */
 void initKernelHeap();
