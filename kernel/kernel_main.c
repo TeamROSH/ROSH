@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "GDT/gdt.h"
 #include "IDT/idt.h"
+#include "Memory/heap.h"
 
 /*
 	print ROSH logo
@@ -9,14 +10,25 @@
 void printLogo();
 
 void main() {
-	// initializing gdt
-	gdt_initialize();
-	// initializing idt
-	idt_initialize();
-	//initializing keyboard
-	keyboard_initialize();
+	gdt_initialize();		// initializing gdt
+	idt_initialize();		// initializing idt
+	keyboard_initialize();	// initializing keyboard
+	initConsole();			// init cursor
+	initKernelHeap();		// init heap
 
-	initConsole();		// init cursor
+	int size = 4;
+	int* pNum = (int*)kmalloc(sizeof(int));
+	for (int i = 0; i < size; i++)
+	{
+		pNum[i] = 200 + i * 10;
+	}
+	for (int i = 0; i < size; i++)
+	{
+		puti(pNum[i]);
+		putc('\n');
+	}
+	kfree(pNum);
+
 	printLogo();		// print ROSH
 }
 
