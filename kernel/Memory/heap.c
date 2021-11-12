@@ -128,3 +128,8 @@ void kfree(void* addr)
 {
 	heap_free(&g_kernelHeap, addr);
 }
+
+void* krealloc(void* ptr, uint32_t size)
+{
+	heap_realloc(&g_kernelHeap, ptr, size);
+}

@@ -86,4 +86,12 @@ void* kmalloc(uint32_t size);
 */
 void kfree(void* addr);
 
+/*
+	re-allocate memory
+	@param ptr: pointer to the memory needed re-allocation
+	@param size: the size of memory
+	@returns pointer to the memory
+*/
+void* krealloc(void* ptr, uint32_t size);
+
 #endif
