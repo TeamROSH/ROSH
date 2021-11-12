@@ -8,3 +8,14 @@ void heap_init(Heap* heap, uint32_t base, uint32_t size)
 	heap->head = NULL;			// empty pointers
 	heap->tail = NULL;
 }
+
+void heap_pushNode(Heap* heap, HeapNode* node)
+{
+	node->next = NULL;			// clear next since added to the end
+	node->prev = head->tail;	// add to end
+	if (heap->head == NULL)		// if heap empty
+		heap->head = node;			// add to beginning
+	else						// if heap not empty
+		heap->tail->next = node;	// set prev's next to node
+	heap->tail = node;			// add to end
+}

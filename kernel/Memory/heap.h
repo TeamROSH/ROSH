@@ -30,4 +30,11 @@ typedef struct Heap
 */
 void heap_init(Heap* heap, uint32_t base, uint32_t size);
 
+/*
+	push heap node to the end of the heap
+	@param heap: pointer to the heap struct
+	@param node: the node to push
+*/
+void heap_pushNode(Heap* heap, HeapNode* node);
+
 #endif
