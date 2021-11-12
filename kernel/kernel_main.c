@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "GDT/gdt.h"
 #include "IDT/idt.h"
-#include "Memory/heap.h"
+#include "memory/heap.h"
 
 /*
 	print ROSH logo

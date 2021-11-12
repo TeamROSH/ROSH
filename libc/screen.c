@@ -3,7 +3,7 @@
 #include "memory.h"
 #include "../kernel/ports.h"
 #include "../kernel/IDT/keyboard.h"
-#include "../kernel/Memory/heap.h"
+#include "../kernel/memory/heap.h"
 #define REG_SCREEN_CTRL 0x3d4
 #define REG_SCREEN_DATA 0x3d5
 #define TAB 4
