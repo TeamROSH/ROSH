@@ -43,4 +43,12 @@ void heap_pushNode(Heap* heap, HeapNode* node);
 */
 void heap_popNode(Heap* heap);
 
+/*
+	allocate <size> to the heap
+	@param heap: pointer to the heap struct
+	@param size: the size of the data to add
+	@returns pointer to the data
+*/
+void* heap_malloc(Heap* heap, uint32_t size);
+
 #endif

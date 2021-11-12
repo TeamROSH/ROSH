@@ -1,4 +1,6 @@
 #include "heap.h"
+#define FALSE 0
+#define TRUE !FALSE
 
 void heap_init(Heap* heap, uint32_t base, uint32_t size)
 {
@@ -32,4 +34,37 @@ void heap_popNode(Heap* heap)
 		heap->tail = heap->tail->prev;	// clear last
         heap->tail->next = NULL;		// make prev the new last
 	}
+}
+
+void* heap_malloc(Heap* heap, uint32_t size)
+{
+	int physicalSize = size + sizeof(HeapNode);		// get total size of node + data
+	HeapNode* node;
+	if (heap->nextFree + physicalSize <= heap->base + heap->size)		// if heap has room at the end
+	{
+		node = (HeapNode*)heap->nextFree;		// allocate free space for the node
+		node->free = FALSE;						// node is not free
+		node->dataSize = size;					// set data size
+		node->data = (void*)(heap->nextFree + sizeof(HeapNode));		// allocate free space for the data
+
+		heap_pushNode(heap, node);				// push the node to the heap
+		heap->nextFree += physicalSize;			// next free address is now after the node
+		return node->data;						// return the node data to the user
+	}
+	else		// if no room at the end - search for room in the middle
+	{
+		node = heap->head;
+		while (node != NULL)		// iterate over heap
+		{
+			if (node->free && node->dataSize >= size)		// if free and has room for data
+			{
+				node->free = FALSE;			// save for us
+				return node->data;			// this node's data was already defined
+			}
+			else
+				node = node->next;			// continue iterate if not found
+		}
+	}
+
+	return NULL;		// if got here - no free memory was found
 }
