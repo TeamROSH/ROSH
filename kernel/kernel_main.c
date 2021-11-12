@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "GDT/gdt.h"
 #include "IDT/idt.h"
+#include "Memory/heap.h"
 
 /*
 	print ROSH logo
@@ -41,6 +42,6 @@ void kernelShutdown()
 {
 	kfree(getTrackerUp());
 	kfree(getTrackerDown());
-	
+
 	shutdown();
 }
