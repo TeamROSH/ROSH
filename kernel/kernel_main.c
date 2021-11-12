@@ -21,7 +21,7 @@ void main() {
 
 void printLogo()
 {
-	char logo[] = "Kernel Loaded.\nGDT initialized.\nIDT initialized.\n\n"
+	char logo[] = "Kernel Loaded.\nGDT initialized.\nIDT initialized.\nHeap initialized.\n\n"
 				"\t\t\t\t\t\t\t______ _____ _____ _   _ \n"
 				"\t\t\t\t\t\t\t| ___ \\  _  /  ___| | | |\n"
 				"\t\t\t\t\t\t\t| |_/ / | | \\ `--.| |_| |\n"
