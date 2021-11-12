@@ -38,6 +38,13 @@ void initialize_paging();
 */
 void allow_paging();
 
+
+/*
+    This function translates page number to physical address
+    page_number: page number
+*/
+uint page_to_address(uint page_number);
+
 /*
     This function initializes the pte
     table_entry: pointer to the pte

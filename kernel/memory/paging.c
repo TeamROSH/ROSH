@@ -4,6 +4,7 @@ uint8_t g_pages_array[PAGES];
 page_directory* g_page_directory;
 
 void allow_paging();
+uint page_to_address(uint page_number);
 void initialize_page_table_entry(page_table_entry* table_entry,
 uint address,
 uint8_t present,    
@@ -16,6 +17,12 @@ uint8_t dirty,
 uint8_t pat,      
 uint8_t global,     
 uint8_t avl);
+
+
+uint page_to_address(uint page_number)
+{
+    return page_number * PAGE_SIZE + PAGES_START_ADDR;
+}
 
 void initialize_page_table_entry(page_table_entry* table_entry,
 uint address,
