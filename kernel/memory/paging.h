@@ -4,6 +4,17 @@
 
 #include "memorylayout.h"
 
+//specifies flags for mapped page
+#define PAGE_FLAG_USER        0
+#define PAGE_FLAG_KERNEL      1
+#define PAGE_FLAG_EXISTS      0
+#define PAGE_FLAG_ALLOC       2
+#define PAGE_FLAG_READONLY    0
+#define PAGE_FLAG_READWRITE   4
+#define PAGE_FLAG_NOCLEAR     0
+#define PAGE_FLAG_CLEAR       8
+
+
 typedef struct {
     uint8_t present : 1;    //one bit is entry present
     uint8_t rw : 1;         // read write or read only
@@ -32,6 +43,16 @@ typedef struct{
     This function initializes the paging
 */
 void initialize_paging();
+
+
+/*
+    This function maps virtual address to phisycal address
+    directory: pointer to the paging directory
+    vadd: virtual address
+    padd: physical address 
+    flags: specify the flags that should be set
+*/
+void page_map(page_directory* directory, uint vadd, uint padd, int flags);
 
 /*
     This function changes the cr0 register value in order to allow paging
