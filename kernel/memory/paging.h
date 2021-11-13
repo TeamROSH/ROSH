@@ -26,17 +26,17 @@ typedef struct {
     uint8_t pat : 1;        // indicates memory caching type
     uint8_t global : 1;     // whether TLB coresponding to the page should be invalidate
     uint8_t avl : 3;        // available
-    uint address : 20;      // page physical address
+    uint32_t address : 20;      // page physical address
 }__attribute__((packed)) page_table_entry;
 
 typedef struct page_table_entry page_directory_entery;
 
 typedef struct{
-    page_table_entry[1024];
+    page_table_entry table_entries[1024];
 }page_table;
 
 typedef struct{
-    page_directory_entery[1024];
+    page_table_entry directory_entries[1024];
 } page_directory;
 
 /*
@@ -52,13 +52,13 @@ void initialize_paging();
     padd: physical address 
     flags: specify the flags that should be set
 */
-void page_map(page_directory* directory, uint vadd, uint padd, int flags);
+void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags);
 
 /*
     This function unmaps page from physical address
     vadd: virtual address
 */
-void page_unmap(uint vadd);
+void page_unmap(uint32_t vadd);
 
 /*
     This function changes the cr0 register value in order to allow paging
@@ -70,14 +70,14 @@ void allow_paging();
     This function translates page number to physical address
     page_number: page number
 */
-uint page_to_address(uint page_number);
+uint32_t page_to_address(uint32_t page_number);
 
 
 /*
     This function translates physical address to page number
     address: page physical address
 */
-uint address_to_page(uint address);
+uint32_t address_to_page(uint32_t address);
 
 /*
     This function initializes the pte
@@ -95,7 +95,7 @@ uint address_to_page(uint address);
     avl:    nulled
 */
 void initialize_page_table_entry(page_table_entry* table_entry,
-uint address,
+uint32_t address,
 uint8_t present,    
 uint8_t rw,         
 uint8_t us,        
