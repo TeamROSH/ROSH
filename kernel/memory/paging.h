@@ -46,13 +46,19 @@ void initialize_paging();
 
 
 /*
-    This function maps virtual address to phisycal address
+    This function maps page into physical address
     directory: pointer to the paging directory
     vadd: virtual address
     padd: physical address 
     flags: specify the flags that should be set
 */
 void page_map(page_directory* directory, uint vadd, uint padd, int flags);
+
+/*
+    This function unmaps page from physical address
+    vadd: virtual address
+*/
+void page_unmap(uint vadd);
 
 /*
     This function changes the cr0 register value in order to allow paging
