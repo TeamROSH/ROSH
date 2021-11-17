@@ -1,6 +1,10 @@
 {
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
-        "stdlib.h": "c"
-    }
+		"stdlib.h": "c",
+		"ports.h": "c",
+		"string.h": "c",
+		"memory.h": "c",
+		"screen.h": "c"
+	}
 }

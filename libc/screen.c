@@ -1,12 +1,18 @@
 #include "screen.h"
 #include "string.h"
+#include "memory.h"
 #include "../kernel/ports.h"
 #include "../kernel/IDT/keyboard.h"
+#include "../kernel/memory/heap.h"
 #define REG_SCREEN_CTRL 0x3d4
 #define REG_SCREEN_DATA 0x3d5
 #define TAB 4
 #define FALSE 0
 #define TRUE !FALSE
+#define UP TRUE
+#define DOWN FALSE
+#define NULL 0
+#define SCROLL_COLS COLS * 2
 
 char* getaddr();
 void moveCursor(int n);
@@ -15,8 +21,15 @@ int print_special(char c);
 int printable(char c);
 void up_putc(char c);
 char key_replacement(char c);
+void scrollScreen(int direction);
 
 int cursor = 0;
+int clear = FALSE;
+char* screenTrackerUp = NULL;
+char* screenTrackerDown = NULL;
+int linesUp = 0;
+int linesDown = 0;
+
 char key_flags[] = {FALSE, FALSE, FALSE, FALSE};		// ctrl shift alt CapsLock
 char shift_replacements[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
 							21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, ' ', '!', '"', '#', '$', '%',
@@ -29,13 +42,18 @@ char shift_replacements[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 
 void putc(char c)
 {
-	if (!print_special(c) && cursor < ROWS * COLS)
+	if (clear)
 	{
-		up_putc(key_replacement(c));
+		clear = FALSE;
+		clearConsole();
+		return;
 	}
-	else if (cursor == ROWS * COLS)
+	if (!print_special(c) && cursor < ROWS * COLS)
+		up_putc(key_replacement(c));
+	if (cursor == ROWS * COLS)
 	{
-		// scroll option
+		moveCursor(-COLS);
+		scrollScreen(DOWN);
 	}
 }
 
@@ -95,6 +113,7 @@ int get_cursor_position(void)
 void initConsole()
 {
 	cursor = get_cursor_position();
+	clear = FALSE;
 }
 
 /*
@@ -111,7 +130,8 @@ int print_special(char c)
 				moveCursor(COLS - (cursor % COLS));		// set cursor to start of next line
 			else
 			{
-				// scroll option
+				moveCursor(-(cursor % COLS));
+				scrollScreen(DOWN);
 			}
 			return TRUE;
 		case '\t':
@@ -119,7 +139,8 @@ int print_special(char c)
 				moveCursor(TAB);
 			else
 			{
-				// scroll option
+				moveCursor(TAB -COLS);
+				scrollScreen(DOWN);
 			}
 			return TRUE;
 		case '\r':
@@ -131,6 +152,11 @@ int print_special(char c)
 				moveCursor(-1);		// delete last insert
 				up_putc('\0');
 				moveCursor(-1);
+			}
+			else if (linesUp > 0)
+			{
+				moveCursor(COLS - 1);
+				scrollScreen(UP);
 			}
 			return TRUE;
 		default:
@@ -186,18 +212,26 @@ void non_char_print(uint8_t c)
 		case UP_SYMBOL:
 			if (cursor >= COLS)
 				moveCursor(-COLS);
+			else if (linesUp > 0)
+				scrollScreen(UP);
 			break;
 		case DOWN_SYMBOL:
 			if (cursor <= ((ROWS - 1) * COLS - 1))
 				moveCursor(COLS);
+			else if (linesDown > 0)
+				scrollScreen(DOWN);
 			break;
 		case LEFT_SYMBOL:
 			if (cursor > 0)
 				moveCursor(-1);
+			else if (linesUp > 0)
+				scrollScreen(UP);
 			break;
 		case RIGHT_SYMBOL:
 			if (cursor < ROWS * COLS - 1)
 				moveCursor(1);
+			else if (linesDown > 0)
+				scrollScreen(DOWN);
 			break;
 		case CTRL_PRESS:
 			key_flags[0] = TRUE;
@@ -245,4 +279,81 @@ char key_replacement(char c)
 	else
 		return c;
 
+}
+
+void clearOnPrint()
+{
+	clear = TRUE;
+}
+
+void clearConsole()
+{
+	char* screen = (char*)SCREEN;
+	for (int i = 0; i < ROWS * COLS * 2; i += 2)
+		screen[i] = 0;
+	moveCursor(-cursor);
+}
+
+/*
+	scroll screen up or down
+	@param direction: Up (TRUE) or Down (FALSE)
+*/
+void scrollScreen(int direction)
+{
+	char* screen = (char*)SCREEN;
+	if (direction == UP)
+	{
+		linesDown++;		// move rows down
+		screenTrackerDown = (char*)krealloc(screenTrackerDown, linesDown * SCROLL_COLS);
+		memcpy(screenTrackerDown + (linesDown - 1) * SCROLL_COLS, screen + (ROWS - 1) * SCROLL_COLS, SCROLL_COLS);
+		for (int i = ROWS * SCROLL_COLS; i >= SCROLL_COLS; i--)		// opposite order copy
+			screen[i] = screen[i - SCROLL_COLS];
+
+		if (linesUp > 0)
+		{
+			linesUp--;		// get saved rows
+			memcpy(screen, screenTrackerUp + linesUp * SCROLL_COLS, SCROLL_COLS);
+			if (linesUp > 0)
+				screenTrackerUp = (char*)krealloc(screenTrackerUp, linesUp * SCROLL_COLS);
+			else
+				kfree(screenTrackerUp);
+		}
+		else
+		{
+			for (int i = 0; i < SCROLL_COLS; i += 2)		// empty first row
+				screen[i] = 0;
+		}
+	}
+	else
+	{
+		linesUp++;		// move rows up
+		screenTrackerUp = (char*)krealloc(screenTrackerUp, linesUp * SCROLL_COLS);
+		memcpy(screenTrackerUp + (linesUp - 1) * SCROLL_COLS, screen, SCROLL_COLS);
+		memcpy(screen, screen + SCROLL_COLS, (ROWS - 1) * SCROLL_COLS);		// order ok
+
+		if (linesDown > 0)
+		{
+			linesDown--;		// get saved rows
+			memcpy(screen + (ROWS - 1) * SCROLL_COLS, screenTrackerDown + linesDown * SCROLL_COLS, SCROLL_COLS);
+			if (linesDown > 0)
+				screenTrackerDown = (char*)krealloc(screenTrackerDown, linesDown * SCROLL_COLS);
+			else
+				kfree(screenTrackerDown);
+		}
+		else
+		{
+			for (int i = 0; i < SCROLL_COLS; i += 2)		// empty last row
+				screen[(ROWS - 1) * SCROLL_COLS + i] = 0;
+		}
+	}
+}
+
+char* getTrackerUp()
+{
+	return screenTrackerUp;
+}
+
+char* getTrackerDown()
+{
+	return screenTrackerDown;
 }
