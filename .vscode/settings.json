@@ -5,6 +5,7 @@
 		"ports.h": "c",
 		"string.h": "c",
 		"memory.h": "c",
-		"screen.h": "c"
+		"screen.h": "c",
+		"cstdio": "c"
 	}
 }

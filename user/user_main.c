@@ -4,26 +4,8 @@
 #include "../libc/screen.h"
 #include "../libc/string.h"
 #define INPUT_SIZE 41
-#define FUN_NAME_SIZE 11
-#define FUNS_NUM 4
 
 void callCommand(char* argv, int argc);
-
-char fun_names[FUNS_NUM][FUN_NAME_SIZE] = 
-{
-	"grep",
-	"echo",
-	"help",
-	"color"
-};
-
-command commands[FUNS_NUM] = 
-{
-	unknown_command,
-	echo,
-	unknown_command,
-	color
-};
 
 void umain()
 {
