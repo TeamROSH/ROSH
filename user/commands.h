@@ -15,6 +15,8 @@ typedef void (*command)(char* argv, int argc);
 
 void echo(char* argv, int argc);
 
+void color(char* argv, int argc);
+
 void unknown_command(char* argv, int argc);
 
 #endif

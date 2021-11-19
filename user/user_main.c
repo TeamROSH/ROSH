@@ -22,7 +22,7 @@ command commands[FUNS_NUM] =
 	unknown_command,
 	echo,
 	unknown_command,
-	unknown_command
+	color
 };
 
 void umain()

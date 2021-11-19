@@ -15,6 +15,13 @@ char* getArg(char* argv, int argc, int argNum)
 	return res;
 }
 
+void unknown_command(char* argv, int argc)
+{
+	puts("Command \'");
+	puts(argv);
+	puts("\' not found. Try \'help\'.");
+}
+
 void echo(char* argv, int argc)
 {
 	for (int i = 1; i < argc; i++)		// for every argument except command name
@@ -24,9 +31,14 @@ void echo(char* argv, int argc)
 	}
 }
 
-void unknown_command(char* argv, int argc)
+void color(char* argv, int argc)
 {
-	puts("Command \'");
-	puts(argv);
-	puts("\' not found. Try \'help\'.");
+	if (argc != 3)
+		puts("Invalid syntax. Try \'help color\'.");
+	else
+	{
+		char fore = (char)atoi(getArg(argv, argc, 1));		// get foreground color
+		char back = (char)atoi(getArg(argv, argc, 2));		// get background color
+		setScreenColor(fore, back);				// set screen colors
+	}
 }
