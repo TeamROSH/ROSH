@@ -5,11 +5,13 @@
 #define INPUT_SIZE 41
 #define OUTPUT_SIZE 240
 #define FUN_NAME_SIZE 11
+#define FUNS_NUM 4
 #define NULL 0
 
 char* getArg(char* argv, int argc, int argNum);
+void callCommand(char* argv, int argc, char* output);
 
-char fun_names[][FUN_NAME_SIZE] = 
+char fun_names[FUNS_NUM][FUN_NAME_SIZE] = 
 {
 	"grep",
 	"echo",
@@ -60,4 +62,20 @@ char* getArg(char* argv, int argc, int argNum)
 		res += strlen(res) + 1;		// next argument
 	}
 	return res;
+}
+
+/*
+	call correct command from list
+	@param argv: argument values
+	@param argc: number of arguments
+	@param output: pointer to output string
+*/
+void callCommand(char* argv, int argc, char* output)
+{
+	for (int i = 0; i < FUNS_NUM; i++)		// search functions
+	{
+		if (strncmp(argv, fun_names[i], strlen(fun_names[i])) == 0)		// if found
+			funs[i](argv, argc, output);		// call it
+	}
+	unknown_command(output);		// print undefined command message
 }
