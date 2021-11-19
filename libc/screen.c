@@ -72,7 +72,7 @@ void moveCursor(int n)
     outb(REG_SCREEN_DATA, (uint8_t)((cursor >> 8) & 0xff));
 }
 
-void puts(char* str)
+void puts(const char* str)
 {
 	int len = strlen(str);		// get string length
 	for (int i = 0; i < len; i++)		// for every char in string

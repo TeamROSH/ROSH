@@ -16,7 +16,7 @@ void putc(char c);
 	print a string to the screen
 	@param str: string to print
 */
-void puts(char* str);
+void puts(const char* str);
 
 /*
 	print a number to the screen

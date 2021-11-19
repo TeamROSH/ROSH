@@ -8,7 +8,7 @@
 	@param str: str to check
 	@return length of string
 */
-int strlen(char* str);
+int strlen(const char* str);
 
 /*
 	int to array
@@ -22,7 +22,7 @@ void itoa(int num, char* res);
 	@param str: pointer to string
 	@returns number
 */
-int atoi(char* str);
+int atoi(const char* str);
 
 /*
 	get number of digits from int
@@ -38,6 +38,6 @@ int digits(int num);
 	@param n: number of chars to check
 	@return (<0) - str1<str2, (>0) - str1>str2, (=0) - str1=str2
 */
-int strncmp(char* str1, char* str2, int n);
+int strncmp(const char* str1, const char* str2, int n);
 
 #endif

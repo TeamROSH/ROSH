@@ -77,10 +77,9 @@ void help(char* argv, int argc)
 
 void shutdownCommand(char* argv, int argc)
 {
-	/*puts("Are you sure? (y/n): ");
+	puts("Are you sure? (y/n): ");
 	bflush();
 	char res = getchar();
 	if (res == 'y')
-		shutdown();*/
-	puts("asdf");
+		shutdown();
 }

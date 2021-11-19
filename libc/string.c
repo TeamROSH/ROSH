@@ -1,6 +1,6 @@
 #include "string.h"
 
-int strlen(char* str)
+int strlen(const char* str)
 {
 	int i = 0;
 	while (*str != 0)	// while not end
@@ -32,7 +32,7 @@ int digits(int num)
 	return i == 0 ? 1 : i;
 }
 
-int strncmp(char* str1, char* str2, int n)
+int strncmp(const char* str1, const char* str2, int n)
 {
 	for (int i = 0; i < n; i++)		// n times (or one of strings over)
 	{
@@ -44,11 +44,11 @@ int strncmp(char* str1, char* str2, int n)
 	return 0;
 }
 
-int atoi(char* str)
+int atoi(const char* str)
 {
 	int size = strlen(str);
 	int num = 0;
-	for (int i = 0; i < size; i++)		// for every char
+	for (int i = 0; i < size; i++)		// for every const char*
 	{
 		if (str[i] >= ASCII_NUM_OFFSET && str[i] < ASCII_NUM_OFFSET + 10)		// if in range (0-9)
 		{
