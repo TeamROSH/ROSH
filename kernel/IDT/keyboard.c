@@ -73,10 +73,13 @@ int keyboard_putc(uint8_t input_char)
 		{	
 			if (realValue == '\b' && buffer_size > 0)		// if bs remove one
 				buffer_size--;
-			if (realValue == '\n')
+			else if (realValue == '\n')
 				enterPress = TRUE;
 			else if (buffer_size < BUFFER_SIZE)				// if char add one to buffer
+			{
+				buffer[buffer_size] = realValue;
 				buffer_size++;
+			}
 		}
         return TRUE;
     }

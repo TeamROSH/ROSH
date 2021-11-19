@@ -1,13 +1,8 @@
 #include "commands.h"
 #include "../libc/screen.h"
+#include "../libc/string.h"
+#define NULL 0
 
-/*
-	get string argument from argv
-	@param argv: argument values
-	@param argc: number of arguments
-	@param argNum: requested argument
-	@returns pointer to requested argument
-*/
 char* getArg(char* argv, int argc, int argNum)
 {
 	if (argNum >= argc)		// prevent buffer overflow
@@ -25,6 +20,13 @@ void echo(char* argv, int argc)
 	for (int i = 0; i < argc; i++)		// for every argument
 	{
 		puts(getArg(argv, argc, i));		// print it
-		putc(" ");		// add the space
+		putc(' ');		// add the space
 	}
+}
+
+void unknown_command(char* argv, int argc)
+{
+	puts("Command \'");
+	puts(argv);
+	puts("\' not found. Try \'help\'.");
 }
