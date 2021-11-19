@@ -24,4 +24,13 @@ void itoa(int num, char* res);
 */
 int digits(int num);
 
+/*
+	compare 2 strings
+	@param str1: str to check
+	@param str1: str to check
+	@param n: number of chars to check
+	@return (<0) - str1<str2, (>0) - str1>str2, (=0) - str1=str2
+*/
+int strncmp(char* str1, char* str2, int n);
+
 #endif

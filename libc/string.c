@@ -31,3 +31,15 @@ int digits(int num)
 	}
 	return i == 0 ? 1 : i;
 }
+
+int strncmp(char* str1, char* str2, int n)
+{
+	for (int i = 0; i < n; i++)		// n times (or one of strings over)
+	{
+		if (str1[i] == 0 || str2 == 0)
+			return str1[i] == str2[i] ? 0 : str1[i] - str2[i];
+		if (str1[i] != str2[i])
+			return str1[i] - str2[i];
+	}
+	return 0;
+}
