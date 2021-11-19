@@ -138,6 +138,8 @@ char getchar()
 void getline(char* pStr, int size)
 {
 	while (!enterPress){}		// wait until enter
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < size - 1; i++)
 		pStr[i] = pop_buffer();
+	pStr[size - 1] = 0;
+	enterPress = FALSE;
 }
