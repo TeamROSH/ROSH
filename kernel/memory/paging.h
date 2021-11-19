@@ -65,6 +65,19 @@ void page_unmap(uint32_t vadd);
 */
 void allow_paging();
 
+/*
+    This function allocates page 
+    retrun:page num
+*/
+uint32_t page_alloc();
+
+
+/*
+    This function updates the pages array due to page alloc or free
+    page_num: the number of the page into the g_pages_array
+    is_on: 0 if alloc 0 if free
+*/
+void update_pages_array(uint32_t page_num, int is_on);
 
 /*
     This function translates page number to physical address
