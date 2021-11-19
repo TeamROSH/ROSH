@@ -40,7 +40,7 @@ void umain()
 
 void cmd(char* input)
 {
-	int count = 0;
+	int count = 1;		// including command name
 	int size = strlen(input);
 	for (int i = 0; i < size; i++)		// replace space with 0
 	{
@@ -64,7 +64,7 @@ void callCommand(char* argv, int argc)
 	{
 		if (strncmp(argv, fun_names[i], strlen(fun_names[i])) == 0)		// if found
 		{
-			commands[i](getArg(argv, argc, 1), argc);		// call it
+			commands[i](argv, argc);		// call it
 			return;
 		}
 	}

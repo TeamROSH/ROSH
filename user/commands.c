@@ -17,7 +17,7 @@ char* getArg(char* argv, int argc, int argNum)
 
 void echo(char* argv, int argc)
 {
-	for (int i = 0; i < argc; i++)		// for every argument
+	for (int i = 1; i < argc; i++)		// for every argument except command name
 	{
 		puts(getArg(argv, argc, i));		// print it
 		putc(' ');		// add the space
