@@ -1,9 +1,14 @@
 #include "keyboard.h"
 #define BUFFER_SIZE 100
+#define FALSE 0
+#define TRUE !FALSE
 
 uint8_t g_symbol_arr[NUM_OF_SYMBOLS];
 uint8_t g_keyboard_input[NUM_OF_SYMBOLS];
 char buffer[100] = {0};
+int buffer_size = 0;
+int special = FALSE;
+int pending = FALSE;
 
 void keyboard_handler();
 uint8_t symbol_to_ascii(uint8_t input_symbol);
@@ -60,13 +65,21 @@ int keyboard_putc(uint8_t input_char)
     if(input_char != 0x1D && input_char != 0x2A && input_char != 0x38 && 
 		input_char != 0x3A && input_char < 0x40)
     {
-        putc((char)symbol_to_ascii(input_char));
-        return true;
+		char realValue = (char)symbol_to_ascii(input_char);
+        putc(realValue);
+		if (pending)
+		{	
+			if (realValue == '\b' && buffer_size > 0)		// if bs remove one
+				buffer_size--;
+			else if (buffer_size < BUFFER_SIZE)				// if char add one to buffer
+				buffer_size++;
+		}
+        return TRUE;
     }
-	else {
+	else if (special){
 		non_char_print((char)symbol_to_ascii(input_char));
 	}
-    return false;
+    return FALSE;
 }
 
 void keyboard_handler(registers_t* registers)
@@ -83,4 +96,9 @@ void keyboard_handler(registers_t* registers)
     
     // sending ack to pic 
     outb(KEYBOARD_OUTPUT_PORT, 0X20);
+}
+
+void allowSpecial(int allow)
+{
+	special = allow;
 }
