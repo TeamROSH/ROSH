@@ -1,4 +1,5 @@
 #include "keyboard.h"
+#include "../../libc/memory.h"
 #define BUFFER_SIZE 100
 #define FALSE 0
 #define TRUE !FALSE
@@ -9,12 +10,13 @@ char buffer[100] = {0};
 int buffer_size = 0;
 int special = FALSE;
 int pending = FALSE;
+int enterPress = FALSE;
 
 void keyboard_handler();
 uint8_t symbol_to_ascii(uint8_t input_symbol);
 void keyboard_initialize();
 int keyboard_putc(uint8_t input_char);
-
+char pop_buffer();
 
 void keyboard_initialize()
 {
@@ -71,6 +73,8 @@ int keyboard_putc(uint8_t input_char)
 		{	
 			if (realValue == '\b' && buffer_size > 0)		// if bs remove one
 				buffer_size--;
+			if (realValue == '\n')
+				enterPress = TRUE;
 			else if (buffer_size < BUFFER_SIZE)				// if char add one to buffer
 				buffer_size++;
 		}
@@ -101,4 +105,39 @@ void keyboard_handler(registers_t* registers)
 void allowSpecial(int allow)
 {
 	special = allow;
+}
+
+void bflush()
+{
+	buffer_size = 0;
+}
+
+/*
+	pop first buffer char
+	@returns first buffer char
+*/
+char pop_buffer()
+{
+	char val = 0;
+	if (buffer_size > 0)
+	{
+		val = buffer[0];		// get char
+		buffer_size--;
+		memcpy(buffer, buffer + 1, buffer_size);		// copy back
+	}
+	return val;
+}
+
+char getchar()
+{
+	while (!enterPress){}		// wait until enter
+	enterPress = FALSE;
+	return pop_buffer();
+}
+
+void getline(char* pStr, int size)
+{
+	while (!enterPress){}		// wait until enter
+	for (int i = 0; i < size; i++)
+		pStr[i] = pop_buffer();
 }
