@@ -4,6 +4,7 @@
 #include "GDT/gdt.h"
 #include "IDT/idt.h"
 #include "memory/heap.h"
+#include "../user/user_main.h"
 
 /*
 	print ROSH logo
@@ -19,6 +20,7 @@ void main() {
 	initKernelHeap();		// init heap
 
 	printLogo();		// print ROSH
+	umain();
 }
 
 void printLogo()

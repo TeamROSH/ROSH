@@ -1,13 +1,14 @@
 #include "keyboard.h"
+#define BUFFER_SIZE 100
 
 uint8_t g_symbol_arr[NUM_OF_SYMBOLS];
 uint8_t g_keyboard_input[NUM_OF_SYMBOLS];
+char buffer[100] = {0};
 
 void keyboard_handler();
 uint8_t symbol_to_ascii(uint8_t input_symbol);
 void keyboard_initialize();
 int keyboard_putc(uint8_t input_char);
-
 
 
 void keyboard_initialize()
