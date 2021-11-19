@@ -130,16 +130,20 @@ char pop_buffer()
 
 char getchar()
 {
+	pending = TRUE;
 	while (!enterPress){}		// wait until enter
 	enterPress = FALSE;
+	pending = FALSE;
 	return pop_buffer();
 }
 
 void getline(char* pStr, int size)
 {
+	pending = TRUE;
 	while (!enterPress){}		// wait until enter
 	for (int i = 0; i < size - 1; i++)
 		pStr[i] = pop_buffer();
 	pStr[size - 1] = 0;
 	enterPress = FALSE;
+	pending = FALSE;
 }

@@ -11,5 +11,6 @@ void umain()
 		puts("\n$ ");
 		getline(input, INPUT_SIZE - 1);
 		// puts(cmd(input))
+		puts("Got Command!\n");
 	}
 }
