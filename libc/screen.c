@@ -344,3 +344,13 @@ char* getTrackerDown()
 {
 	return screenTrackerDown;
 }
+
+void setScreenColor(char fore, char back)
+{
+	char color_byte = (back << 4) + fore;		// get color byte
+	char* screen = (char*)SCREEN;
+	for (int i = 1; i < ROWS * COLS * 2; i += 2)		// all color bytes
+	{
+		screen[i] = color_byte;		// set byte
+	}
+}

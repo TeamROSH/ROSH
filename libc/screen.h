@@ -52,4 +52,11 @@ char* getTrackerUp();
 */
 char* getTrackerDown();
 
+/*
+	set the screen color
+	@param fore: foreground color code
+	@param back: background color code
+*/
+void setScreenColor(char fore, char back);
+
 #endif
