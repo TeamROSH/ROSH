@@ -43,3 +43,18 @@ int strncmp(char* str1, char* str2, int n)
 	}
 	return 0;
 }
+
+int atoi(char* str)
+{
+	int size = strlen(str);
+	int num = 0;
+	for (int i = 0; i < size; i++)		// for every char
+	{
+		if (str[i] >= ASCII_NUM_OFFSET && str[i] < ASCII_NUM_OFFSET + 10)		// if in range (0-9)
+		{
+			num *= 10;			// add to int
+			num += str[i] - ASCII_NUM_OFFSET;
+		}
+	}
+	return num;
+}
