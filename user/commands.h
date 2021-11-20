@@ -14,7 +14,7 @@ typedef void (*command)(char* argv, int argc);
 	@param argNum: requested argument
 	@returns pointer to requested argument
 */
-char* getArg(char* argv, int argc, int argNum);
+const char* getArg(const char* argv, int argc, int argNum);
 
 void echo(char* argv, int argc);
 
@@ -47,17 +47,23 @@ static const command commands[FUNS_NUM] =
 	shutdownCommand
 };
 
-static const char *fun_info[] = 
+static const char fun_info[] = 
 {
-	"Not yet defined.\n",
+	"Not yet defined.\n"
+
+	"\0"
 	
 	"echo - Print message to the screen.\n"
-	"Usage: \'echo <arg1> <arg2> ...\'\n",
+	"Usage: \'echo <arg1> <arg2> ...\'\n"
+
+	"\0"
 	
 	"help - Print information about available commands.\n"
 	"Usage:\n"
 	"\'help\' - Print all commands.\n"
-	"\'help <command name>\' - Print information about a specific command.\n",
+	"\'help <command name>\' - Print information about a specific command.\n"
+
+	"\0"
 	
 	"color - Change the shell's colors.\n"
 	"Usage: \'color <foreground> <background>\'\n\n"
@@ -69,7 +75,9 @@ static const char *fun_info[] =
 	"\t4 Red   \t\t12 Light Red\n"
 	"\t5 Magenta   \t13 Light Magenta\n"
 	"\t6 Brown \t\t14 Yellow\n"
-	"\t7 Light Gray\t15 White\n",
+	"\t7 Light Gray\t15 White\n"
+
+	"\0"
 	
 	"shutdown - shutdown the computer.\n"
 	"Usage: \'shutdown\'\n"

@@ -5,11 +5,11 @@
 #include "../libc/system.h"
 #define NULL 0
 
-char* getArg(char* argv, int argc, int argNum)
+const char* getArg(const char* argv, int argc, int argNum)
 {
 	if (argNum >= argc)		// prevent buffer overflow
 		return NULL;
-	char* res = argv;
+	const char* res = argv;
 	for (int i = 0; i < argNum; i++)		// run until wanted argument reached
 	{
 		res += strlen(res) + 1;		// next argument
@@ -65,9 +65,11 @@ void help(char* argv, int argc)
 		{
 			if (strncmp(getArg(argv, argc, 1), fun_names[i], strlen(fun_names[i])) == 0)		// if found
 			{
-				puts(fun_info[i]);		// print info
+				puts(getArg(fun_info, FUNS_NUM, i));		// print info
+				return;
 			}
 		}
+		puts("Unknown command. Try \'help\'.");
 	}
 	else
 	{

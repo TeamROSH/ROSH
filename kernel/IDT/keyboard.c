@@ -68,18 +68,31 @@ int keyboard_putc(uint8_t input_char)
 		input_char != 0x3A && input_char < 0x40)
     {
 		char realValue = (char)symbol_to_ascii(input_char);
-        putc(realValue);
 		if (pending)
-		{	
-			if (realValue == '\b' && buffer_size > 0)		// if bs remove one
-				buffer_size--;
+		{
+			if (realValue == '\b')		// if bs remove one
+			{
+				if (buffer_size > 0)
+				{
+					buffer_size--;
+					putc(realValue);
+				}
+			}
 			else if (realValue == '\n')
+			{
 				enterPress = TRUE;
+				putc(realValue);
+			}
 			else if (buffer_size < BUFFER_SIZE)				// if char add one to buffer
 			{
 				buffer[buffer_size] = realValue;
 				buffer_size++;
+				putc(realValue);
 			}
+		}
+		else
+		{
+			putc(realValue);
 		}
         return TRUE;
     }
