@@ -44,6 +44,11 @@ typedef struct{
 */
 void initialize_paging();
 
+/*
+    This function loads the g_page_directory tale into the cr3 register
+    directory: the page directory pointer 
+*/
+void load_directory_table(page_directory* directory);
 
 /*
     This function maps page into physical address

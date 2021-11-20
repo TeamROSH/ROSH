@@ -5,7 +5,9 @@ uint8_t g_pages_array[PAGES_COUNT];
 
 page_directory* g_page_directory;
 
+void initialize_paging();
 void allow_paging();
+void load_directory_table(page_directory* directory);
 uint32_t page_to_address(uint32_t page_number);
 uint32_t address_to_page(uint32_t address);
 void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags);
@@ -24,6 +26,67 @@ uint8_t dirty,
 uint8_t pat,      
 uint8_t global,     
 uint8_t avl);
+
+void initialize_paging()
+{
+    int i = 0;
+
+    for(i = 0; i < PAGES_COUNT; i++)
+    {
+        g_pages_array[i] = 0;
+    }
+
+    //mapping page for the page directory
+    update_pages_array(PAGE_DIRECTORY_START,1);
+    
+    //mappign pages for the page tale
+    for (i = 0; i< PAGE_TABLE_COUNT; i++)
+    {
+        update_pages_array(PAGE_TABLES_START + i, 1);
+    }
+
+    //converting the page directory into address and initializing the page directory array
+    g_page_directory = (page_directory*)page_to_address(PAGE_DIRECTORY_START);
+
+    //setting all the page directory entries as not present
+    for(i = 0; i < PAGE_TABLE_COUNT; i++)
+    {
+        initialize_page_table_entry(&g_page_directory->directory_entries[i], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    }
+    //TODO load page directory
+    asm(mov eax, g_page_directory);
+
+    //mapping kernel code as read only memory
+    for( i = 0; i < KERNEL_SOURCE_SIZE; i++)
+    {
+        page_map(g_page_directory, KERNEL_START_ADDR + i * PAGE_SIZE, KERNEL_START_ADDR + i * PAGE_SIZE, PAGE_FLAG_KERNEL | PAGE_FLAG_READONLY);
+    }
+
+    //mapping kernel stack as readwrite memory
+    for(i = 0;i < KERNEL_STACK_SIZE; i++)
+    {
+        page_map(g_page_directory, KERNEL_STACK_START_ADDR + i * PAGE_SIZE, KERNEL_STACK_START_ADDR + i *PAGE_SIZE, PAGE_FLAG_KERNEL | PAGE_FLAG_READWRITE);
+    }
+
+    for(i = 0; i < KERNEL_HEAP_SIZE; i++)
+    {
+        page_map(g_page_directory, KERNEL_HEAP_START + i * PAGE_SIZE, KERNEL_HEAP_START + i * PAGE_SIZE, PAGE_FLAG_READWRITE | PAGE_FLAG_KERNEL);
+    }
+
+    //mapping the video memory into the physical address
+    page_map(g_page_directory, VIDEO_MEM_START, VIDEO_MEM_PHYSICAL_ADDR, PAGE_FLAG_READWRITE | PAGE_FLAG_KERNEL);
+
+    //mapping the page directory
+    page_map(g_page_directory, page_to_address(PAGE_DIRECTORY_START), page_to_address(PAGE_DIRECTORY_START), PAGE_FLAG_READWRITE | PAGE_FLAG_KERNEL);
+    
+    //mapping the page tables
+    for(i= 0; i < PAGE_TABLE_COUNT; i++)
+    {
+        map_page(g_page_directory, page_to_address(1 + i), page_to_address(1+ i), PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
+    }
+    
+    allow_paging();
+}
 
 void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags)
 {
@@ -66,7 +129,8 @@ void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags
     0,
     0);
 
-    //TODO: remember to set the page
+    //updatin the page array
+    update_pages_array(address_to_page(padd), 1);
 }
 
 void page_unmap(uint32_t vadd)
@@ -93,6 +157,7 @@ void page_unmap(uint32_t vadd)
     0,
     0,
     0);
+
 }
 
 uint32_t address_to_page(uint32_t address)
@@ -143,6 +208,12 @@ uint32_t page_alloc()
             }
         }
     }
+}
+
+void load_directory_table(page_directory* directory)
+{
+        asm volatile("mov %0, %%eax;");
+        asm volatile("mov %%eax, %%cr3" : : "a" (directory));
 }
 
 void initialize_page_table_entry(page_table_entry* table_entry,
