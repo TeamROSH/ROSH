@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "GDT/gdt.h"
 #include "IDT/idt.h"
+#include "memory/paging.h"
 
 /*
 	print ROSH logo

@@ -82,7 +82,7 @@ void initialize_paging()
     //mapping the page tables
     for(i= 0; i < PAGE_TABLE_COUNT; i++)
     {
-        map_page(g_page_directory, page_to_address(1 + i), page_to_address(1+ i), PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
+        page_map(g_page_directory, page_to_address(1 + i), page_to_address(1+ i), PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
     }
     
     allow_paging();
@@ -212,7 +212,7 @@ uint32_t page_alloc()
 
 void load_directory_table(page_directory* directory)
 {
-        asm volatile("mov %0, %%eax;");
+        asm volatile("mov 0, %eax;");
         asm volatile("mov %%eax, %%cr3" : : "a" (directory));
 }
 
