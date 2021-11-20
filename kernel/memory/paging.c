@@ -53,8 +53,8 @@ void initialize_paging()
     {
         initialize_page_table_entry(&g_page_directory->directory_entries[i], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
-    //TODO load page directory
-    asm(mov eax, g_page_directory);
+    // load page directory
+    load_directory_table(g_page_directory);
 
     //mapping kernel code as read only memory
     for( i = 0; i < KERNEL_SOURCE_SIZE; i++)
