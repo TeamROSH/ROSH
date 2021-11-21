@@ -3,7 +3,7 @@
 
 #define FUN_NAME_SIZE 11
 #define FUN_INFO_SIZE 400
-#define FUNS_NUM 5
+#define FUNS_NUM 6
 
 typedef void (*command)(char* argv, int argc);
 
@@ -24,6 +24,8 @@ void help(char* argv, int argc);
 
 void shutdownCommand(char* argv, int argc);
 
+void bc(char* argv, int argc);
+
 void unknown_command(char* argv, int argc);
 
 
@@ -35,7 +37,8 @@ static const char fun_names[FUNS_NUM][FUN_NAME_SIZE] =
 	"echo",
 	"help",
 	"color",
-	"shutdown"
+	"shutdown",
+	"bc"
 };
 
 static const command commands[FUNS_NUM] = 
@@ -44,7 +47,8 @@ static const command commands[FUNS_NUM] =
 	echo,
 	help,
 	color,
-	shutdownCommand
+	shutdownCommand,
+	bc
 };
 
 static const char fun_info[] = 
@@ -81,6 +85,12 @@ static const char fun_info[] =
 	
 	"shutdown - shutdown the computer.\n"
 	"Usage: \'shutdown\'\n"
+
+	"\0"
+
+	"bc - basic calculator.\n"
+	"Usage: \'bc <expression>\'\n"
+	"Only +,-,/,* and integers are allowed.\n"
 };
 
 #endif

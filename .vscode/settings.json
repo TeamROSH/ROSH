@@ -6,6 +6,7 @@
 		"string.h": "c",
 		"memory.h": "c",
 		"screen.h": "c",
-		"cstdio": "c"
+		"cstdio": "c",
+		"cmath": "c"
 	}
 }

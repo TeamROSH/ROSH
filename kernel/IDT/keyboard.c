@@ -96,7 +96,8 @@ int keyboard_putc(uint8_t input_char)
 		}
         return TRUE;
     }
-	else if (special){
+	else if (special || input_char == 0x1D || input_char == 0x2A || input_char == 0x38 || 
+		input_char == 0x3A || input_char >= 0x9D){		// if special or one of control keys
 		non_char_print((char)symbol_to_ascii(input_char));
 	}
     return FALSE;

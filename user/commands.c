@@ -4,6 +4,8 @@
 #include "../libc/string.h"
 #include "../libc/system.h"
 #define NULL 0
+#define FALSE 0
+#define TRUE !FALSE
 
 const char* getArg(const char* argv, int argc, int argNum)
 {
@@ -56,7 +58,9 @@ void help(char* argv, int argc)
 			"help - Print information about available commands.\n"
 			"echo - Print message to the screen.\n"
 			"color - Change the shell's colors.\n"
+			"grep - \n"
 			"shutdown - shutdown the computer.\n"
+			"bc - basic calculator.\n"
 		);
 	}
 	else if (argc == 2)		// for specific command
@@ -84,4 +88,32 @@ void shutdownCommand(char* argv, int argc)
 	char res = getchar();
 	if (res == 'y')
 		shutdown();
+}
+
+void bc(char* argv, int argc)
+{
+	// local functions
+	int isValidExp(const char* exp, int size)			// check for only ints and +-*/
+	{
+		if (exp[0] == '*' || exp[0] == '/' || exp[0] == '+' || exp[0] == '-')
+			return FALSE;
+		if (exp[size - 1] == '*' || exp[size - 1] == '/' || exp[size - 1] == '+' || exp[size - 1] == '-')
+			return FALSE;
+		for (int i = 1; i < size - 1; i++)
+			if (!((exp[i] >= 48 && exp[i] < 58) || exp[i] == '*' || exp[i] == '/' 
+				|| exp[i] == '+' || exp[i] == '-'))
+				return FALSE;
+		return TRUE;
+	}
+
+	// main code
+	if (argc != 2)
+	{
+		puts("Invalid syntax. Try \'help bc\'.");
+		return;
+	}
+
+	const char* exp = getArg(argv, argc, 1);		// get math expression
+	int size = strlen(exp);					// get its size
+	puti(isValidExp(exp, size));
 }
