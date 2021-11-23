@@ -1,3 +1,4 @@
+[bits 16]
 enable_A20:
 	mov     ax,2403h                ;--- A20-Gate Support ---
 	int     15h
