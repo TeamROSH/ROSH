@@ -20,6 +20,8 @@ _start:
 	mov sp, bp
 
 	call console_setup		; clear console
+
+	call enable_A20
 	
 	print_init_messages:
 		pusha
@@ -68,6 +70,7 @@ run_kernel:
 %include "boot/gdt.s"
 %include "boot/pm.s"
 %include "boot/boot_print.s"
+%include "boot/A20.s"
 
 ; Boot padding
 times 510 - ($-$$) db 0
