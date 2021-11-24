@@ -16,6 +16,8 @@ compile_libc:
 	@echo "Compiling libc..."
 	@i386-elf-gcc -ffreestanding -c libc/screen.c -o objects/screen.o
 	@i386-elf-gcc -ffreestanding -c libc/string.c -o objects/string.o
+	@i386-elf-gcc -ffreestanding -c libc/memory.c -o objects/memory.o
+	@i386-elf-gcc -ffreestanding -c libc/system.c -o objects/system.o
 	
 compile_kernel:
 	@echo "Compiling kernel..."
@@ -28,6 +30,9 @@ compile_kernel:
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/irq.c -o objects/irq.o
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/idt.c -o objects/idt.o
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/isr.c -o objects/isr.o
+	@i386-elf-gcc -ffreestanding -c kernel/memory/heap.c -o objects/heap.o
+	@i386-elf-gcc -ffreestanding -c user/user_main.c -o objects/user_main.o
+	@i386-elf-gcc -ffreestanding -c user/commands.c -o objects/commands.o
 	@nasm kernel/kernel_entry.s -f elf -o objects/kernel/kernel_entry.o
 	@nasm kernel/IDT/interrupt_main.s -f elf -o objects/interrupt_main.o
 	@nasm kernel/GDT/load_gdt.s -f elf -o objects/load_gdt.o

@@ -1,14 +1,22 @@
 #include "keyboard.h"
+#include "../../libc/memory.h"
+#define BUFFER_SIZE 100
+#define FALSE 0
+#define TRUE !FALSE
 
 uint8_t g_symbol_arr[NUM_OF_SYMBOLS];
 uint8_t g_keyboard_input[NUM_OF_SYMBOLS];
+char buffer[100] = {0};
+int buffer_size = 0;
+int special = FALSE;
+int pending = FALSE;
+int enterPress = FALSE;
 
 void keyboard_handler();
 uint8_t symbol_to_ascii(uint8_t input_symbol);
 void keyboard_initialize();
 int keyboard_putc(uint8_t input_char);
-
-
+char pop_buffer();
 
 void keyboard_initialize()
 {
@@ -59,13 +67,40 @@ int keyboard_putc(uint8_t input_char)
     if(input_char != 0x1D && input_char != 0x2A && input_char != 0x38 && 
 		input_char != 0x3A && input_char < 0x40)
     {
-        putc((char)symbol_to_ascii(input_char));
-        return true;
+		char realValue = (char)symbol_to_ascii(input_char);
+		if (pending)
+		{
+			if (realValue == '\b')		// if bs remove one
+			{
+				if (buffer_size > 0)
+				{
+					buffer_size--;
+					putc(realValue);
+				}
+			}
+			else if (realValue == '\n')
+			{
+				enterPress = TRUE;
+				putc(realValue);
+			}
+			else if (buffer_size < BUFFER_SIZE)				// if char add one to buffer
+			{
+				buffer[buffer_size] = realValue;
+				buffer_size++;
+				putc(realValue);
+			}
+		}
+		else
+		{
+			putc(realValue);
+		}
+        return TRUE;
     }
-	else {
+	else if (special || input_char == 0x1D || input_char == 0x2A || input_char == 0x38 || 
+		input_char == 0x3A || input_char >= 0x9D){		// if special or one of control keys
 		non_char_print((char)symbol_to_ascii(input_char));
 	}
-    return false;
+    return FALSE;
 }
 
 void keyboard_handler(registers_t* registers)
@@ -82,4 +117,50 @@ void keyboard_handler(registers_t* registers)
     
     // sending ack to pic 
     outb(KEYBOARD_OUTPUT_PORT, 0X20);
+}
+
+void allowSpecial(int allow)
+{
+	special = allow;
+}
+
+void bflush()
+{
+	buffer_size = 0;
+}
+
+/*
+	pop first buffer char
+	@returns first buffer char
+*/
+char pop_buffer()
+{
+	char val = 0;
+	if (buffer_size > 0)
+	{
+		val = buffer[0];		// get char
+		buffer_size--;
+		memcpy(buffer, buffer + 1, buffer_size);		// copy back
+	}
+	return val;
+}
+
+char getchar()
+{
+	pending = TRUE;
+	while (!enterPress){}		// wait until enter
+	enterPress = FALSE;
+	pending = FALSE;
+	return pop_buffer();
+}
+
+void getline(char* pStr, int size)
+{
+	pending = TRUE;
+	while (!enterPress){}		// wait until enter
+	for (int i = 0; i < size - 1; i++)
+		pStr[i] = pop_buffer();
+	pStr[size - 1] = 0;
+	enterPress = FALSE;
+	pending = FALSE;
 }

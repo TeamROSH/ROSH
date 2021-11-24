@@ -57,4 +57,28 @@ void keyboard_initialize();
 */
 int keyboard_putc(uint8_t input_char);
 
+/*
+	To allow input of special chars?
+	@param allow: new setting
+*/
+void allowSpecial(int allow);
+
+/*
+	Flush buffer
+*/
+void bflush();
+
+/*
+	get char from input buffer
+	@returns input char
+*/
+char getchar();
+
+/*
+	get line ends with \n from buffer
+	@param pStr: pointer to returned string
+	@param size: size of requested string
+*/
+void getline(char* pStr, int size);
+
 #endif
