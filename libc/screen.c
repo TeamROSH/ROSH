@@ -24,7 +24,6 @@ char key_replacement(char c);
 void scrollScreen(int direction);
 
 int cursor = 0;
-int clear = FALSE;
 char* screenTrackerUp = NULL;
 char* screenTrackerDown = NULL;
 int linesUp = 0;
@@ -42,12 +41,6 @@ char shift_replacements[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 
 void putc(char c)
 {
-	if (clear)
-	{
-		clear = FALSE;
-		clearConsole();
-		return;
-	}
 	if (!print_special(c) && cursor < ROWS * COLS)
 		up_putc(key_replacement(c));
 	if (cursor == ROWS * COLS)
@@ -79,7 +72,7 @@ void moveCursor(int n)
     outb(REG_SCREEN_DATA, (uint8_t)((cursor >> 8) & 0xff));
 }
 
-void puts(char* str)
+void puts(const char* str)
 {
 	int len = strlen(str);		// get string length
 	for (int i = 0; i < len; i++)		// for every char in string
@@ -113,7 +106,6 @@ int get_cursor_position(void)
 void initConsole()
 {
 	cursor = get_cursor_position();
-	clear = FALSE;
 }
 
 /*
@@ -281,11 +273,6 @@ char key_replacement(char c)
 
 }
 
-void clearOnPrint()
-{
-	clear = TRUE;
-}
-
 void clearConsole()
 {
 	char* screen = (char*)SCREEN;
@@ -356,4 +343,14 @@ char* getTrackerUp()
 char* getTrackerDown()
 {
 	return screenTrackerDown;
+}
+
+void setScreenColor(char fore, char back)
+{
+	char color_byte = (back << 4) + fore;		// get color byte
+	char* screen = (char*)SCREEN;
+	for (int i = 1; i < ROWS * COLS * 2; i += 2)		// all color bytes
+	{
+		screen[i] = color_byte;		// set byte
+	}
 }

@@ -4,6 +4,7 @@
 #include "GDT/gdt.h"
 #include "IDT/idt.h"
 #include "memory/heap.h"
+#include "../user/user_main.h"
 
 /*
 	print ROSH logo
@@ -19,6 +20,11 @@ void main() {
 	initKernelHeap();		// init heap
 
 	printLogo();		// print ROSH
+
+	getchar();
+	clearConsole();
+
+	umain();
 }
 
 void printLogo()
@@ -30,9 +36,8 @@ void printLogo()
 				"\t\t\t\t\t\t\t|    /| | | |`--. \\  _  |\n"
 				"\t\t\t\t\t\t\t| |\\ \\\\ \\_/ /\\__/ / | | |\n"
 				"\t\t\t\t\t\t\t\\_| \\_|\\___/\\____/\\_| |_/\n"
-				"\t\t\t\t  Roei Aviad and Yoav Shaham's Operating System!\n\nPress any key to start!\n";
+				"\t\t\t\t  Roei Aviad and Yoav Shaham's Operating System!\n\nPress Enter to start!\n";
 	puts(logo);
-	clearOnPrint();			// !!! no prints after this line !!!
 }
 
 /*
