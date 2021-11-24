@@ -85,7 +85,7 @@ void initialize_paging()
         page_map(g_page_directory, page_to_address(1 + i), page_to_address(1+ i), PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
     }
     
-    allow_paging();
+    //allow_paging();
 }
 
 void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags)

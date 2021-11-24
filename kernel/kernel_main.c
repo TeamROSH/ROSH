@@ -17,6 +17,8 @@ void main() {
 	//initializing keyboard
 	keyboard_initialize();
 
+	initialize_paging();
+
 	initConsole();		// init cursor
 	printLogo();		// print ROSH
 }
