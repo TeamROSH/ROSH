@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "GDT/gdt.h"
 #include "IDT/idt.h"
+#include "memory/paging.h"
 #include "memory/heap.h"
 #include "../user/user_main.h"
 
@@ -15,9 +16,10 @@ void kernelShutdown();
 void main() {
 	gdt_initialize();		// initializing gdt
 	idt_initialize();		// initializing idt
+	initKernelHeap();		// init heap
+	initialize_paging();	// init paging
 	keyboard_initialize();	// initializing keyboard
 	initConsole();			// init cursor
-	initKernelHeap();		// init heap
 
 	printLogo();		// print ROSH
 
