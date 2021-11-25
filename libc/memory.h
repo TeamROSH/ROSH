@@ -9,6 +9,6 @@
 	@param src: source address
 	@param n: number of bytes to copy
 */
-void memcpy(void* dst, void* src, uint32_t n);
+void memcpy(void* dst, const void* src, uint32_t n);
 
 #endif

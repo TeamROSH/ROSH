@@ -1,8 +1,10 @@
 #include "commands.h"
 #include "../libc/screen.h"
 #include "../kernel/IDT/keyboard.h"
+#include "../kernel/memory/heap.h"
 #include "../libc/string.h"
 #include "../libc/system.h"
+#include "../libc/memory.h"
 #define NULL 0
 #define FALSE 0
 #define TRUE !FALSE
@@ -93,27 +95,72 @@ void shutdownCommand(char* argv, int argc)
 void bc(char* argv, int argc)
 {
 	// local functions
-	int isValidExp(const char* exp, int size)			// check for only ints and +-*/
+	int isMathOperator(char c)
 	{
-		if (exp[0] == '*' || exp[0] == '/' || exp[0] == '+' || exp[0] == '-')
+		return c == '*' || c == '/' || c == '+' || c == '-';
+	}
+
+	int isValidExp(char* exp, int size)			// check for only ints and +-*/
+	{
+		if (isMathOperator(exp[0]))
 			return FALSE;
-		if (exp[size - 1] == '*' || exp[size - 1] == '/' || exp[size - 1] == '+' || exp[size - 1] == '-')
+		if (isMathOperator(exp[size - 1]))
 			return FALSE;
-		for (int i = 1; i < size - 1; i++)
-			if (!((exp[i] >= 48 && exp[i] < 58) || exp[i] == '*' || exp[i] == '/' 
-				|| exp[i] == '+' || exp[i] == '-'))
+		for (int i = 0; i < size; i++)
+			if (!((exp[i] >= 48 && exp[i] < 58) || isMathOperator(exp[i])))
 				return FALSE;
 		return TRUE;
 	}
+	int countOperators(char* exp, int size)
+	{
+		int count = 0;
+		for (int i = 0; i < size; i++)
+			if (isMathOperator(exp[i]))
+				count++;
+		return count;
+	}
+	void seperateArrays(char* exp, int size, char* opers, int* nums)
+	{
+		int i = 0, count = 0, j = 0;
+		for (i = 0; i < size; i++)
+		{
+			if (isMathOperator(exp[i]))
+			{
+				opers[count] = exp[i];
+				exp[i] = 0;
+				count++;
+			}
+		}
+		count = 0;
+		for (i = 0; i < size; i++)
+		{
+			nums[count] = atoi(exp + i);
+			count++;
+			i += strlen(exp + i);
+		}
+	}
 
-	// main code
-	if (argc != 2)
+	// checks
+	const char* exp = getArg(argv, argc, 1);		// get math expression
+	int size = strlen(exp);					// get its size
+
+	char* cExp = (char*)kmalloc(size + 1);		// copy exp
+	memcpy(cExp, exp, size + 1);
+
+	if (argc != 2 || !isValidExp(cExp, size) || size == 0)
 	{
 		puts("Invalid syntax. Try \'help bc\'.");
 		return;
 	}
 
-	const char* exp = getArg(argv, argc, 1);		// get math expression
-	int size = strlen(exp);					// get its size
-	puti(isValidExp(exp, size));
+	// main function
+	int opersNum = countOperators(cExp, size);		// get number of operators
+	char* opers = (char*)kmalloc(opersNum);			// seperate into 2 arrays
+	int* nums = (int*)kmalloc((opersNum + 1) * sizeof(int));
+	seperateArrays(cExp, size, opers, nums);
+
+
+	kfree(opers);
+	kfree(nums);
+	kfree(cExp);
 }
