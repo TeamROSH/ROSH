@@ -87,12 +87,12 @@ int keyboard_putc(uint8_t input_char)
 			{
 				buffer[buffer_size] = key_replacement(realValue);
 				buffer_size++;
-				putc(realValue);
+				putc(key_replacement(realValue));
 			}
 		}
 		else
 		{
-			putc(realValue);
+			putc(key_replacement(realValue));
 		}
         return TRUE;
     }

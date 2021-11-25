@@ -119,6 +119,25 @@ void bc(char* argv, int argc)
 				count++;
 		return count;
 	}
+	int getNextOperIndex(char* opers, int size)
+	{
+		for (int i = 0; i < size; i++)
+			if (opers[i] == '*' || opers[i] == '/')
+				return i;
+		return 0;
+	}
+	void perform(int* a, int* b, char oper)
+	{
+		if (oper == '+')
+			*a += *b;
+		else if (oper == '-')
+			*a -= *b;
+		else if (oper == '*')
+			*a *= *b;
+		else if (oper == '/')
+			*a /= *b;
+		
+	}
 	void seperateArrays(char* exp, int size, char* opers, int* nums)
 	{
 		int i = 0, count = 0, j = 0;
@@ -139,6 +158,17 @@ void bc(char* argv, int argc)
 			i += strlen(exp + i);
 		}
 	}
+	int calculate(char* opers, int* nums, int opersNum)
+	{
+		if (opersNum == 0)		// end cond
+			return nums[0];
+		int numsNum = opersNum + 1;
+		int iOper = getNextOperIndex(opers, opersNum);		// get next operator
+		perform(nums + iOper, nums + iOper + 1, opers[iOper]);		// perform action
+		memcpy(nums + iOper + 1, nums + iOper + 2, numsNum - iOper - 2);	// reduce numbers
+		memcpy(opers + iOper, opers + iOper + 1, opersNum - iOper - 1);	// reduce operators
+		return calculate(opers, nums, opersNum - 1);
+	}
 
 	// checks
 	const char* exp = getArg(argv, argc, 1);		// get math expression
@@ -158,7 +188,8 @@ void bc(char* argv, int argc)
 	char* opers = (char*)kmalloc(opersNum);			// seperate into 2 arrays
 	int* nums = (int*)kmalloc((opersNum + 1) * sizeof(int));
 	seperateArrays(cExp, size, opers, nums);
-
+	int res = calculate(opers, nums, opersNum);		// get exp result
+	puti(res);		// print result
 
 	kfree(opers);
 	kfree(nums);

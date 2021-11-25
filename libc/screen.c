@@ -42,7 +42,7 @@ char shift_replacements[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1
 void putc(char c)
 {
 	if (!print_special(c) && cursor < ROWS * COLS)
-		up_putc(key_replacement(c));
+		up_putc(c);
 	if (cursor == ROWS * COLS)
 	{
 		moveCursor(-COLS);
@@ -83,6 +83,11 @@ void puts(const char* str)
 
 void puti(int n)
 {
+	if (n < 0)
+	{
+		putc('-');
+		n = -n;
+	}
 	int size = digits(n), temp = 0;
 	for (int i = 0; i < size; i++)		// for every digit
 	{
