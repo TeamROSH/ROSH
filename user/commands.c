@@ -138,7 +138,7 @@ void bc(char* argv, int argc)
 			*a /= *b;
 		
 	}
-	void seperateArrays(char* exp, int size, char* opers, int* nums)
+	int seperateArrays(char* exp, int size, char* opers, int* nums)
 	{
 		int i = 0, count = 0, j = 0;
 		for (i = 0; i < size; i++)
@@ -153,10 +153,13 @@ void bc(char* argv, int argc)
 		count = 0;
 		for (i = 0; i < size; i++)
 		{
+			if (exp[i] == 0)
+				return FALSE;
 			nums[count] = atoi(exp + i);
 			count++;
 			i += strlen(exp + i);
 		}
+		return TRUE;
 	}
 	int calculate(char* opers, int* nums, int opersNum)
 	{
@@ -187,7 +190,14 @@ void bc(char* argv, int argc)
 	int opersNum = countOperators(cExp, size);		// get number of operators
 	char* opers = (char*)kmalloc(opersNum);			// seperate into 2 arrays
 	int* nums = (int*)kmalloc((opersNum + 1) * sizeof(int));
-	seperateArrays(cExp, size, opers, nums);
+	if (!seperateArrays(cExp, size, opers, nums))
+	{
+		puts("Invalid syntax. Try \'help bc\'.");
+		kfree(opers);
+		kfree(nums);
+		kfree(cExp);
+		return;
+	}
 	int res = calculate(opers, nums, opersNum);		// get exp result
 	puti(res);		// print result
 
