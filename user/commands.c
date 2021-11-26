@@ -23,7 +23,7 @@ const char* getArg(const char* argv, int argc, int argNum)
 
 void grep(char* argv, int argc)
 {
-	char *token = NULL;
+	/*char *token = NULL;
 
 	// validating length
 	if(argc != 3)
@@ -45,7 +45,7 @@ void grep(char* argv, int argc)
 			}
 			token = strtok(NULL, argv[2]);
 		}
-	}
+	}*/
 }
 
 void unknown_command(char* argv, int argc)
