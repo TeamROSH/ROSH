@@ -1,5 +1,5 @@
 #include "paging.h"
-
+#include "libc/string.h"
 //array of bytes each bit represents page
 uint8_t g_pages_array[PAGES_COUNT];
 
@@ -31,18 +31,13 @@ void initialize_paging()
 {
     int i = 0;
 
-    for(i = 0; i < PAGES_COUNT; i++)
-    {
-        g_pages_array[i] = 0;
-    }
+    memset(g_pages_array, 0, PAGES_COUNT);
 
-    //mapping page for the page directory
-    update_pages_array(PAGE_DIRECTORY_START,1);
     
-    //mappign pages for the page tale
+    //mappign pages for the page talbes and page directory
     for (i = 0; i< PAGE_TABLE_COUNT; i++)
     {
-        update_pages_array(PAGE_TABLES_START + i, 1);
+        update_pages_array(PAGE_DIRECTORY_START + i, 1);
     }
 
     //converting the page directory into address and initializing the page directory array
@@ -195,6 +190,8 @@ uint32_t page_alloc()
                 curr_bit =(1 << j);
                 if(!(g_pages_array[i] & curr_bit))
                 {
+                    //  initializing the page with NULL
+                    memset(page_to_address(curr_bit * 8 + j), NULL, PAGE_SIZE);
                     //updating the page_array 
                     update_pages_array(curr_bit * 8 + j, 1);
 
