@@ -16,7 +16,7 @@ void putc(char c);
 	print a string to the screen
 	@param str: string to print
 */
-void puts(char* str);
+void puts(const char* str);
 
 /*
 	print a number to the screen
@@ -34,5 +34,29 @@ void initConsole();
 	@param c: the character
 */
 void non_char_print(uint8_t c);
+
+/*
+	clear the console
+*/
+void clearConsole();
+
+/*
+	screenTrackerUp getter
+	@returns screenTrackerUp
+*/
+char* getTrackerUp();
+
+/*
+	screenTrackerDown getter
+	@returns screenTrackerDown
+*/
+char* getTrackerDown();
+
+/*
+	set the screen color
+	@param fore: foreground color code
+	@param back: background color code
+*/
+void setScreenColor(char fore, char back);
 
 #endif

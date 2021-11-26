@@ -17,8 +17,11 @@ init_pm:
 	mov fs, ax
 	mov gs, ax
 
-	; update stack
-	mov ebp, 0x90000
-	mov esp, ebp
+	mov esp, KERNEL_STACK		; set kernel stack
 
-	call run_kernel		 ; run kernel
+	mov edi, KERNEL_OFFSET
+    mov esi, 0x7E00   ; kernel source code
+    mov ecx, 0xFE00   ; 127 * 512 bytes
+    rep movsb
+
+	jmp KERNEL_OFFSET		 ; run kernel
