@@ -48,8 +48,6 @@ void isr_handler(registers_t* registers)
     if(g_interrupt_handlers[registers->interrupt_num] != 0)
     {
         g_interrupt_handlers[registers->interrupt_num](registers);
-		cli();		// hlt the cpu
-		hlt();
     }
     //if no handler for isr
     else
@@ -66,4 +64,6 @@ void set_interrupt(uint8_t interrupt_num, interrupt_handler interrupt)
 void general_handler(registers_t* registers)
 {
 	puts(exceptions[registers->interrupt_num]);
+	cli();		// hlt the cpu
+	hlt();
 }
