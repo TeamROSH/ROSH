@@ -1,6 +1,7 @@
 #include "syscalls.h"
 #include "../../libc/system.h"
 #include "../../libc/screen.h"
+#include "../IDT/keyboard.h"
 
 void syscall(uint16_t group, uint16_t function, uint32_t* params, int n)
 {
@@ -32,7 +33,10 @@ void syscall_handler(registers_t* registers)
 	{
 		if (function == F_SHUTDOWN)
 		{
-			shutdown();
+			if (n == 0)
+			{
+				shutdown();
+			}
 		}
 	}
 	else if (group == G_OUTPUT)
@@ -63,6 +67,18 @@ void syscall_handler(registers_t* registers)
 			if (n == 2)
 			{
 				setScreenColor((char)(params[0]), (char)(params[1]));
+			}
+		}
+	}
+	else if (group == G_INPUT)
+	{
+		if (function == F_GETCHAR)
+		{
+			if (n == 1)
+			{
+				asm volatile("sti");		// enable interrupts
+				*((char*)(params[0])) = getchar();
+				asm volatile("cli");		// disable interrupts
 			}
 		}
 	}
