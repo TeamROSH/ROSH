@@ -39,4 +39,9 @@ typedef struct tss_entry {
 */
 void init_tss(gdt_entry_bits* entry);
 
+/*
+	set tss kernel stack
+*/
+void set_kernel_stack(uint32_t stack);
+
 #endif

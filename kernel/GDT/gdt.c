@@ -1,10 +1,11 @@
 #include "gdt.h"
+#include "tss.h"
 
 gdt_entry g_gdt_entries[GDT_ENTRIES];
 gdt_pointer g_gdt_pointer;
 
 extern void load_gdt(uint32_t);
-
+extern void flush_tss(void);
 
 void gdt_initialize()
 {
@@ -65,7 +66,11 @@ void gdt_initialize()
 	*user_data = *user_code;		// same except data and not code
 	user_data->code = 0;
 
+	// init tss (0x28)
+	init_tss((gdt_entry_bits*)(g_gdt_entries + 5));		// init tss entry
+
     //loading the new gdt into memory
     load_gdt((uint32_t)&g_gdt_pointer);
-}
 
+	flush_tss();
+}

@@ -38,6 +38,7 @@ compile_kernel:
 	@nasm kernel/IDT/interrupt_main.s -f elf -o objects/interrupt_main.o
 	@nasm kernel/GDT/load_gdt.s -f elf -o objects/load_gdt.o
 	@nasm kernel/IDT/load_idt.s -f elf -o objects/load_idt.o
+	@nasm kernel/GDT/flush_tss.s -f elf -o objects/flush_tss.o
 	@i386-elf-ld -o compiled/kernel_main.bin -Ttext 0x6400000 objects/kernel/*.o objects/*.o --oformat binary
 
 qemu:
