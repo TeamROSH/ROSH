@@ -40,4 +40,12 @@ int digits(int num);
 */
 int strncmp(const char* str1, const char* str2, int n);
 
+/*
+	check if str2 is in str1
+	@param str1: str to check
+	@param str2: str to check
+	@retrun (char*) - str2 in str1, (NULL) - str2 not in str1
+*/
+char* strstr(const char* str1, const char* str2);
+
 #endif

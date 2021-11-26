@@ -1,5 +1,20 @@
 #include "string.h"
 
+char* strstr(const char* str1, const char* str2)
+{
+	// while not string end
+	while(*str1 != NULL)
+	{
+		if((*str1 == *str2) && !strncmp(str1, str2, strlen(str1)))
+		{
+			return str1;
+		}
+		str1++;
+	}
+
+	retrun NULL;
+}
+
 int strlen(const char* str)
 {
 	int i = 0;

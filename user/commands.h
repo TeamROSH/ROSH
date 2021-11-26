@@ -3,7 +3,7 @@
 
 #define FUN_NAME_SIZE 11
 #define FUN_INFO_SIZE 400
-#define FUNS_NUM 6
+#define FUNS_NUM 7
 
 typedef void (*command)(char* argv, int argc);
 
@@ -28,6 +28,7 @@ void bc(char* argv, int argc);
 
 void unknown_command(char* argv, int argc);
 
+void grep(char* argv, int argc);
 
 
 // After functions are defined:
@@ -43,6 +44,7 @@ static const char fun_names[FUNS_NUM][FUN_NAME_SIZE] =
 
 static const command commands[FUNS_NUM] = 
 {
+	grep,
 	unknown_command,
 	echo,
 	help,
@@ -53,7 +55,8 @@ static const command commands[FUNS_NUM] =
 
 static const char fun_info[] = 
 {
-	"Not yet defined.\n"
+	"grep - Finds the requested string and prints it\n"
+	"Usage: \'grep <arg1> <argv2>"
 
 	"\0"
 	
