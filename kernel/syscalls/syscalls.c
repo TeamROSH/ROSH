@@ -51,5 +51,12 @@ void syscall_handler(registers_t* registers)
 				puts((char*)params[0]);
 			}
 		}
+		else if (function == F_PUTI)
+		{
+			if (n == 1)
+			{
+				puti((int)params[0]);
+			}
+		}
 	}
 }
