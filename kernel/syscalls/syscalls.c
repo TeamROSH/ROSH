@@ -16,3 +16,8 @@ void syscall(uint16_t group, uint16_t function, uint32_t* params, int n)
 		: "eax", "esi", "edi"
 	);
 }
+
+void syscall_handler(registers_t* registers)
+{
+	
+}

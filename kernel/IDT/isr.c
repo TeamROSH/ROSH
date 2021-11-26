@@ -44,10 +44,12 @@ char *exceptions[] = {
 
 void isr_handler(registers_t* registers)
 {
+	int interrupt = registers->interrupt_num;
+	interrupt = interrupt < 0 ? -interrupt : interrupt;
     //if there is a handler for the isr
-    if(g_interrupt_handlers[registers->interrupt_num] != 0)
+    if(g_interrupt_handlers[interrupt] != 0)
     {
-        g_interrupt_handlers[registers->interrupt_num](registers);
+        g_interrupt_handlers[interrupt](registers);
     }
     //if no handler for isr
     else

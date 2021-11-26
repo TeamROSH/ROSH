@@ -1,6 +1,7 @@
 #ifndef SYSCALLS_H
 #define SYSCALLS_H
 #include <stdint.h>
+#include "../IDT/time.h"
 
 /*
 	Syscaller for usermode
@@ -10,5 +11,7 @@
 	@param n: number of parameters
 */
 void syscall(uint16_t group, uint16_t function, uint32_t* params, int n);
+
+void syscall_handler(registers_t* registers);
 
 #endif

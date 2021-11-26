@@ -70,7 +70,7 @@ void idt_initialize()
 	idt_gate_initialize(45,(uint32_t)irq13,KERNEL_CS,0x8e);
 	idt_gate_initialize(46,(uint32_t)irq14,KERNEL_CS,0x8e);
 	idt_gate_initialize(47,(uint32_t)irq15,KERNEL_CS,0x8e);
-	idt_gate_initialize(128,(uint32_t)isr128,KERNEL_CS,0x8e);
+	idt_gate_initialize(128,(uint32_t)isr128,KERNEL_CS,0xee);		// syscalls in ring 3: 0xee
 
 	for (int i = 0; i < IDT_ENTRIES; i++)
 	{
@@ -79,6 +79,7 @@ void idt_initialize()
 	
 	set_interrupt(32, time_handler);
 	set_interrupt(33, keyboard_handler);
+	set_interrupt(0x80, syscall_handler);
     load_idt((uint32_t)&g_idt_pointer);
 }
 
