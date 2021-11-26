@@ -81,5 +81,14 @@ void syscall_handler(registers_t* registers)
 				asm volatile("cli");		// disable interrupts
 			}
 		}
+		else if (function == F_GETLINE)
+		{
+			if (n == 2)
+			{
+				asm volatile("sti");		// enable interrupts
+				getline(*((char**)(params[0])), (int)(params[1]));
+				asm volatile("cli");		// disable interrupts
+			}
+		}
 	}
 }
