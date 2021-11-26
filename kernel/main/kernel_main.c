@@ -1,11 +1,11 @@
-#include "../libc/screen.h"
-#include "../libc/system.h"
+#include "../../libc/screen.h"
+#include "../../libc/system.h"
 #include <stdint.h>
-#include "GDT/gdt.h"
-#include "IDT/idt.h"
-#include "memory/paging.h"
-#include "memory/heap.h"
-#include "../user/user_main.h"
+#include "../GDT/gdt.h"
+#include "../IDT/idt.h"
+#include "../memory/paging.h"
+#include "../memory/heap.h"
+#include "../../user/user_main.h"
 
 /*
 	print ROSH logo

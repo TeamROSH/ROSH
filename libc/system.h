@@ -1,7 +1,7 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-#include "../kernel/ports.h"
+#include "../kernel/ports/ports.h"
 
 /*
 	shutdown QEmu

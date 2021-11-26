@@ -21,8 +21,8 @@ compile_libc:
 	
 compile_kernel:
 	@echo "Compiling kernel..."
-	@i386-elf-gcc -ffreestanding -c kernel/kernel_main.c -o objects/kernel/kernel_main.o
-	@i386-elf-gcc -ffreestanding -c kernel/ports.c -o objects/ports.o
+	@i386-elf-gcc -ffreestanding -c kernel/main/kernel_main.c -o objects/kernel/kernel_main.o
+	@i386-elf-gcc -ffreestanding -c kernel/ports/ports.c -o objects/ports.o
 	@i386-elf-gcc -ffreestanding -c kernel/memory/paging.c -o objects/paging.o
 	@i386-elf-gcc -ffreestanding -c kernel/GDT/gdt.c -o objects/gdt.o
 	@i386-elf-gcc -ffreestanding -c kernel/GDT/tss.c -o objects/tss.o
@@ -33,7 +33,7 @@ compile_kernel:
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/isr.c -o objects/isr.o
 	@i386-elf-gcc -ffreestanding -c kernel/memory/heap.c -o objects/heap.o
 
-	@nasm kernel/kernel_entry.s -f elf -o objects/kernel/kernel_entry.o
+	@nasm kernel/main/kernel_entry.s -f elf -o objects/kernel/kernel_entry.o
 	@nasm kernel/IDT/interrupt_main.s -f elf -o objects/interrupt_main.o
 	@nasm kernel/GDT/load_gdt.s -f elf -o objects/load_gdt.o
 	@nasm kernel/IDT/load_idt.s -f elf -o objects/load_idt.o
