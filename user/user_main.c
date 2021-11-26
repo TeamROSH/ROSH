@@ -12,14 +12,6 @@ void umain()
 {
 	char input[INPUT_SIZE] = {0};
 
-	char* c = "hello";
-	uint32_t params[2];
-	params[0] = (uint32_t)&c;
-	params[1] = 5;
-	syscall(2, 1, params, 2);
-
-	syscall(1, 1, (uint32_t*)&c, 1);
-
 	while (1)
 	{
 		//puts("\n\n$ ");

@@ -8,6 +8,7 @@
 		"screen.h": "c",
 		"cstdio": "c",
 		"cmath": "c",
-		"idt.h": "c"
+		"idt.h": "c",
+		"keyboard.h": "c"
 	}
 }

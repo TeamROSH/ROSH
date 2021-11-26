@@ -2,6 +2,7 @@
 #include "../../libc/system.h"
 #include "../../libc/screen.h"
 #include "../IDT/keyboard.h"
+#include "../memory/heap.h"
 
 void syscall(uint16_t group, uint16_t function, uint32_t* params, int n)
 {
@@ -88,6 +89,30 @@ void syscall_handler(registers_t* registers)
 				asm volatile("sti");		// enable interrupts
 				getline(*((char**)(params[0])), (int)(params[1]));
 				asm volatile("cli");		// disable interrupts
+			}
+		}
+	}
+	else if (group == G_MEMORY)
+	{
+		if (function == F_MALLOC)
+		{
+			if (n == 2)
+			{
+				*((void**)(params[0])) = kmalloc((int)(params[1]));
+			}
+		}
+		else if (function == F_REALLOC)
+		{
+			if (n == 3)
+			{
+				*((void**)(params[0])) = krealloc((void*)params[1],(int)(params[2]));
+			}
+		}
+		else if (function == F_FREE)
+		{
+			if (n == 1)
+			{
+				kfree((void*)params[0]);
 			}
 		}
 	}
