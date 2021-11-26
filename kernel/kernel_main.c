@@ -12,6 +12,7 @@
 */
 void printLogo();
 void kernelShutdown();
+extern void usermode(void);
 
 void main() {
 	gdt_initialize();		// initializing gdt
@@ -26,7 +27,7 @@ void main() {
 	getchar();
 	clearConsole();
 
-	umain();
+	usermode();
 }
 
 void printLogo()

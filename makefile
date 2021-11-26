@@ -32,13 +32,17 @@ compile_kernel:
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/idt.c -o objects/idt.o
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/isr.c -o objects/isr.o
 	@i386-elf-gcc -ffreestanding -c kernel/memory/heap.c -o objects/heap.o
-	@i386-elf-gcc -ffreestanding -c user/user_main.c -o objects/user_main.o
-	@i386-elf-gcc -ffreestanding -c user/commands.c -o objects/commands.o
+
 	@nasm kernel/kernel_entry.s -f elf -o objects/kernel/kernel_entry.o
 	@nasm kernel/IDT/interrupt_main.s -f elf -o objects/interrupt_main.o
 	@nasm kernel/GDT/load_gdt.s -f elf -o objects/load_gdt.o
 	@nasm kernel/IDT/load_idt.s -f elf -o objects/load_idt.o
 	@nasm kernel/GDT/flush_tss.s -f elf -o objects/flush_tss.o
+
+	@i386-elf-gcc -ffreestanding -c user/user_main.c -o objects/user_main.o
+	@i386-elf-gcc -ffreestanding -c user/commands.c -o objects/commands.o
+	@nasm user/usermode.s -f elf -o objects/usermode.o
+
 	@i386-elf-ld -o compiled/kernel_main.bin -Ttext 0x6400000 objects/kernel/*.o objects/*.o --oformat binary
 
 qemu:
