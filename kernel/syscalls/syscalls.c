@@ -58,5 +58,12 @@ void syscall_handler(registers_t* registers)
 				puti((int)params[0]);
 			}
 		}
+		else if (function == F_COLOR)
+		{
+			if (n == 2)
+			{
+				setScreenColor((char)(params[0]), (char)(params[1]));
+			}
+		}
 	}
 }
