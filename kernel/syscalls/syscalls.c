@@ -23,5 +23,5 @@ void syscall_handler(registers_t* registers)
 	uint16_t group = (uint16_t)(id >> 16);
 	uint16_t function = (uint16_t)id;
 
-	
+	if (group == G_SYSTEM)
 }
