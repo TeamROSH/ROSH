@@ -1,6 +1,7 @@
 #ifndef TSS_H
 #define TSS_H
 #include <stdint.h>
+#include "gdt.h"
 
 typedef struct tss_entry {
 	uint32_t prev_tss;			// previous TSS
@@ -31,5 +32,11 @@ typedef struct tss_entry {
 	uint16_t trap;
 	uint16_t iomap_base;
 } __attribute__((packed)) tss_entry;
+
+/*
+	init tss entry in the GDT
+	@param entry: empty tss entry to fill
+*/
+void init_tss(gdt_entry_bits* entry);
 
 #endif
