@@ -4,7 +4,7 @@
 #include "../IDT/time.h"
 
 /*
-	Syscaller for usermode
+	Syscaller for usermode (Ring 3)
 	@param group: group of functions
 	@param function: function number in the group
 	@param params: parameters to pass to the system call
@@ -12,6 +12,9 @@
 */
 void syscall(uint16_t group, uint16_t function, uint32_t* params, int n);
 
+/*
+	Syscall handler (Ring 0)
+*/
 void syscall_handler(registers_t* registers);
 
 #endif

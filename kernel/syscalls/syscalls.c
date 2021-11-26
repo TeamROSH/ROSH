@@ -19,5 +19,9 @@ void syscall(uint16_t group, uint16_t function, uint32_t* params, int n)
 
 void syscall_handler(registers_t* registers)
 {
+	uint32_t id = registers->eax;		// get function id
+	uint16_t group = (uint16_t)(id >> 16);
+	uint16_t function = (uint16_t)id;
+
 	
 }
