@@ -30,20 +30,23 @@ void grep(char* argv, int argc)
 	{
 		puts("Invalid syntax. Try \'help grep\'.");
 	}
+
+	char *str = getArg(argv, argc, 2);
+	char *substr = getArg(argv, argc, 1);
 	else
 	{
 
-		token = strtok(argv[2], "\n");
+		token = strtok(str, "\n");
 		
 		// going through the lines in the string
 		while(token != NULL)
 		{
 			// if string included
-			if(strstr(token, argv[1]) != 0)
+			if(strstr(token, substr) != 0)
 			{
 				puts(token)
 			}
-			token = strtok(NULL, argv[2]);
+			token = strtok(NULL, str);
 		}
 	}
 }
