@@ -33,11 +33,11 @@ typedef struct page_table_entry page_directory_entery;
 
 typedef struct{
     page_table_entry table_entries[1024];
-}page_table;
+}page_table __attribute__((aligned(0x1000)));
 
 typedef struct{
     page_table_entry directory_entries[1024];
-} page_directory;
+} page_directory __attribute__((aligned(0x1000)));
 
 /*
     This function initializes the paging

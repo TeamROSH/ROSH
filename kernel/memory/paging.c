@@ -75,14 +75,11 @@ void initialize_paging()
 
     //mapping the video memory into the physical address
     page_map(g_page_directory, VIDEO_MEM_START, VIDEO_MEM_PHYSICAL_ADDR, PAGE_FLAG_READWRITE | PAGE_FLAG_KERNEL);
-
-    //mapping the page directory
-    page_map(g_page_directory, page_to_address(PAGE_DIRECTORY_START), page_to_address(PAGE_DIRECTORY_START), PAGE_FLAG_READWRITE | PAGE_FLAG_KERNEL);
     
-    //mapping the page tables
+    //mapping the page tables and page directory
     for(i= 0; i < PAGE_TABLE_COUNT; i++)
     {
-        page_map(g_page_directory, page_to_address(1 + i), page_to_address(1+ i), PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
+        page_map(g_page_directory, page_to_address(i), page_to_address(i), PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
     }
     
     //allow_paging();
@@ -196,7 +193,7 @@ uint32_t page_alloc()
             for(int j = 0; j < 8; j++)
             {
                 curr_bit =(1 << j);
-                if((g_pages_array[i] & curr_bit) == 0)
+                if(!(g_pages_array[i] & curr_bit))
                 {
                     //updating the page_array 
                     update_pages_array(curr_bit * 8 + j, 1);

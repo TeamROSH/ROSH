@@ -1,5 +1,15 @@
 #include "string.h"
 
+void memset(void *str, int c, size_t n)
+{
+	int i = 0;
+
+	for (i = 0; i < n; i++)
+	{
+		*str = c;
+	}
+}
+
 int strlen(const char* str)
 {
 	int i = 0;
