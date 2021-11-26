@@ -10,7 +10,7 @@ void allow_paging();
 void load_directory_table(page_directory* directory);
 uint32_t page_to_address(uint32_t page_number);
 uint32_t address_to_page(uint32_t address);
-void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags);
+void page_map(page_directory* directory, uint64_t vadd, uint64_t padd, int flags);
 void page_unmap(uint32_t vadd);
 void update_pages_array(uint32_t page_num, int is_on);
 uint32_t page_alloc();
@@ -88,10 +88,10 @@ void initialize_paging()
     allow_paging();
 }
 
-void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags)
+void page_map(page_directory* directory, uint64_t vadd, uint64_t padd, int flags)
 {
-    uint32_t page_num= 0;
-    uint32_t page_table_num = 0;
+    int64_t page_num= 0;
+    int64_t page_table_num = 0;
     page_table* pt;
     
     //getting page and page table number
