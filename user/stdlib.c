@@ -63,6 +63,7 @@ void* umalloc(uint32_t size)
 	params[0] = (uint32_t)&res;
 	params[1] = (uint32_t)size;
 	syscall(G_MEMORY, F_MALLOC, params, 2);
+	return res;
 }
 
 void* urealloc(void* ptr, uint32_t size)
@@ -73,6 +74,7 @@ void* urealloc(void* ptr, uint32_t size)
 	params[1] = (uint32_t)&ptr;
 	params[2] = (uint32_t)size;
 	syscall(G_MEMORY, F_REALLOC, params, 3);
+	return res;
 }
 
 void ufree(void* addr)

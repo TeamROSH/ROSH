@@ -201,7 +201,6 @@ void bc(char* argv, int argc)
 	int size = strlen(exp);					// get its size
 
 	char* cExp = (char*)umalloc(size + 1);		// copy exp
-	uputi((int)cExp);
 	memcpy(cExp, exp, size + 1);
 
 	if (argc != 2 || !isValidExp(cExp, size) || size == 0)
