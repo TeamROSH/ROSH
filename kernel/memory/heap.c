@@ -8,6 +8,7 @@
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
 Heap g_kernelHeap;
+Heap g_userHeap;
 
 void heap_init(Heap* heap, uint32_t base, uint32_t size)
 {
@@ -136,4 +137,24 @@ void kfree(void* addr)
 void* krealloc(void* ptr, uint32_t size)
 {
 	heap_realloc(&g_kernelHeap, ptr, size);
+}
+
+void initUserHeap()
+{
+	heap_init(&g_userHeap, USER_HEAP_START, USER_HEAP_SIZE);
+}
+
+void* k_umalloc(uint32_t size)
+{
+	return heap_malloc(&g_userHeap, size);
+}
+
+void k_ufree(void* addr)
+{
+	heap_free(&g_userHeap, addr);
+}
+
+void* k_urealloc(void* ptr, uint32_t size)
+{
+	heap_realloc(&g_userHeap, ptr, size);
 }

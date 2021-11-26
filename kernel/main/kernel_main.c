@@ -17,7 +17,8 @@ extern void usermode(void);
 void main() {
 	gdt_initialize();		// initializing gdt
 	idt_initialize();		// initializing idt
-	initKernelHeap();		// init heap
+	initKernelHeap();		// init kernel heap
+	initUserHeap();		// init user heap
 	initialize_paging();	// init paging
 	keyboard_initialize();	// initializing keyboard
 	initConsole();			// init cursor

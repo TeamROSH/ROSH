@@ -94,4 +94,30 @@ void kfree(void* addr);
 */
 void* krealloc(void* ptr, uint32_t size);
 
+/*
+	init the user heap
+*/
+void initUserHeap();
+
+/*
+	allocate memory
+	@param size: the size of memory
+	@returns pointer to the memory
+*/
+void* k_umalloc(uint32_t size);
+
+/*
+	free allocated memory
+	@param addr: address to free
+*/
+void k_ufree(void* addr);
+
+/*
+	re-allocate memory
+	@param ptr: pointer to the memory needed re-allocation
+	@param size: the size of memory
+	@returns pointer to the memory
+*/
+void* k_urealloc(void* ptr, uint32_t size);
+
 #endif

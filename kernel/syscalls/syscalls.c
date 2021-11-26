@@ -105,21 +105,21 @@ void syscall_handler(registers_t* registers)
 		{
 			if (n == 2)
 			{
-				*((void**)(params[0])) = kmalloc((int)(params[1]));
+				*((void**)(params[0])) = k_umalloc((int)(params[1]));
 			}
 		}
 		else if (function == F_REALLOC)
 		{
 			if (n == 3)
 			{
-				*((void**)(params[0])) = krealloc((void*)params[1],(int)(params[2]));
+				*((void**)(params[0])) = k_urealloc((void*)params[1],(int)(params[2]));
 			}
 		}
 		else if (function == F_FREE)
 		{
 			if (n == 1)
 			{
-				kfree((void*)params[0]);
+				k_ufree((void*)params[0]);
 			}
 		}
 	}
