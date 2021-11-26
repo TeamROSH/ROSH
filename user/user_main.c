@@ -3,6 +3,7 @@
 #include "../kernel/IDT/keyboard.h"
 #include "../libc/screen.h"
 #include "../libc/string.h"
+#include "../kernel/syscalls/syscalls.h"
 #define INPUT_SIZE 41
 
 void callCommand(char* argv, int argc);
@@ -11,12 +12,15 @@ void umain()
 {
 	char input[INPUT_SIZE] = {0};
 
+	char a = 'a';
+	syscall(1, 0, (uint32_t*)(&a), 1);
+
 	while (1)
 	{
-		puts("\n\n$ ");
-		bflush();		// clear buffer
-		getline(input, INPUT_SIZE);		// get input
-		cmd(input);				// get output
+		//puts("\n\n$ ");
+		//bflush();		// clear buffer
+		//getline(input, INPUT_SIZE);		// get input
+		//cmd(input);				// get output
 	}
 }
 

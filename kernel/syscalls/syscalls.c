@@ -1,4 +1,6 @@
 #include "syscalls.h"
+#include "../../libc/system.h"
+#include "../../libc/screen.h"
 
 void syscall(uint16_t group, uint16_t function, uint32_t* params, int n)
 {
@@ -23,5 +25,24 @@ void syscall_handler(registers_t* registers)
 	uint16_t group = (uint16_t)(id >> 16);
 	uint16_t function = (uint16_t)id;
 
+	uint32_t* params = (uint32_t*)registers->esi;		// get parameters
+	uint32_t n = registers->edi;
+
 	if (group == G_SYSTEM)
+	{
+		if (function == F_SHUTDOWN)
+		{
+			shutdown();
+		}
+	}
+	else if (group == G_OUTPUT)
+	{
+		if (function == F_PUTC)
+		{
+			if (n == 1)
+			{
+				putc(params[0]);
+			}
+		}
+	}
 }
