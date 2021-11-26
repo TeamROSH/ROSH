@@ -1,4 +1,47 @@
 #include "string.h"
+#include "kernel/memory/heap.h"
+
+char* strtok(char* s, char d)
+{
+	int i = 0;
+	static char* curr_index = NULL;
+
+	// if the string or the delmim null
+	if(!s || !d )
+	{
+		return NULL;
+	}
+
+	// last token
+	if(curr_index == NULL)
+	{
+		return NULL;
+	}
+
+	char *str = (char* )heap_malloc(strlen(curr_index) + 1);
+
+	for(i = 0; curr_index[i] != '\0'; i++)
+	{
+
+		if(curr_index != d)
+		{
+			str[i] = curr_index[i];
+		}
+
+		else
+		{
+			str[i] = '\0';
+			curr_index+= i;
+			curr_index+= 1;
+			return str;
+		}
+	}
+
+	str[i] = '\0';
+	curr_index = NULL;
+
+	return str;
+}
 
 char* strstr(const char* str1, const char* str2)
 {

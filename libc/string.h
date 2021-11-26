@@ -48,4 +48,12 @@ int strncmp(const char* str1, const char* str2, int n);
 */
 char* strstr(const char* str1, const char* str2);
 
+
+/*
+	breaks a string into a sequence of zero or more nonempty tokens
+	@param s: str to check
+	@param d: char to check
+	@retrun (token) - d in s, (NULL) - last token
+*/
+char* strtok(char* s, char d);
 #endif
