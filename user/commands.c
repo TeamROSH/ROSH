@@ -21,6 +21,33 @@ const char* getArg(const char* argv, int argc, int argNum)
 	return res;
 }
 
+void grep(char* argv, int argc)
+{
+	char *token = NULL;
+
+	// validating length
+	if(argc != 3)
+	{
+		puts("Invalid syntax. Try \'help grep\'.");
+	}
+	else
+	{
+
+		token = strtok(argv[2], "\n");
+		
+		// going through the lines in the string
+		while(token != NULL)
+		{
+			// if string included
+			if(strstr(token, argv[1]) == 0)
+			{
+				puts(token)
+			}
+			token = strtok(NULL, argv[2]);
+		}
+	}
+}
+
 void unknown_command(char* argv, int argc)
 {
 	puts("Command \'");
