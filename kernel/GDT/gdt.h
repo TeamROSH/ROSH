@@ -2,7 +2,7 @@
 #define GDT_H
 #include <stdint.h>
 
-#define GDT_ENTRIES 5
+#define GDT_ENTRIES 6
 typedef struct 
 {
     uint16_t limit; // 20 bit maximum addressable unit
@@ -29,7 +29,7 @@ typedef struct gdt_entry_bits {
 	unsigned int base_low               : 24;
 	unsigned int accessed               :  1;
 	unsigned int read_write             :  1;
-	unsigned int conforming_expand_down :  1;
+	unsigned int conforming				:  1;
 	unsigned int code                   :  1; // 1 for code, 0 for data
 	unsigned int code_data_segment      :  1; // (is not TSS or LDT?)
 	unsigned int DPL                    :  2; // privilege level
