@@ -43,6 +43,11 @@ char ugetchar()
 	return c;
 }
 
+void ubflush()
+{
+	syscall(G_INPUT, F_BFLUSH, 0, 0);
+}
+
 void ugetline(char* pStr, int size)
 {
 	uint32_t params[2];

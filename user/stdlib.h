@@ -43,6 +43,11 @@ void usetColor(char fore, char back);
 char ugetchar();
 
 /*
+	Flush buffer
+*/
+void ubflush();
+
+/*
 	get line ends with \n from buffer
 	@param pStr: pointer to returned string
 	@param size: size of requested string

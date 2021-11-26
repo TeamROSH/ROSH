@@ -91,6 +91,13 @@ void syscall_handler(registers_t* registers)
 				asm volatile("cli");		// disable interrupts
 			}
 		}
+		else if (function == F_BFLUSH)
+		{
+			if (n == 0)
+			{
+				bflush();
+			}
+		}
 	}
 	else if (group == G_MEMORY)
 	{

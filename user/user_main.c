@@ -7,15 +7,12 @@ void umain()
 {
 	char input[INPUT_SIZE] = {0};
 
-	ugetline(input, 5);
-	uputs(input);
-
 	while (1)
 	{
-		//puts("\n\n$ ");
-		//bflush();		// clear buffer
-		//getline(input, INPUT_SIZE);		// get input
-		//cmd(input);				// get output
+		uputs("\n\n$ ");
+		ubflush();		// clear buffer
+		ugetline(input, INPUT_SIZE);		// get input
+		cmd(input);				// get output
 	}
 }
 

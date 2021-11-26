@@ -2,14 +2,7 @@
 #define TIME_H
 #include <stdint.h>
 #include "../../libc/screen.h"
-
-typedef struct {
-    uint32_t es;
-    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; // pusha
-    uint32_t interrupt_num, err_code;             
-    uint32_t eip, cs, eflags, user_esp, ss;           //cpu pushes
-
-}registers_t;
+#include "reg_def.h"
 
 typedef void (*interrupt_handler)(registers_t* registers);
 

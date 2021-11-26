@@ -1,10 +1,6 @@
 #include "commands.h"
-#include "../libc/screen.h"
-#include "../kernel/IDT/keyboard.h"
-#include "../kernel/memory/heap.h"
-#include "../libc/string.h"
-#include "../libc/system.h"
-#include "../libc/memory.h"
+#include "stdlib.h"
+
 #define NULL 0
 #define FALSE 0
 #define TRUE !FALSE
@@ -50,29 +46,29 @@ void grep(char* argv, int argc)
 
 void unknown_command(char* argv, int argc)
 {
-	puts("Command \'");
-	puts(argv);
-	puts("\' not found. Try \'help\'.");
+	uputs("Command \'");
+	uputs(argv);
+	uputs("\' not found. Try \'help\'.");
 }
 
 void echo(char* argv, int argc)
 {
 	for (int i = 1; i < argc; i++)		// for every argument except command name
 	{
-		puts(getArg(argv, argc, i));		// print it
-		putc(' ');		// add the space
+		uputs(getArg(argv, argc, i));		// print it
+		uputc(' ');		// add the space
 	}
 }
 
 void color(char* argv, int argc)
 {
 	if (argc != 3)
-		puts("Invalid syntax. Try \'help color\'.");
+		uputs("Invalid syntax. Try \'help color\'.");
 	else
 	{
 		char fore = (char)atoi(getArg(argv, argc, 1));		// get foreground color
 		char back = (char)atoi(getArg(argv, argc, 2));		// get background color
-		setScreenColor(fore, back);				// set screen colors
+		usetColor(fore, back);				// set screen colors
 	}
 }
 
@@ -80,7 +76,7 @@ void help(char* argv, int argc)
 {
 	if (argc == 1)		// no specific command
 	{
-		puts(
+		uputs(
 			"For specific command:\n"
 			"help <command name>\n\n"
 			"Available Commands:\n"
@@ -98,25 +94,25 @@ void help(char* argv, int argc)
 		{
 			if (strncmp(getArg(argv, argc, 1), fun_names[i], strlen(fun_names[i])) == 0)		// if found
 			{
-				puts(getArg(fun_info, FUNS_NUM, i));		// print info
+				uputs(getArg(fun_info, FUNS_NUM, i));		// print info
 				return;
 			}
 		}
-		puts("Unknown command. Try \'help\'.");
+		uputs("Unknown command. Try \'help\'.");
 	}
 	else
 	{
-		puts("Invalid syntax. Try \'help help\'.");
+		uputs("Invalid syntax. Try \'help help\'.");
 	}
 }
 
 void shutdownCommand(char* argv, int argc)
 {
-	puts("Are you sure? (y/n): ");
-	bflush();
-	char res = getchar();
+	uputs("Are you sure? (y/n): ");
+	ubflush();
+	char res = ugetchar();
 	if (res == 'y')
-		shutdown();
+		ushutdown();
 }
 
 void bc(char* argv, int argc)
@@ -204,31 +200,31 @@ void bc(char* argv, int argc)
 	const char* exp = getArg(argv, argc, 1);		// get math expression
 	int size = strlen(exp);					// get its size
 
-	char* cExp = (char*)kmalloc(size + 1);		// copy exp
+	char* cExp = (char*)umalloc(size + 1);		// copy exp
 	memcpy(cExp, exp, size + 1);
 
 	if (argc != 2 || !isValidExp(cExp, size) || size == 0)
 	{
-		puts("Invalid syntax. Try \'help bc\'.");
+		uputs("Invalid syntax. Try \'help bc\'.");
 		return;
 	}
 
 	// main function
 	int opersNum = countOperators(cExp, size);		// get number of operators
-	char* opers = (char*)kmalloc(opersNum);			// seperate into 2 arrays
-	int* nums = (int*)kmalloc((opersNum + 1) * sizeof(int));
+	char* opers = (char*)umalloc(opersNum);			// seperate into 2 arrays
+	int* nums = (int*)umalloc((opersNum + 1) * sizeof(int));
 	if (!seperateArrays(cExp, size, opers, nums))
 	{
-		puts("Invalid syntax. Try \'help bc\'.");
-		kfree(opers);
-		kfree(nums);
-		kfree(cExp);
+		uputs("Invalid syntax. Try \'help bc\'.");
+		ufree(opers);
+		ufree(nums);
+		ufree(cExp);
 		return;
 	}
 	int res = calculate(opers, nums, opersNum);		// get exp result
-	puti(res);		// print result
+	uputi(res);		// print result
 
-	kfree(opers);
-	kfree(nums);
-	kfree(cExp);
+	ufree(opers);
+	ufree(nums);
+	ufree(cExp);
 }

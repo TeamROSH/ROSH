@@ -1,7 +1,7 @@
 #ifndef SYSCALLS_H
 #define SYSCALLS_H
 #include <stdint.h>
-#include "../IDT/time.h"
+#include "../IDT/reg_def.h"
 
 #define G_SYSTEM	0
 	#define F_SHUTDOWN	0
@@ -15,7 +15,7 @@
 #define G_INPUT		2
 	#define F_GETCHAR	0
 	#define F_GETLINE	1
-
+	#define F_BFLUSH	2
 
 #define G_MEMORY	3
 	#define F_MALLOC	0

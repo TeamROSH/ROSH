@@ -3,7 +3,7 @@
 
 #define FUN_NAME_SIZE 11
 #define FUN_INFO_SIZE 400
-#define FUNS_NUM 7
+#define FUNS_NUM 6
 
 typedef void (*command)(char* argv, int argc);
 
@@ -45,7 +45,6 @@ static const char fun_names[FUNS_NUM][FUN_NAME_SIZE] =
 static const command commands[FUNS_NUM] = 
 {
 	grep,
-	unknown_command,
 	echo,
 	help,
 	color,
