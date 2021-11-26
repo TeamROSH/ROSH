@@ -41,7 +41,14 @@ void syscall_handler(registers_t* registers)
 		{
 			if (n == 1)
 			{
-				putc(params[0]);
+				putc((char)params[0]);
+			}
+		}
+		else if (function == F_PUTS)
+		{
+			if (n == 1)
+			{
+				puts((char*)params[0]);
 			}
 		}
 	}
