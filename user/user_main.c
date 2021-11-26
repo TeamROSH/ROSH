@@ -1,9 +1,4 @@
 #include "user_main.h"
-#include "commands.h"
-#include "../kernel/IDT/keyboard.h"
-#include "../libc/screen.h"
-#include "../libc/string.h"
-#include "../kernel/syscalls/syscalls.h"
 #define INPUT_SIZE 41
 
 void callCommand(char* argv, int argc);
@@ -11,6 +6,9 @@ void callCommand(char* argv, int argc);
 void umain()
 {
 	char input[INPUT_SIZE] = {0};
+
+	ugetline(input, 5);
+	uputs(input);
 
 	while (1)
 	{

@@ -1,6 +1,9 @@
 #ifndef USER_MAIN_H
 #define USER_MAIN_H
 
+#include "commands.h"
+#include "stdlib.h"
+
 /*
 	Userspace main function
 */

@@ -41,6 +41,7 @@ compile_kernel:
 	@nasm kernel/GDT/flush_tss.s -f elf -o objects/flush_tss.o
 
 	@i386-elf-gcc -ffreestanding -c user/user_main.c -o objects/user_main.o
+	@i386-elf-gcc -ffreestanding -c user/stdlib.c -o objects/stdlib.o
 	@i386-elf-gcc -ffreestanding -c user/commands.c -o objects/commands.o
 	@nasm user/usermode.s -f elf -o objects/usermode.o
 

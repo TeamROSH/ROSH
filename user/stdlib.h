@@ -1,6 +1,7 @@
 #ifndef STDLIB_H
 #define STDLIB_H
 
+#include <stdint.h>
 #include "../libc/memory.h"
 #include "../libc/string.h"
 #include "../kernel/syscalls/syscalls.h"
@@ -27,6 +28,13 @@ void uputs(const char* str);
 	@param n: number to print
 */
 void uputi(int n);
+
+/*
+	set the screen color
+	@param fore: foreground color code
+	@param back: background color code
+*/
+void usetColor(char fore, char back);
 
 /*
 	get char from input buffer
