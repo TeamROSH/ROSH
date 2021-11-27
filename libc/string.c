@@ -1,16 +1,5 @@
 #include "string.h"
 
-void memset(void *str, int c, size_t n)
-{
-	int i = 0;
-	unsigned char *curr_char = (unsigned char*)str;
-	for (i = 0; i < (int)n; i++)
-	{
-		*curr_char = c;
-		curr_char++;
-	}
-}
-
 int strlen(const char* str)
 {
 	int i = 0;

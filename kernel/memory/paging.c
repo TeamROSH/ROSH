@@ -1,4 +1,6 @@
 #include "paging.h"
+#define NULL 0
+
 //array of bytes each bit represents page
 uint8_t g_pages_array[PAGES_COUNT];
 
@@ -214,7 +216,7 @@ uint32_t page_alloc()
                 if(!(g_pages_array[i] & curr_bit))
                 {
                     //  initializing the page with NULL
-                    memset(page_to_address(curr_bit * BITS_IN_BYTE + j), NULL, PAGE_SIZE);
+                    memset((uint32_t*)(page_to_address(curr_bit * BITS_IN_BYTE + j)), NULL, PAGE_SIZE);
                     //updating the page_array 
                     update_pages_array(curr_bit * BITS_IN_BYTE + j, 1);
 

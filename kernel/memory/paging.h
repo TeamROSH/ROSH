@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #include "memorylayout.h"
-#include "../../libc/string.h"
+#include "../../libc/memory.h"
 
 //specifies flags for mapped page
 #define PAGE_FLAG_USER        0
