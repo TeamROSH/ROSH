@@ -58,6 +58,11 @@ void initialize_paging()
         page_map(g_page_directory, KERNEL_START_ADDR + i * PAGE_SIZE, KERNEL_START_ADDR + i * PAGE_SIZE, PAGE_FLAG_KERNEL | PAGE_FLAG_READWRITE);
     }
 
+	//mapping user mode
+    for(i = 0; i < USER_MODE_SIZE + USER_STACK_SIZE + USER_HEAP_SIZE; i++)
+    {
+        page_map(g_page_directory, USER_MODE_START + i * PAGE_SIZE, USER_MODE_START + i * PAGE_SIZE, PAGE_FLAG_USER | PAGE_FLAG_READWRITE);
+    }
     
     //mapping the video memory into the physical address
     page_map(g_page_directory, VIDEO_MEM_START, VIDEO_MEM_PHYSICAL_ADDR, PAGE_FLAG_READWRITE | PAGE_FLAG_KERNEL);
@@ -66,12 +71,6 @@ void initialize_paging()
     for(i= 0; i < PAGE_TABLE_COUNT; i++)
     {
         page_map(g_page_directory, page_to_address(i), page_to_address(i), PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
-    }
-    
-    //mapping user mode
-    for(i = 0; i < USER_MODE_SIZE; i++)
-    {
-        page_map(g_page_directory, USER_MODE_START + i * PAGE_SIZE, USER_MODE_START + i * PAGE_SIZE, PAGE_FLAG_USER | PAGE_FLAG_READWRITE);
     }
 
     allow_paging();
