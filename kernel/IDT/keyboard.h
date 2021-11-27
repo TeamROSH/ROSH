@@ -81,4 +81,12 @@ char getchar();
 */
 void getline(char* pStr, int size);
 
+
+/*
+	get the correct char to print (Shift + key...)
+	@param c: char got
+	@returns actual char
+*/
+char key_replacement(char c);
+
 #endif

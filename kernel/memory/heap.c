@@ -1,4 +1,5 @@
 #include "heap.h"
+#include "memorylayout.h"
 #include "../../libc/memory.h"
 #define FALSE 0
 #define TRUE !FALSE

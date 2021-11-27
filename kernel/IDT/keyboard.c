@@ -85,14 +85,14 @@ int keyboard_putc(uint8_t input_char)
 			}
 			else if (buffer_size < BUFFER_SIZE)				// if char add one to buffer
 			{
-				buffer[buffer_size] = realValue;
+				buffer[buffer_size] = key_replacement(realValue);
 				buffer_size++;
-				putc(realValue);
+				putc(key_replacement(realValue));
 			}
 		}
 		else
 		{
-			putc(realValue);
+			putc(key_replacement(realValue));
 		}
         return TRUE;
     }
