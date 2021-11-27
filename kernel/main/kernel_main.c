@@ -11,7 +11,9 @@
 */
 void printLogo();
 void kernelShutdown();
-extern void usermode(void);
+
+typedef void usermode_t(void);
+usermode_t* usermode = (usermode_t*)0x7530000;
 
 void main() {
 	gdt_initialize();		// initializing gdt

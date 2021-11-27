@@ -1,5 +1,5 @@
-run: clean_output compile_boot compile_libc compile_kernel qemu
-debug: clean_output compile_boot compile_libc compile_kernel qemu_debug
+run: clean_output compile_boot compile_libc compile_kernel compile_user qemu
+debug: clean_output compile_boot compile_libc compile_kernel compile_user qemu_debug
 
 clean_output:
 	@rm -rf compiled/
@@ -7,6 +7,8 @@ clean_output:
 	@rm -rf objects/
 	@mkdir objects/
 	@mkdir objects/kernel/
+	@mkdir objects/user/
+	@mkdir objects/user/main/
 
 compile_boot:
 	@echo "Compiling boot..."
@@ -40,19 +42,27 @@ compile_kernel:
 	@nasm kernel/IDT/load_idt.s -f elf -o objects/load_idt.o
 	@nasm kernel/GDT/flush_tss.s -f elf -o objects/flush_tss.o
 
-	@i386-elf-gcc -ffreestanding -c user/user_main.c -o objects/user_main.o
-	@i386-elf-gcc -ffreestanding -c user/stdlib.c -o objects/stdlib.o
-	@i386-elf-gcc -ffreestanding -c user/commands.c -o objects/commands.o
-	@nasm user/usermode.s -f elf -o objects/usermode.o
-
 	@i386-elf-ld -o compiled/kernel_main.bin -Ttext 0x6400000 objects/kernel/*.o objects/*.o --oformat binary
+
+compile_user:
+	@i386-elf-gcc -ffreestanding -c user/user_main.c -o objects/user/user_main.o
+	@i386-elf-gcc -ffreestanding -c user/stdlib.c -o objects/user/stdlib.o
+	@i386-elf-gcc -ffreestanding -c user/commands.c -o objects/user/commands.o
+	@i386-elf-gcc -ffreestanding -c user/syscalls/syscalls.c -o objects/user/syscalls.o
+	@nasm user/usermode.s -f elf -o objects/user/main/usermode.o
+	@cp objects/memory.o objects/user/memory.o
+	@cp objects/string.o objects/user/string.o
+
+	@i386-elf-ld -o compiled/user_main.bin -Ttext 0x7530000 objects/user/main/*.o objects/user/*.o --oformat binary
 
 qemu:
 	@echo "Launching..."
 	@cat compiled/boot_sect.bin compiled/kernel_main.bin /dev/zero | head -c 1048576 > rosh.bin
+	@dd bs=1 if=compiled/user_main.bin of=rosh.bin seek=65536 status=none
 	@qemu-system-i386 -drive file=rosh.bin,index=0,format=raw
 
 qemu_debug:
 	@echo "Launching Debug..."
 	@cat compiled/boot_sect.bin compiled/kernel_main.bin /dev/zero | head -c 1048576 > rosh.bin
+	@dd bs=1 if=compiled/user_main.bin of=rosh.bin seek=65536 status=none
 	@qemu-system-i386 -s -S -drive file=rosh.bin,index=0,format=raw

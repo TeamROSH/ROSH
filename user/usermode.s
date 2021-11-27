@@ -1,6 +1,6 @@
-global usermode
-extern umain
-usermode:
+global _start
+_start:
+	[extern umain]
 	mov ax, 0x20 | 3 ; user data segment
 	mov ds, ax
 	mov es, ax 

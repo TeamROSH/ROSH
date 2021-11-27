@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "../libc/memory.h"
 #include "../libc/string.h"
-#include "../kernel/syscalls/syscalls.h"
+#include "syscalls/syscalls.h"
 
 /*
 	Shutdown the system
