@@ -68,6 +68,12 @@ void initialize_paging()
         page_map(g_page_directory, page_to_address(i), page_to_address(i), PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
     }
     
+    //mapping user mode
+    for(i = 0; i < USER_MODE_SIZE; i++)
+    {
+        page_map(g_page_directory, USER_MODE_START + i * PAGE_SIZE, USER_MODE_START + i * PAGE_SIZE, PAGE_FLAG_USER | PAGE_FLAG_READWRITE);
+    }
+
     allow_paging();
 }
 
