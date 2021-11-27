@@ -2,6 +2,7 @@
 #define STRINGH
 
 #define ASCII_NUM_OFFSET 48
+#include <stddef.h>
 
 /*
 	get length of str
@@ -40,4 +41,11 @@ int digits(int num);
 */
 int strncmp(const char* str1, const char* str2, int n);
 
+/*
+	copies value c into str n times
+	@param str: string that will be copied into 
+	@pram c: int value that will be copied
+	@param n: size_t number of compies
+*/
+void memset(void *str, int c, size_t n);
 #endif

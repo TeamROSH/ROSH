@@ -2,6 +2,7 @@
 #define HEAP_H
 
 #include <stdint.h>
+#include "memorylayout.h"
 
 typedef struct HeapNode
 {

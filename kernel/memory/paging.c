@@ -1,5 +1,4 @@
 #include "paging.h"
-
 //array of bytes each bit represents page
 uint8_t g_pages_array[PAGES_COUNT];
 
@@ -31,18 +30,13 @@ void initialize_paging()
 {
     int i = 0;
 
-    for(i = 0; i < PAGES_COUNT; i++)
-    {
-        g_pages_array[i] = 0;
-    }
+    memset(g_pages_array, 0, PAGES_COUNT);
 
-    //mapping page for the page directory
-    update_pages_array(PAGE_DIRECTORY_START,1);
     
-    //mappign pages for the page tale
+    //mappign pages for the page talbes and page directory
     for (i = 0; i< PAGE_TABLE_COUNT; i++)
     {
-        update_pages_array(PAGE_TABLES_START + i, 1);
+        update_pages_array(PAGE_DIRECTORY_START + i, 1);
     }
 
     //converting the page directory into address and initializing the page directory array
@@ -56,42 +50,36 @@ void initialize_paging()
     // load page directory
     load_directory_table(g_page_directory);
 
-    //mapping kernel code as read only memory
-    for( i = 0; i < KERNEL_SOURCE_SIZE; i++)
+    //mapping kernel code and stack and heap as kernel
+    for( i = 0; i < KERNEL_SOURCE_SIZE + KERNEL_STACK_SIZE + KERNEL_HEAP_SIZE; i++)
     {
-        page_map(g_page_directory, KERNEL_START_ADDR + i * PAGE_SIZE, KERNEL_START_ADDR + i * PAGE_SIZE, PAGE_FLAG_KERNEL | PAGE_FLAG_READONLY);
+        page_map(g_page_directory, KERNEL_START_ADDR + i * PAGE_SIZE, KERNEL_START_ADDR + i * PAGE_SIZE, PAGE_FLAG_KERNEL | PAGE_FLAG_READWRITE);
     }
 
-    //mapping kernel stack as readwrite memory
-    for(i = 0;i < KERNEL_STACK_SIZE; i++)
-    {
-        page_map(g_page_directory, KERNEL_STACK_START_ADDR + i * PAGE_SIZE, KERNEL_STACK_START_ADDR + i *PAGE_SIZE, PAGE_FLAG_KERNEL | PAGE_FLAG_READWRITE);
-    }
-
-    for(i = 0; i < KERNEL_HEAP_SIZE; i++)
-    {
-        page_map(g_page_directory, KERNEL_HEAP_START + i * PAGE_SIZE, KERNEL_HEAP_START + i * PAGE_SIZE, PAGE_FLAG_READWRITE | PAGE_FLAG_KERNEL);
-    }
-
+    
     //mapping the video memory into the physical address
     page_map(g_page_directory, VIDEO_MEM_START, VIDEO_MEM_PHYSICAL_ADDR, PAGE_FLAG_READWRITE | PAGE_FLAG_KERNEL);
-
-    //mapping the page directory
-    page_map(g_page_directory, page_to_address(PAGE_DIRECTORY_START), page_to_address(PAGE_DIRECTORY_START), PAGE_FLAG_READWRITE | PAGE_FLAG_KERNEL);
     
-    //mapping the page tables
+    //mapping the page tables and page directory
     for(i= 0; i < PAGE_TABLE_COUNT; i++)
     {
-        page_map(g_page_directory, page_to_address(1 + i), page_to_address(1+ i), PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
+        page_map(g_page_directory, page_to_address(i), page_to_address(i), PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
     }
     
-    //allow_paging();
+    allow_paging();
 }
 
+/*
+    This function maps page into physical address
+    directory: pointer to the paging directory
+    vadd: virtual address
+    padd: physical address 
+    flags: specify the flags that should be set
+*/
 void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags)
 {
-    uint32_t page_num= 0;
-    uint32_t page_table_num = 0;
+    int32_t page_num= 0;
+    int32_t page_table_num = 0;
     page_table* pt;
     
     //getting page and page table number
@@ -131,8 +119,13 @@ void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags
 
     //updatin the page array
     update_pages_array(address_to_page(padd), 1);
+    
 }
 
+/*
+    This function unmaps page from physical address
+    vadd: virtual address
+*/
 void page_unmap(uint32_t vadd)
 {
     uint32_t page_num= 0;
@@ -160,16 +153,29 @@ void page_unmap(uint32_t vadd)
 
 }
 
+/*
+    This function translates physical address to page number
+    address: page physical address
+*/
 uint32_t address_to_page(uint32_t address)
 {
     return (address - PAGES_START_ADDR) / PAGE_SIZE;
 }
 
+/*
+    This function translates page number to physical address
+    page_number: page number
+*/
 uint32_t page_to_address(uint32_t page_number)
 {
     return page_number * PAGE_SIZE + PAGES_START_ADDR;
 }
 
+/*
+    This function updates the pages array due to page alloc or free
+    page_num: the number of the page into the g_pages_array
+    is_on: 0 if alloc 0 if free
+*/
 void update_pages_array(uint32_t page_num, int is_on)
 {
     //getting the byte index into the g_pages_array to be updated
@@ -182,40 +188,73 @@ void update_pages_array(uint32_t page_num, int is_on)
     
 }
 
+/*
+    This function allocates page 
+    retrun:page num
+*/
 uint32_t page_alloc()
 {
-
     uint8_t curr_bit = 0;
+
     for(int i = 0; i < PAGES_COUNT; i++)
     {
         //if there is a space for page to be mapped
         if(g_pages_array[i] != 0xFF)
         {
-            //saving the 
+            //saving the curr pages bit array
             curr_bit= g_pages_array[i];
-            for(int j = 0; j < 8; j++)
+
+            //going through the bits in the bit array
+            for(int j = 0; j < BITS_IN_BYTE; j++)
             {
+                //moving to the next bit
                 curr_bit =(1 << j);
-                if((g_pages_array[i] & curr_bit) == 0)
+                
+                // if an empty bit
+                if(!(g_pages_array[i] & curr_bit))
                 {
+                    //  initializing the page with NULL
+                    memset(page_to_address(curr_bit * BITS_IN_BYTE + j), NULL, PAGE_SIZE);
                     //updating the page_array 
-                    update_pages_array(curr_bit * 8 + j, 1);
+                    update_pages_array(curr_bit * BITS_IN_BYTE + j, 1);
 
                     //returning the page num    
-                    return curr_bit *8 +j;
+                    return curr_bit * BITS_IN_BYTE +j;
                 }
 
             }
         }
     }
+
+    // no pages left and allocation failed returning null
+    return NULL;
 }
 
+/*
+    This function loads the g_page_directory tale into the cr3 register
+    @param directory: the page directory pointer 
+*/
 void load_directory_table(page_directory* directory)
 {
-        asm volatile("mov 0, %eax;");
-        asm volatile("mov %%eax, %%cr3" : : "a" (directory));
+    asm volatile("mov 0, %eax;");
+    asm volatile("mov %%eax, %%cr3" : : "a" (directory));
 }
 
+/*
+    This function initializes the pte
+    table_entry: pointer to the pte
+    address: page physical address
+    present: is present
+    rw: read write or read only
+    us: user or kernel
+    pwt:    nulled
+    pcd:    nulled
+    accessed:   nulled
+    dirty:  nulled
+    pat:    nulled
+    global: nulled
+    avl:    nulled
+*/
 void initialize_page_table_entry(page_table_entry* table_entry,
 uint32_t address,
 uint8_t present,    
@@ -242,6 +281,9 @@ uint8_t avl)
     table_entry->avl = avl;
 }
 
+/*
+    This function changes the cr0 register value in order to allow paging
+*/
 void allow_paging()
 {
 	asm("movl %cr0, %eax");

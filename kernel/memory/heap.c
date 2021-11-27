@@ -120,7 +120,7 @@ void* heap_realloc(Heap* heap, void* addr, uint32_t size)
 
 void initKernelHeap()
 {
-	heap_init(&g_kernelHeap, KERNEL_HEAP_START, KERNEL_HEAP_SIZE);
+	heap_init(&g_kernelHeap, KERNEL_HEAP_START, KERNEL_HEAP_SIZE * PAGE_SIZE);
 }
 
 void* kmalloc(uint32_t size)
