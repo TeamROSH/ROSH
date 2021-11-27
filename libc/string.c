@@ -3,10 +3,11 @@
 void memset(void *str, int c, size_t n)
 {
 	int i = 0;
-
-	for (i = 0; i < n; i++)
+	unsigned char *curr_char = (unsigned char*)str;
+	for (i = 0; i < (int)n; i++)
 	{
-		*str = c;
+		*curr_char = c;
+		curr_char++;
 	}
 }
 

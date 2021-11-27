@@ -2,6 +2,7 @@
 #define STRINGH
 
 #define ASCII_NUM_OFFSET 48
+#include <stddef.h>
 
 /*
 	get length of str

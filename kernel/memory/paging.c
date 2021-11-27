@@ -1,5 +1,4 @@
 #include "paging.h"
-#include "libc/string.h"
 //array of bytes each bit represents page
 uint8_t g_pages_array[PAGES_COUNT];
 
@@ -10,7 +9,7 @@ void allow_paging();
 void load_directory_table(page_directory* directory);
 uint32_t page_to_address(uint32_t page_number);
 uint32_t address_to_page(uint32_t address);
-void page_map(page_directory* directory, uint64_t vadd, uint64_t padd, int flags);
+void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags);
 void page_unmap(uint32_t vadd);
 void update_pages_array(uint32_t page_num, int is_on);
 uint32_t page_alloc();
@@ -57,6 +56,7 @@ void initialize_paging()
         page_map(g_page_directory, KERNEL_START_ADDR + i * PAGE_SIZE, KERNEL_START_ADDR + i * PAGE_SIZE, PAGE_FLAG_KERNEL | PAGE_FLAG_READWRITE);
     }
 
+    
     //mapping the video memory into the physical address
     page_map(g_page_directory, VIDEO_MEM_START, VIDEO_MEM_PHYSICAL_ADDR, PAGE_FLAG_READWRITE | PAGE_FLAG_KERNEL);
     
@@ -66,13 +66,13 @@ void initialize_paging()
         page_map(g_page_directory, page_to_address(i), page_to_address(i), PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
     }
     
-    //allow_paging();
+    allow_paging();
 }
 
-void page_map(page_directory* directory, uint64_t vadd, uint64_t padd, int flags)
+void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags)
 {
-    int64_t page_num= 0;
-    int64_t page_table_num = 0;
+    int32_t page_num= 0;
+    int32_t page_table_num = 0;
     page_table* pt;
     
     //getting page and page table number
@@ -111,10 +111,8 @@ void page_map(page_directory* directory, uint64_t vadd, uint64_t padd, int flags
     0);
 
     //updatin the page array
-    if(!update_pages_array(address_to_page(padd), 1))
-    {
-        //should panic because there is no more free memory
-    }
+    update_pages_array(address_to_page(padd), 1);
+    
 }
 
 void page_unmap(uint32_t vadd)
@@ -238,6 +236,10 @@ uint8_t avl)
 
 void allow_paging()
 {
+    //TODO remove after bug fix
+    //asm("jmp .");
+    //TODO
+
 	asm("movl %cr0, %eax");
     //enabling paging
 	asm("orl $0x80000000, %eax");

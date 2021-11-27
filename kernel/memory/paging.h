@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "memorylayout.h"
+#include "../../libc/string.h"
 
 //specifies flags for mapped page
 #define PAGE_FLAG_USER        0
@@ -14,6 +15,7 @@
 #define PAGE_FLAG_NOCLEAR     0
 #define PAGE_FLAG_CLEAR       8
 
+#define BITS_IN_BYTE 8
 
 typedef struct {
     uint8_t present : 1;    //one bit is entry present
