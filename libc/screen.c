@@ -1,7 +1,7 @@
 #include "screen.h"
 #include "string.h"
 #include "memory.h"
-#include "../kernel/ports.h"
+#include "../kernel/ports/ports.h"
 #include "../kernel/IDT/keyboard.h"
 #include "../kernel/memory/heap.h"
 #define REG_SCREEN_CTRL 0x3d4

@@ -2,6 +2,7 @@
 #define IDT_H
 #include <stdint.h>
 #include "isr.h"
+#include "../syscalls/syscalls.h"
 
 #define IDT_ENTRIES 256
 

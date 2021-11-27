@@ -1,44 +1,35 @@
-#include "../libc/screen.h"
-#include "../libc/system.h"
+#include "../../libc/screen.h"
+#include "../../libc/system.h"
 #include <stdint.h>
-#include "GDT/gdt.h"
-#include "IDT/idt.h"
-#include "memory/paging.h"
-#include "memory/heap.h"
-#include "../user/user_main.h"
+#include "../GDT/gdt.h"
+#include "../IDT/idt.h"
+#include "../memory/paging.h"
+#include "../memory/heap.h"
+#include "../../user/user_main.h"
 
 /*
 	print ROSH logo
 */
 void printLogo();
 void kernelShutdown();
+extern void usermode(void);
 
 void main() {
 	gdt_initialize();		// initializing gdt
 	
 	idt_initialize();		// initializing idt
-	initKernelHeap();		// init heap
+	initKernelHeap();		// init kernel heap
+	initUserHeap();		// init user heap
 	initialize_paging();	// init paging
-	//memset(VIDEO_MEM_START, 0, PAGE_SIZE);
-	/*
-	uint32_t* x = 0x7504001;
-	uint32_t* y = 0x7504000;
-	for(int i = 0; i < 10; i+=2)
-	{
-		*y = 'F';
-		y+= 2;
-		*x = 'X';
-		x+= 2;
-	}*/
 	keyboard_initialize();	// initializing keyboard
-	  initConsole();			// init cursor
-
+	
+	initConsole();			// init cursor
 	printLogo();		// print ROSH
-	putc('a');
-	 getchar();
-	 clearConsole();
 
-	//umain();
+	getchar();
+	clearConsole();
+
+	usermode();
 }
 
 void printLogo()

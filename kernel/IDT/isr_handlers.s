@@ -187,5 +187,5 @@ isr31:
 ; 128 (0x80): System Calls
 isr128:
     push byte 0
-    push byte 0		; sample
+    push byte -0x80
     jmp isr_main
