@@ -51,21 +51,10 @@ void initialize_paging()
     // load page directory
     load_directory_table(g_page_directory);
 
-    //mapping kernel code as read only memory
-    for( i = 0; i < KERNEL_SOURCE_SIZE; i++)
+    //mapping kernel code and stack and heap as kernel
+    for( i = 0; i < KERNEL_SOURCE_SIZE + KERNEL_STACK_SIZE + KERNEL_HEAP_SIZE; i++)
     {
-        page_map(g_page_directory, KERNEL_START_ADDR + i * PAGE_SIZE, KERNEL_START_ADDR + i * PAGE_SIZE, PAGE_FLAG_KERNEL | PAGE_FLAG_READONLY);
-    }
-
-    //mapping kernel stack as readwrite memory
-    for(i = 0;i < KERNEL_STACK_SIZE; i++)
-    {
-        page_map(g_page_directory, KERNEL_STACK_START_ADDR + i * PAGE_SIZE, KERNEL_STACK_START_ADDR + i *PAGE_SIZE, PAGE_FLAG_KERNEL | PAGE_FLAG_READWRITE);
-    }
-
-    for(i = 0; i < KERNEL_HEAP_SIZE; i++)
-    {
-        page_map(g_page_directory, KERNEL_HEAP_START + i * PAGE_SIZE, KERNEL_HEAP_START + i * PAGE_SIZE, PAGE_FLAG_READWRITE | PAGE_FLAG_KERNEL);
+        page_map(g_page_directory, KERNEL_START_ADDR + i * PAGE_SIZE, KERNEL_START_ADDR + i * PAGE_SIZE, PAGE_FLAG_KERNEL | PAGE_FLAG_READWRITE);
     }
 
     //mapping the video memory into the physical address
@@ -122,7 +111,10 @@ void page_map(page_directory* directory, uint64_t vadd, uint64_t padd, int flags
     0);
 
     //updatin the page array
-    update_pages_array(address_to_page(padd), 1);
+    if(!update_pages_array(address_to_page(padd), 1))
+    {
+        //should panic because there is no more free memory
+    }
 }
 
 void page_unmap(uint32_t vadd)
@@ -176,32 +168,40 @@ void update_pages_array(uint32_t page_num, int is_on)
 
 uint32_t page_alloc()
 {
-
     uint8_t curr_bit = 0;
+
     for(int i = 0; i < PAGES_COUNT; i++)
     {
         //if there is a space for page to be mapped
         if(g_pages_array[i] != 0xFF)
         {
-            //saving the 
+            //saving the curr pages bit array
             curr_bit= g_pages_array[i];
-            for(int j = 0; j < 8; j++)
+
+            //going through the bits in the bit array
+            for(int j = 0; j < BITS_IN_BYTE; j++)
             {
+                //moving to the next bit
                 curr_bit =(1 << j);
+                
+                // if an empty bit
                 if(!(g_pages_array[i] & curr_bit))
                 {
                     //  initializing the page with NULL
-                    memset(page_to_address(curr_bit * 8 + j), NULL, PAGE_SIZE);
+                    memset(page_to_address(curr_bit * BITS_IN_BYTE + j), NULL, PAGE_SIZE);
                     //updating the page_array 
-                    update_pages_array(curr_bit * 8 + j, 1);
+                    update_pages_array(curr_bit * BITS_IN_BYTE + j, 1);
 
                     //returning the page num    
-                    return curr_bit *8 +j;
+                    return curr_bit * BITS_IN_BYTE +j;
                 }
 
             }
         }
     }
+
+    // no pages left and allocation failed returning null
+    return NULL;
 }
 
 void load_directory_table(page_directory* directory)
