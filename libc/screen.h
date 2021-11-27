@@ -2,7 +2,9 @@
 #define SCREENH
 
 #include <stdint.h>
-#define SCREEN 0x7504000
+#include "../kernel/memory/memorylayout.h"
+
+#define SCREEN VIDEO_MEM_START
 #define ROWS 25
 #define COLS 80
 

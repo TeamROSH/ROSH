@@ -1,8 +1,4 @@
 #include "user_main.h"
-#include "commands.h"
-#include "../kernel/IDT/keyboard.h"
-#include "../libc/screen.h"
-#include "../libc/string.h"
 #define INPUT_SIZE 41
 
 void callCommand(char* argv, int argc);
@@ -13,9 +9,9 @@ void umain()
 
 	while (1)
 	{
-		puts("\n\n$ ");
-		bflush();		// clear buffer
-		getline(input, INPUT_SIZE);		// get input
+		uputs("\n\n$ ");
+		ubflush();		// clear buffer
+		ugetline(input, INPUT_SIZE);		// get input
 		cmd(input);				// get output
 	}
 }

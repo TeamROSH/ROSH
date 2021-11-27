@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "time.h"
-#include "../ports.h"
+#include "../ports/ports.h"
 #include "../../libc/screen.h"
 
 #define KEYBOARD_INPUT_PORT 0X60

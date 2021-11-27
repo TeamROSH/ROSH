@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "../../libc/screen.h"
-#include "../ports.h"
+#include "../ports/ports.h"
 #include "keyboard.h"
 #include "time.h"
 #define IDT_ENTRIES 256
