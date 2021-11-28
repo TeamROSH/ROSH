@@ -4,6 +4,7 @@ jmp _start
 
 KERNEL_OFFSET equ 0x6400000		; load kernel here
 KERNEL_STACK equ 0x6504FFF
+USER_OFFSET equ 0x7530000		; load user here
 BOOT_DRIVE db 0
 
 ; messages

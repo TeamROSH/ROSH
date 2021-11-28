@@ -1,6 +1,5 @@
-global _start
-_start:
-	[extern umain]
+global usermode
+usermode:
 	mov ax, 0x20 | 3 ; user data segment
 	mov ds, ax
 	mov es, ax 
@@ -12,5 +11,5 @@ _start:
 	push eax ; current esp
 	pushf
 	push 0x18 | 3 ; user code segment
-	push umain ; jump to main usermode function
+	push 0x7530000 ; jump to main usermode function
 	iret

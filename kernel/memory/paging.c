@@ -59,7 +59,7 @@ void initialize_paging()
     }
 
 	//mapping user mode
-    for(i = 0; i < USER_MODE_SIZE + USER_STACK_SIZE + USER_HEAP_SIZE; i++)
+    for(i = 0; i < USER_SOURCE_SIZE + USER_STACK_SIZE + USER_HEAP_SIZE; i++)
     {
         page_map(g_page_directory, USER_MODE_START + i * PAGE_SIZE, USER_MODE_START + i * PAGE_SIZE, PAGE_FLAG_USER | PAGE_FLAG_READWRITE);
     }

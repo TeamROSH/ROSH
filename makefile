@@ -42,6 +42,8 @@ compile_kernel:
 	@nasm kernel/IDT/load_idt.s -f elf -o objects/load_idt.o
 	@nasm kernel/GDT/flush_tss.s -f elf -o objects/flush_tss.o
 
+	@nasm user/usermode.s -f elf -o objects/usermode.o
+
 	@i386-elf-ld -o compiled/kernel_main.bin -Ttext 0x6400000 objects/kernel/*.o objects/*.o --oformat binary
 
 compile_user:
@@ -49,20 +51,23 @@ compile_user:
 	@i386-elf-gcc -ffreestanding -c user/stdlib.c -o objects/user/stdlib.o
 	@i386-elf-gcc -ffreestanding -c user/commands.c -o objects/user/commands.o
 	@i386-elf-gcc -ffreestanding -c user/syscalls/syscalls.c -o objects/user/syscalls.o
-	@nasm user/usermode.s -f elf -o objects/user/main/usermode.o
 	@cp objects/memory.o objects/user/memory.o
 	@cp objects/string.o objects/user/string.o
+
+	@nasm user/usermode_entry.s -f elf -o objects/user/main/usermode_entry.o
 
 	@i386-elf-ld -o compiled/user_main.bin -Ttext 0x7530000 objects/user/main/*.o objects/user/*.o --oformat binary
 
 qemu:
 	@echo "Launching..."
 	@cat compiled/boot_sect.bin compiled/kernel_main.bin /dev/zero | head -c 1048576 > rosh.bin
-	@dd bs=1 if=compiled/user_main.bin of=rosh.bin seek=65536 status=none
+	@dd bs=1 if=compiled/user_main.bin of=rosh.bin seek=41472 status=none
+	@cat /dev/zero | head -c 1048576 >> rosh.bin
 	@qemu-system-i386 -drive file=rosh.bin,index=0,format=raw
 
 qemu_debug:
 	@echo "Launching Debug..."
 	@cat compiled/boot_sect.bin compiled/kernel_main.bin /dev/zero | head -c 1048576 > rosh.bin
-	@dd bs=1 if=compiled/user_main.bin of=rosh.bin seek=65536 status=none
+	@dd bs=1 if=compiled/user_main.bin of=rosh.bin seek=41472 status=none
+	@cat /dev/zero | head -c 1048576 >> rosh.bin
 	@qemu-system-i386 -s -S -drive file=rosh.bin,index=0,format=raw

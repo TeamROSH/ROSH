@@ -1,7 +1,7 @@
 disk_load:
 	pusha   ; save registers
 	
-	mov ax, 127		; load 127 sectors (max)
+	mov ax, 127		; load 127 sectors
 	mov [dapack.count], ax
 
 	mov ax, 0x7E00	; set memory buffer

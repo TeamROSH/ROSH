@@ -21,7 +21,13 @@ init_pm:
 
 	mov edi, KERNEL_OFFSET
     mov esi, 0x7E00   ; kernel source code
-    mov ecx, 0xFE00   ; 127 * 512 bytes
+    mov ecx, 0xA000   ; 80 * 512 bytes
+    rep movsb
+
+	mov edi, USER_OFFSET
+    mov esi, 0x7E00		; user code
+	add esi, 0xA000
+    mov ecx, 0x5E00		; 47 * 512
     rep movsb
 
 	jmp KERNEL_OFFSET		 ; run kernel
