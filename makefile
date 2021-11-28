@@ -50,6 +50,7 @@ compile_user:
 	@i386-elf-gcc -ffreestanding -c user/user_main.c -o objects/user/user_main.o
 	@i386-elf-gcc -ffreestanding -c user/stdlib.c -o objects/user/stdlib.o
 	@i386-elf-gcc -ffreestanding -c user/commands.c -o objects/user/commands.o
+	@i386-elf-gcc -ffreestanding -c user/heap.c -o objects/user/heap.o
 	@i386-elf-gcc -ffreestanding -c user/syscalls/syscalls.c -o objects/user/syscalls.o
 	@cp objects/memory.o objects/user/memory.o
 	@cp objects/string.o objects/user/string.o

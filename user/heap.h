@@ -2,7 +2,7 @@
 #define HEAP_H
 
 #include <stdint.h>
-#include "memorylayout.h"
+#include "../kernel/memory/memorylayout.h"
 
 typedef struct HeapNode
 {
@@ -70,22 +70,22 @@ void heap_free(Heap* heap, void* addr);
 void* heap_realloc(Heap* heap, void* addr, uint32_t size);
 
 /*
-	init the kernel heap
+	init the user heap
 */
-void initKernelHeap();
+void initUserHeap();
 
 /*
 	allocate memory
 	@param size: the size of memory
 	@returns pointer to the memory
 */
-void* kmalloc(uint32_t size);
+void* umalloc(uint32_t size);
 
 /*
 	free allocated memory
 	@param addr: address to free
 */
-void kfree(void* addr);
+void ufree(void* addr);
 
 /*
 	re-allocate memory
@@ -93,6 +93,6 @@ void kfree(void* addr);
 	@param size: the size of memory
 	@returns pointer to the memory
 */
-void* krealloc(void* ptr, uint32_t size);
+void* urealloc(void* ptr, uint32_t size);
 
 #endif

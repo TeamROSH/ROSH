@@ -5,8 +5,9 @@ void callCommand(char* argv, int argc);
 
 void umain()
 {
-	char input[INPUT_SIZE] = {0};
+	initUserHeap();		// init the usermode heap
 
+	char input[INPUT_SIZE] = {0};
 	while (1)
 	{
 		uputs("\n\n$ ");

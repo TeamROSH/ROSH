@@ -19,7 +19,6 @@ void main() {
 	
 	idt_initialize();		// initializing idt
 	initKernelHeap();		// init kernel heap
-	initUserHeap();		// init user heap
 	initialize_paging();	// init paging
 	keyboard_initialize();	// initializing keyboard
 	

@@ -55,31 +55,3 @@ void ugetline(char* pStr, int size)
 	params[1] = (uint32_t)size;
 	syscall(G_INPUT, F_GETLINE, params, 2);
 }
-
-void* umalloc(uint32_t size)
-{
-	void* res;
-	uint32_t params[2];
-	params[0] = (uint32_t)&res;
-	params[1] = (uint32_t)size;
-	syscall(G_MEMORY, F_MALLOC, params, 2);
-	return res;
-}
-
-void* urealloc(void* ptr, uint32_t size)
-{
-	void* res;
-	uint32_t params[3];
-	params[0] = (uint32_t)&res;
-	params[1] = (uint32_t)&ptr;
-	params[2] = (uint32_t)size;
-	syscall(G_MEMORY, F_REALLOC, params, 3);
-	return res;
-}
-
-void ufree(void* addr)
-{
-	uint32_t params[1];
-	params[0] = (uint32_t)addr;
-	syscall(G_MEMORY, F_FREE, params, 1);
-}

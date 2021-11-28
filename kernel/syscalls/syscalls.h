@@ -17,11 +17,6 @@
 	#define F_GETLINE	1
 	#define F_BFLUSH	2
 
-#define G_MEMORY	3
-	#define F_MALLOC	0
-	#define F_REALLOC	1
-	#define F_FREE		2
-
 /*
 	Syscall handler (Ring 0)
 */

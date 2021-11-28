@@ -82,28 +82,4 @@ void syscall_handler(registers_t* registers)
 			}
 		}
 	}
-	else if (group == G_MEMORY)
-	{
-		if (function == F_MALLOC)
-		{
-			if (n == 2)
-			{
-				*((void**)(params[0])) = k_umalloc((int)(params[1]));
-			}
-		}
-		else if (function == F_REALLOC)
-		{
-			if (n == 3)
-			{
-				*((void**)(params[0])) = k_urealloc((void*)params[1],(int)(params[2]));
-			}
-		}
-		else if (function == F_FREE)
-		{
-			if (n == 1)
-			{
-				k_ufree((void*)params[0]);
-			}
-		}
-	}
 }

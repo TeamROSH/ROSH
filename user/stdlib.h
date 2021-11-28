@@ -5,6 +5,7 @@
 #include "../libc/memory.h"
 #include "../libc/string.h"
 #include "syscalls/syscalls.h"
+#include "heap.h"
 
 /*
 	Shutdown the system
@@ -53,26 +54,5 @@ void ubflush();
 	@param size: size of requested string
 */
 void ugetline(char* pStr, int size);
-
-/*
-	allocate memory
-	@param size: the size of memory
-	@returns pointer to the memory
-*/
-void* umalloc(uint32_t size);
-
-/*
-	free allocated memory
-	@param addr: address to free
-*/
-void ufree(void* addr);
-
-/*
-	re-allocate memory
-	@param ptr: pointer to the memory needed re-allocation
-	@param size: the size of memory
-	@returns pointer to the memory
-*/
-void* urealloc(void* ptr, uint32_t size);
 
 #endif

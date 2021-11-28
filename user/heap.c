@@ -1,13 +1,12 @@
 #include "heap.h"
-#include "memorylayout.h"
-#include "../../libc/memory.h"
+#include "stdlib.h"
 #define FALSE 0
 #define TRUE !FALSE
 #define CHECKSUM 0x552F60B2
 #define NULL 0
 #define min(a, b) ((a) < (b) ? (a) : (b))
 
-Heap g_kernelHeap;
+Heap g_userHeap;
 
 void heap_init(Heap* heap, uint32_t base, uint32_t size)
 {
@@ -118,22 +117,22 @@ void* heap_realloc(Heap* heap, void* addr, uint32_t size)
 	}
 }
 
-void initKernelHeap()
+void initUserHeap()
 {
-	heap_init(&g_kernelHeap, KERNEL_HEAP_START, KERNEL_HEAP_SIZE * PAGE_SIZE);
+	heap_init(&g_userHeap, USER_HEAP_START, USER_HEAP_SIZE * PAGE_SIZE);
 }
 
-void* kmalloc(uint32_t size)
+void* umalloc(uint32_t size)
 {
-	return heap_malloc(&g_kernelHeap, size);
+	return heap_malloc(&g_userHeap, size);
 }
 
-void kfree(void* addr)
+void ufree(void* addr)
 {
-	heap_free(&g_kernelHeap, addr);
+	heap_free(&g_userHeap, addr);
 }
 
-void* krealloc(void* ptr, uint32_t size)
+void* urealloc(void* ptr, uint32_t size)
 {
-	heap_realloc(&g_kernelHeap, ptr, size);
+	heap_realloc(&g_userHeap, ptr, size);
 }
