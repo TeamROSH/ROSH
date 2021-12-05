@@ -109,11 +109,11 @@ void* heap_realloc(Heap* heap, void* addr, uint32_t size)
 		return node->data;				// return same node
 	else
 	{
+		heap_free(heap, node->data);		// free old memory
 		void* data = heap_malloc(heap, size);		// allocate new node
 		if (data == NULL)			// if failed allocating
 			return NULL;
 		memcpy(data, node->data, min(node->dataSize, size));		// copy memory
-		heap_free(heap, node->data);		// free old memory
 		return data;		// return new address
 	}
 }

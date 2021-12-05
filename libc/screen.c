@@ -315,7 +315,7 @@ void scrollScreen(int direction)
 	{
 		linesUp++;		// move rows up
 		screenTrackerUp = (char*)krealloc(screenTrackerUp, linesUp * SCROLL_COLS);
-		memcpy(screenTrackerUp + (linesUp - 1) * SCROLL_COLS, screen, SCROLL_COLS);
+		// memcpy(screenTrackerUp + (linesUp - 1) * SCROLL_COLS, screen, SCROLL_COLS);			// <-- Page Fault
 		memcpy(screen, screen + SCROLL_COLS, (ROWS - 1) * SCROLL_COLS);		// order ok
 
 		if (linesDown > 0)
