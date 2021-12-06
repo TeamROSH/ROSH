@@ -24,7 +24,10 @@ typedef struct process_context_block{
     uint32_t process_state;          // the process state
     uint8_t is_kernel;              // kernel or user process
     page_table* pt                  // the process page table
-    uint32_t* stack                 // stack pointer
+    uint32_t* stack                 // stack base pointer
+    uint32_t* stack_top             // stack top pointer
+    uint32_t* data                  // data pointer
+    uint32_t data_size              // data size
     uint32_t  stack_size            //  curr stack size
     }process_context_block;
 
