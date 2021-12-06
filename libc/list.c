@@ -18,6 +18,8 @@ list* create_list()
 node* create_node(void* data)
 {
     node* new_node = (node*)heap_malloc(&g_kernelHeap, sizeod(node));
+    
+    // assigning data
     new_node->data = data;
     new_node->next = NULL;
     new_node->prev = NULL;
@@ -37,36 +39,25 @@ node* insert_head(list* list, void* data)
         }
     }
 
-    node* new_node = (node*)heap_malloc(&g_kernelHeap, sizeof(node));
+    node* new_node = create_node(data);
     // if no more kernel heap space
     if(new_node == NULL)
     {
         retrun NULL;
     }
 
-    // assigning data
-    new_node->data = data;
+    // making nodes pointing to each other
+    new_node->next = list->head;
+    list->head->prev = new_node;
 
-    //if empty list
-    if(list->size == 0)
+    //  if empry list
+    if(list->size == NULL)
     {
-
-        list->head = new_node;
         list->tail = new_node;
     }
-    // at least one node
-    else
-    {
-        // setting next and prev to the new node
-        new_node->next = list->tail;
-        new_node->prev = list->head;
 
-
-        list->head->next = new_node;
-        list->tail->prev = new_node;
-        list->head = new_node;
-    }
-
+    list->head = new_node;
+    
     // inc list size
     list->size = list->size + 1;
 
@@ -86,36 +77,27 @@ node* insert_tail(list* list, void* data)
         }
     }
 
-    node* new_node = (node*)heap_malloc(&g_kernelHeap, sizeof(node));
+    node* new_node = create_node(data);
     // if no more kernel heap space
     if(new_node == NULL)
     {
         retrun NULL;
     }
 
-    // assigning data
-    new_node->data = data;
+    // making nodes pointing to each other
+    new_node->prev = list->tail;
+    list->tail->next = new_node;
 
-    //if empty list
-    if(list->size == 0)
+    //  if empty list
+    if(list->size == NULL)
     {
         list->head = new_node;
-        list->tail = new_node;
-    }
-    // at least one node
-    else
-    {
-    list->head->next = new_node;
-    list->tail->prev = new_node;
-    list->head = new_node;
     }
 
-    // setting next and prev to the new node
-    new_node->next = list->tail;
-    new_node->prev = list->head;
-
+    list->tail = new_node;
+    
     // inc list size
     list->size = list->size + 1;
 
-    return new_node;
+    return new_node;    
 }
