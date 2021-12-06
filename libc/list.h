@@ -1,6 +1,7 @@
 #ifndef LIST_H
 #define LIST_H
 #include "../kernel/memory/heap.h"
+#include "memory.h"
 
 typedef struct node
 {
@@ -45,5 +46,17 @@ node* insert_head(list* list, void* data);
     @retruns a pointer to the new node 
 */
 node* insert_tail(list* list, void* data);
+
+/*
+    This function deletes a node from list
+    @param list: the list that the node will be deleted from
+    @param node: the node that willbe deleted
+*/
+void delete_node(list* list, node* node);
+
+/*
+
+*/
+node* delete_node_at_pos(list* list, int pos);
 
 #endif

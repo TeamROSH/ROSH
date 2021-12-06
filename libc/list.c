@@ -1,10 +1,12 @@
 #include "list.h"
 
+extern Heap g_kernelHeap;
 
 list* create_list();
 node* create_node(void* data);
 node* insert_head(list* list, void* data);
 node* insert_tail(list* list, void* data);
+void delete_node(list* list, node* node);
 
 list* create_list()
 {
@@ -100,4 +102,44 @@ node* insert_tail(list* list, void* data)
     list->size = list->size + 1;
 
     return new_node;    
+}
+
+void delete_node(list* list, node* node)
+{
+    // invalid values
+    if(list == NULL ||node == NULL)
+    {
+        return;
+    }   
+
+    // if node isn't head
+    if(list->head != node)
+    {
+        node->prev->next = node->next;
+    }
+
+    // if node isn't tail 
+    if(list->tail != node)
+    {
+        node->next->prev = node->prev;
+    }
+
+
+    // if deleted node is the head
+    if(list->head == node)
+    {
+        list->head = node->next;
+    }
+
+    // if deleted node is the tail
+    if(list->tail == node)
+    {
+        list->tail = node->prev;
+    }
+
+    // deleting node
+    memset(node, 0, sizeof(node));
+    heap_free(&g_kernelHeap, node);
+    node = NULL;
+
 }
