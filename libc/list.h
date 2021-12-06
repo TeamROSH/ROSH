@@ -55,8 +55,10 @@ node* insert_tail(list* list, void* data);
 void delete_node(list* list, node* node);
 
 /*
-
+    This function deletes the node at pos (from the head)
+    @param pos: the deleted node pos
+    @param list: the list that the node will be deleted from
 */
-node* delete_node_at_pos(list* list, int pos);
+void delete_node_at_pos(list* list, int pos);
 
 #endif

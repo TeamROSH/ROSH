@@ -7,6 +7,7 @@ node* create_node(void* data);
 node* insert_head(list* list, void* data);
 node* insert_tail(list* list, void* data);
 void delete_node(list* list, node* node);
+void delete_node_at_pos(list* list, int pos);
 
 list* create_list()
 {
@@ -107,7 +108,7 @@ node* insert_tail(list* list, void* data)
 void delete_node(list* list, node* node)
 {
     // invalid values
-    if(list == NULL ||node == NULL)
+    if(list == NULL || node == NULL)
     {
         return;
     }   
@@ -142,4 +143,28 @@ void delete_node(list* list, node* node)
     heap_free(&g_kernelHeap, node);
     node = NULL;
 
+}
+
+void delete_node_at_pos(list* list, int pos)
+{
+    int i =0;
+    // invalid arguments
+    if(pos >= list->size || list == NULL || pos <= 0)
+    {
+        return;
+    }
+    node* curr_node = list->head;
+
+    // oing through the nodes
+    while(i < pos && curr_node != NULL)
+    {
+        curr_node = curr_node->next;
+        i++;
+    }
+
+    // deleting the curr node
+    if(curr_node != NULL)
+    {
+        delete_node(list, curr_node);
+    }
 }
