@@ -14,7 +14,7 @@
 #define PROCESS_DEAD 8      
 #define PROCESS_ZOMBI 16    //idle
 
-#define NUM_MAX_PROCESS 1024    // there is a limited amount of pages
+#define MAX_PROCESS 1024    // there is a limited amount of pages
 
 
 typedef struct process_context_block{
@@ -32,3 +32,9 @@ typedef struct process_context_block{
     }process_context_block;
 
 #endif
+
+/*
+    This function generates pid
+    @returns the new pid
+*/
+int generate_pid();
