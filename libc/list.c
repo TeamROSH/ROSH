@@ -25,9 +25,22 @@ node* insert_head(list* list, void* data)
     // assigning data
     new_node->data = data;
 
-    //
+    //if empty list
+    if(list->size == 0)
+    {
+        list->head = new_node;
+        list->tail = new_node;
+    }
+    else
+    {
     list->head->next = new_node;
+    list->tail->prev = new_node;
     list->head = new_node;
+    }
+
+    new_node->next = list->tail;
+    new_node->prev = list->head;
     list->size = list->size + 1;
-    
+
+    return new_node;    
 }
