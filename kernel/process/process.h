@@ -60,3 +60,9 @@ void initialize_process_regs(process_context_block* pcb);
     @param file name: the elf file name 
 */
 void load_process_code(process_context_block* pcb, char* file_name);
+
+/*
+    This function unmap the process pages and frees the process context block
+    @param pcb: the process context block
+*/
+void kill_process(process_context_block* pcb);
