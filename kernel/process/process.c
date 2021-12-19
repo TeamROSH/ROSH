@@ -12,6 +12,7 @@ uint32_t g_curr_process_base;
 process_context_block* create_process(int is_kernel);
 int generate_pid();
 void initialize_process_regs(process_context_block* pcb);
+void load_process_code(process_context_block* pcb, char* file_name);
 
 
 process_context_block* create_process(int is_kernel, char[PROCESS_NAME] process_name)
@@ -21,14 +22,24 @@ process_context_block* create_process(int is_kernel, char[PROCESS_NAME] process_
     pcb->is_kernel = is_kernel;
     pcb->pid = generate_pid();
     memcpy(pcb->name, process_name, PROCESS_NAME);
-    pcb->process_base = g_curr_process;
-    pcb->process_top = g_curr_process + PAGE_SIZE * 20;
-    pcb->reg.esp = 0x100000;
+    initialize_process_regs(pcb);
     
     //mapping stack
-    pcb->stack = 0x100000;
-    uint32_t* stackPhy = page_to_address(page_alloc());
-    page_map(g_page_directory, stack, stackPhy, PAGE_FLAG_READWRITE | PAGE_FLAG_EXISTS | is_kernel);
+    pcb->process_pages[1] = page_to_address(page_alloc());
+    pcb->process_pages[0] = page_to_address(page_alloc());
+    pcb->stack_base = pcb->process_pages[0];
+
+    // allocating apace for heap
+    for(int i =2; i < 5; i ++)
+    {
+        pcb->process_pages[i] = page_to_address(page_alloc());
+    }
+    
+    // crating heap object 
+    heap_init(pcb->process_heap, pcb->process_pages[2], PAGE_SIZE * 3);
+
+
+    load_process_code(pcb, process_name);
 
     pcb->process_state = PROCESS_CREATED;
 
@@ -58,4 +69,11 @@ void initialize_process_regs(process_context_block* pcb)
     pcb->reg.esi = 0;
     pcb->reg.edi = 0;
     pcb->reg.eflags = 518;
+}
+
+void load_process_code(process_context_block* pcb, char* file_name)
+{
+    // TODO
+    // will be implemented when elf end file system will be implemented 
+    // TODO
 }

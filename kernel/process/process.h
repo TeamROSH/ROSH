@@ -6,6 +6,7 @@
 #include "../memory/paging.h"
 #include "../../libc/list.h"
 #include "../../libc/memory.h"
+#include "../heap.h"
 
 #define PROCESS_NAME 512
 
@@ -26,11 +27,9 @@ typedef struct process_context_block{
     registers_t reg;                // curr process reg values
     uint32_t process_state;          // the process state
     uint8_t is_kernel;              // kernel or user process
-    page_table* pt;                  // the process page table
-    uint32_t memory_pages[MAX_PROCESS_PAGES];
-    uint32_t process_base;
-    uint32_t process_top;
-    uint32_t stack; 
+    uint32_t process_pages[MAX_PROCESS_PAGES];
+    uint32_t stack_base;
+    Heap process_heap;
     }process_context_block;
 
 #endif
@@ -54,3 +53,10 @@ int generate_pid();
     @param pcb: process_context_block pointer
 */
 void initialize_process_regs(process_context_block* pcb);
+
+/*
+    This function will get the elf file and load it's  content into the process pages and  update the pcb registers
+    @param pcb: the process context block
+    @param file name: the elf file name 
+*/
+void load_process_code(process_context_block* pcb, char* file_name);
