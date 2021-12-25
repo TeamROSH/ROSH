@@ -3,13 +3,18 @@
 #include "../libc/memory.h"
 
 uint8_t buffer[512];
-Superblock superblock;
+Superblock s;
+Superblock* superblock = &s;
 
 void init_fs()
 {
 	read_sectors((uint32_t)buffer, FS_SECTOR, 1);		// read Superblock
 	Superblock* temp = (Superblock*)buffer;
-	if (temp->checksum != FS_EXISTS)		// if fs exists
+	if (temp->checksum == FS_EXISTS)		// if fs exists
+	{
+		memcpy(superblock, buffer, sizeof(Superblock));
+	}
+	else
 	{
 		temp->inodes_num = DISK_SECTOR;
 		temp->blocks_num = DISK_SECTOR * 7;
@@ -19,45 +24,52 @@ void init_fs()
 		temp->inodes = temp->bitmaps + 1;
 		temp->blocks = temp->inodes + temp->inodes_num / (DISK_SECTOR / temp->inode_size);
 
-		for (int i = 0; i < (temp->inodes_num + temp->blocks_num) / 8; i++)
-			temp->bitmaps[i] = 0;
-
 		write_sectors(buffer, FS_SECTOR, 1);		// write new Superblock
+		memcpy(superblock, buffer, sizeof(Superblock));
+
+		for (int i = 0; i < DISK_SECTOR; i++)
+			buffer[i] = 0;
+		write_sectors(buffer, superblock->bitmaps, 1);		// init empty bitmap
 	}
-	memcpy(&superblock, buffer, sizeof(Superblock));
 }
 
 int take_inode()
 {
+	read_sectors(buffer, superblock->bitmaps, 1);		// read bitmap
 	int found = -1;
-	for (int i = 0; i < superblock->inodes_num; i++)
+	for (int i = 0; i < superblock->inodes_num; i++)		// for every inode
 	{
-		uint8_t bit = superblock->inode_bitmap[i / 8] >> (i % 8);
-		if (bit % 2 == 0)
+		uint8_t bit = buffer[i / 8] << (i % 8);		// get its bit in bitmap
+		if (bit % 2 == 0)		// if not taken
 		{
 			found = i;
 			uint8_t temp = 1;
-			temp >>= (i % 8);
-			superblock->inode_bitmap[i / 8] |= temp;
+			temp <<= (i % 8);
+			buffer[i / 8] |= temp;		// take it
+			break;
 		}
 	}
+	write_sectors(buffer, superblock->bitmaps, 1);		// write bitmap back
 	return found;
 }
 
 int take_block()
 {
+	read_sectors(buffer, superblock->bitmaps, 1);		// read bitmap
 	int found = -1;
-	for (int i = 0; i < superblock->blocks_num; i++)
+	for (int i = 0; i < superblock->blocks_num; i++)		// for every inode
 	{
-		uint8_t bit = superblock->block_bitmap[i / 8] >> (i % 8);
-		if (bit % 2 == 0)
+		uint8_t bit = buffer[64 + i / 8] << (i % 8);		// get its bit in bitmap
+		if (bit % 2 == 0)		// if not taken
 		{
 			found = i;
 			uint8_t temp = 1;
-			temp >>= (i % 8);
-			superblock->block_bitmap[i / 8] |= temp;
+			temp <<= (i % 8);
+			buffer[64 + i / 8] |= temp;		// take it
+			break;
 		}
 	}
+	write_sectors(buffer, superblock->bitmaps, 1);		// write bitmap back
 	return found;
 }
 

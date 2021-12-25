@@ -23,9 +23,9 @@ typedef struct Inode
 typedef struct Superblock
 {
 	uint32_t checksum;
-	uint8_t* bitmaps;
-	Inode* inodes;
-	Block* blocks;
+	uint32_t bitmaps;
+	uint32_t inodes;
+	uint32_t blocks;
 	uint32_t inodes_num;
 	uint32_t blocks_num;
 	uint32_t inode_size;
