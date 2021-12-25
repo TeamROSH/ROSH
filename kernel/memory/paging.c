@@ -63,12 +63,6 @@ void initialize_paging()
     {
         page_map(g_page_directory, USER_MODE_START + i * PAGE_SIZE, USER_MODE_START + i * PAGE_SIZE, PAGE_FLAG_USER | PAGE_FLAG_READWRITE);
     }
-
-	//mapping temp fs
-    for(i = 0; i < TEMP_FS_SIZE; i++)
-    {
-        page_map(g_page_directory, TEMP_FS + i * PAGE_SIZE, TEMP_FS + i * PAGE_SIZE, PAGE_FLAG_KERNEL | PAGE_FLAG_READWRITE);
-    }
     
     //mapping the video memory into the physical address
     page_map(g_page_directory, VIDEO_MEM_START, VIDEO_MEM_PHYSICAL_ADDR, PAGE_FLAG_READWRITE | PAGE_FLAG_KERNEL);

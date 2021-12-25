@@ -64,7 +64,7 @@ compile_user:
 build:
 ifeq (,$(wildcard ./rosh.bin))
 	@echo "Drive not found. Creating..."
-	@cat /dev/zero | head -c 2097152 > rosh.bin
+	@cat /dev/zero | head -c 4194304 > rosh.bin
 else
 	@echo "Drive found."
 endif

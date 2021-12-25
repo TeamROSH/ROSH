@@ -1,23 +1,30 @@
 #include "fs.h"
-#include "../kernel/memory/memorylayout.h"
+#include "../kernel/ports/ata_pio.h"
+#include "../libc/memory.h"
 
-Superblock* superblock = (Superblock*)TEMP_FS;
+uint8_t buffer[512];
+Superblock superblock;
 
 void init_fs()
 {
-	superblock->inodes_num = 64;
-	superblock->blocks_num = 64;
-	superblock->inode_size = sizeof(Inode);
-	superblock->block_size = 512;
-	superblock->inode_bitmap = (void*)(TEMP_FS + sizeof(Superblock));
-	superblock->block_bitmap = (void*)(superblock->inode_bitmap + superblock->inodes_num / 8);
-	superblock->inodes = (void*)(superblock->block_bitmap + superblock->blocks_num / 8);
-	superblock->blocks = (void*)(superblock->inodes + superblock->inodes_num * superblock->inode_size);
+	read_sectors((uint32_t)buffer, FS_SECTOR, 1);		// read Superblock
+	Superblock* temp = (Superblock*)buffer;
+	if (temp->checksum != FS_EXISTS)		// if fs exists
+	{
+		temp->inodes_num = DISK_SECTOR;
+		temp->blocks_num = DISK_SECTOR * 7;
+		temp->inode_size = sizeof(Inode);
+		temp->block_size = sizeof(Block);
+		temp->bitmaps = FS_SECTOR + 1;
+		temp->inodes = temp->bitmaps + 1;
+		temp->blocks = temp->inodes + temp->inodes_num / (DISK_SECTOR / temp->inode_size);
 
-	for (int i = 0; i < superblock->inodes_num / 8; i++)
-		superblock->inode_bitmap[i] = 0;
-	for (int i = 0; i < superblock->blocks_num / 8; i++)
-		superblock->block_bitmap[i] = 0;
+		for (int i = 0; i < (temp->inodes_num + temp->blocks_num) / 8; i++)
+			temp->bitmaps[i] = 0;
+
+		write_sectors(buffer, FS_SECTOR, 1);		// write new Superblock
+	}
+	memcpy(&superblock, buffer, sizeof(Superblock));
 }
 
 int take_inode()

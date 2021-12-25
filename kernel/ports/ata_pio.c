@@ -10,7 +10,7 @@
 
 static void ATA_wait_BSY();
 static void ATA_wait_DRQ();
-void read_sectors_ATA_PIO(uint32_t target_address, uint32_t LBA, uint8_t sector_count)
+void read_sectors(uint32_t target_address, uint32_t LBA, uint8_t sector_count)
 {
 	asm volatile("cli");
 	
@@ -36,7 +36,7 @@ void read_sectors_ATA_PIO(uint32_t target_address, uint32_t LBA, uint8_t sector_
 	asm volatile("sti");
 }
 
-void write_sectors_ATA_PIO(uint32_t LBA, uint8_t sector_count, uint32_t* bytes)
+void write_sectors_ATA_PIO(uint32_t target_address, uint32_t LBA, uint8_t sector_count)
 {
 	asm volatile("cli");
 	
@@ -48,13 +48,15 @@ void write_sectors_ATA_PIO(uint32_t LBA, uint8_t sector_count, uint32_t* bytes)
 	outb(0x1F5, (uint8_t)(LBA >> 16)); 
 	outb(0x1F7,0x30); //Send the write command
 
+	uint16_t *target = (uint16_t*) target_address;
+
 	for (int j =0;j<sector_count;j++)
 	{
 		ATA_wait_BSY();
 		ATA_wait_DRQ();
 		for(int i=0;i<256;i++)
 		{
-			outw(0x1F0, bytes[i]);
+			outw(0x1F0, target[i]);
 		}
 	}
 
