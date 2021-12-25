@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "../kernel/memory/memorylayout.h"
 
-#define SCREEN VIDEO_MEM_START
+#define SCREEN VIDEO_MEM_START		// VIDEO_MEM_PHYSICAL_ADDR
 #define ROWS 25
 #define COLS 80
 

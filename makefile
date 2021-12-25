@@ -25,6 +25,7 @@ compile_kernel:
 	@echo "Compiling kernel..."
 	@i386-elf-gcc -ffreestanding -c kernel/main/kernel_main.c -o objects/kernel/kernel_main.o
 	@i386-elf-gcc -ffreestanding -c kernel/ports/ports.c -o objects/ports.o
+	@i386-elf-gcc -ffreestanding -c kernel/ports/ata_pio.c -o objects/ata_pio.o
 	@i386-elf-gcc -ffreestanding -c kernel/memory/paging.c -o objects/paging.o
 	@i386-elf-gcc -ffreestanding -c kernel/GDT/gdt.c -o objects/gdt.o
 	@i386-elf-gcc -ffreestanding -c kernel/GDT/tss.c -o objects/tss.o
@@ -35,7 +36,7 @@ compile_kernel:
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/isr.c -o objects/isr.o
 	@i386-elf-gcc -ffreestanding -c kernel/syscalls/syscalls.c -o objects/syscalls.o
 	@i386-elf-gcc -ffreestanding -c kernel/memory/heap.c -o objects/heap.o
-	@i386-elf-gcc -ffreestanding -c fs/fs.c -o objects/heap.o
+	@i386-elf-gcc -ffreestanding -c fs/fs.c -o objects/fs.o
 
 	@nasm kernel/main/kernel_entry.s -f elf -o objects/kernel/kernel_entry.o
 	@nasm kernel/IDT/interrupt_main.s -f elf -o objects/interrupt_main.o

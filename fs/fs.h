@@ -5,7 +5,7 @@
 
 typedef struct Block
 {
-	void data[512];
+	uint8_t data[512];
 } Block;
 
 typedef struct Inode
@@ -17,8 +17,8 @@ typedef struct Inode
 
 typedef struct Superblock
 {
-	void* inode_bitmap;
-	void* block_bitmap;
+	uint8_t* inode_bitmap;
+	uint8_t* block_bitmap;
 	Inode* inodes;
 	Block* blocks;
 	uint32_t inodes_num;
@@ -30,7 +30,7 @@ typedef struct Superblock
 /*
 	init a temporary file system
 */
-void* init_fs();
+void init_fs();
 
 /*
 	create a folder

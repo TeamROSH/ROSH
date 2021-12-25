@@ -5,6 +5,7 @@
 #include "../IDT/idt.h"
 #include "../memory/paging.h"
 #include "../memory/heap.h"
+#include "../ports/ata_pio.h"
 
 /*
 	print ROSH logo
@@ -24,6 +25,9 @@ void main() {
 	
 	initConsole();			// init cursor
 	printLogo();		// print ROSH
+
+	char buffer[512] = {0};
+	read_sectors_ATA_PIO((uint32_t)buffer, 0x0, 1);
 
 	getchar();
 	clearConsole();

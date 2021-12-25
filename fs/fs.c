@@ -25,13 +25,13 @@ int take_inode()
 	int found = -1;
 	for (int i = 0; i < superblock->inodes_num; i++)
 	{
-		uint8_t bit = superblock->inodes_num[i / 8] >> (i % 8);
+		uint8_t bit = superblock->inode_bitmap[i / 8] >> (i % 8);
 		if (bit % 2 == 0)
 		{
 			found = i;
 			uint8_t temp = 1;
 			temp >>= (i % 8);
-			superblock->inodes_num[i / 8] |= temp;
+			superblock->inode_bitmap[i / 8] |= temp;
 		}
 	}
 	return found;
@@ -42,19 +42,19 @@ int take_block()
 	int found = -1;
 	for (int i = 0; i < superblock->blocks_num; i++)
 	{
-		uint8_t bit = superblock->blocks_num[i / 8] >> (i % 8);
+		uint8_t bit = superblock->block_bitmap[i / 8] >> (i % 8);
 		if (bit % 2 == 0)
 		{
 			found = i;
 			uint8_t temp = 1;
 			temp >>= (i % 8);
-			superblock->blocks_num[i / 8] |= temp;
+			superblock->block_bitmap[i / 8] |= temp;
 		}
 	}
 	return found;
 }
 
-void create_folder()
+void create_folder(char* path)
 {
 	int inode_num = take_inode();
 	if (inode_num == -1)

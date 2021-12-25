@@ -40,3 +40,5 @@ void irq_handler(registers_t* registers)
     }
 
 }
+
+void empty_irq(registers_t* registers){}
