@@ -1,5 +1,5 @@
-run: clean_output compile_boot compile_libc compile_kernel compile_user qemu
-debug: clean_output compile_boot compile_libc compile_kernel compile_user qemu_debug
+run: clean_output compile_boot compile_libc compile_kernel compile_user build qemu
+debug: clean_output compile_boot compile_libc compile_kernel compile_user build qemu_debug
 
 clean_output:
 	@rm -rf compiled/
@@ -61,16 +61,21 @@ compile_user:
 
 	@i386-elf-ld -o compiled/user_main.bin -Ttext 0x7530000 objects/user/main/*.o objects/user/*.o --oformat binary
 
+build:
+ifeq (,$(wildcard ./rosh.bin))
+	@echo "Drive not found. Creating..."
+	@cat /dev/zero | head -c 2097152 > rosh.bin
+else
+	@echo "Drive found."
+endif
+	@dd bs=1 seek=0 status=none < compiled/boot_sect.bin 1<> rosh.bin
+	@dd bs=1 seek=512 status=none < compiled/kernel_main.bin 1<> rosh.bin
+	@dd bs=1 seek=41472 status=none < compiled/user_main.bin 1<> rosh.bin
+
 qemu:
 	@echo "Launching..."
-	@cat compiled/boot_sect.bin compiled/kernel_main.bin /dev/zero | head -c 1048576 > rosh.bin
-	@dd bs=1 if=compiled/user_main.bin of=rosh.bin seek=41472 status=none
-	@cat /dev/zero | head -c 1048576 >> rosh.bin
 	@qemu-system-i386 -drive file=rosh.bin,index=0,format=raw
 
 qemu_debug:
 	@echo "Launching Debug..."
-	@cat compiled/boot_sect.bin compiled/kernel_main.bin /dev/zero | head -c 1048576 > rosh.bin
-	@dd bs=1 if=compiled/user_main.bin of=rosh.bin seek=41472 status=none
-	@cat /dev/zero | head -c 1048576 >> rosh.bin
 	@qemu-system-i386 -s -S -drive file=rosh.bin,index=0,format=raw
