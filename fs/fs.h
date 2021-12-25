@@ -17,7 +17,7 @@ typedef struct Inode
 	uint32_t folder;	// 0 - file, 1 - folder
 	uint32_t reserved;
 	uint32_t size;		// file size
-	Block* block;
+	uint32_t block;
 } Inode;
 
 typedef struct Superblock
