@@ -36,7 +36,7 @@ void read_sectors(uint32_t target_address, uint32_t LBA, uint8_t sector_count)
 	asm volatile("sti");
 }
 
-void write_sectors_ATA_PIO(uint32_t target_address, uint32_t LBA, uint8_t sector_count)
+void write_sectors(uint32_t target_address, uint32_t LBA, uint8_t sector_count)
 {
 	asm volatile("cli");
 	

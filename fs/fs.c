@@ -3,17 +3,17 @@
 #include "../libc/memory.h"
 #include "../libc/string.h"
 
-uint8_t buffer[DISK_SECTOR + 1];
+uint8_t disk_buffer[DISK_SECTOR + 1];
 Superblock s;
 Superblock* superblock = &s;
 char dir[200] = {0};
 
-void getPath(char* path);
+int getPath(char* path);
 int take_inode();
 int take_block();
 void release_inode(int inode);
 void release_block(int block);
-int followPath(char* path_parts, int size);
+int followPath(char* path_parts, int size, int prev);
 Inode* getInode(int inode_num);
 Block* getBlock(int block_num);
 void writeInode(int inode_num);
@@ -22,12 +22,12 @@ void addInodeToFolder(char* path, int inode_num);
 
 void init_fs()
 {
-	read_sectors((uint32_t)buffer, FS_SECTOR, 1);		// read Superblock
-	Superblock* temp = (Superblock*)buffer;
+	read_sectors((uint32_t)disk_buffer, FS_SECTOR, 1);		// read Superblock
+	Superblock* temp = (Superblock*)disk_buffer;
 	dir[0] = '/';
 	if (temp->checksum == FS_EXISTS)		// if fs exists
 	{
-		memcpy(superblock, buffer, sizeof(Superblock));
+		memcpy(superblock, disk_buffer, sizeof(Superblock));
 	}
 	else
 	{
@@ -39,80 +39,82 @@ void init_fs()
 		temp->inodes = temp->bitmaps + 1;
 		temp->blocks = temp->inodes + temp->inodes_num / (DISK_SECTOR / temp->inode_size);
 
-		write_sectors(buffer, FS_SECTOR, 1);		// write new Superblock
-		memcpy(superblock, buffer, sizeof(Superblock));
+		write_sectors((uint32_t)disk_buffer, FS_SECTOR, 1);		// write new Superblock
+		memcpy(superblock, disk_buffer, sizeof(Superblock));
 
 		for (int i = 0; i < DISK_SECTOR; i++)
-			buffer[i] = 0;
-		write_sectors(buffer, superblock->bitmaps, 1);		// init empty bitmap
+			disk_buffer[i] = 0;
+		write_sectors((uint32_t)disk_buffer, superblock->bitmaps, 1);		// init empty bitmap
+
+		create_folder("/");
 	}
 }
 
 int take_inode()
 {
-	read_sectors(buffer, superblock->bitmaps, 1);		// read bitmap
+	read_sectors((uint32_t)disk_buffer, superblock->bitmaps, 1);		// read bitmap
 	int found = -1;
 	for (int i = 0; i < superblock->inodes_num; i++)		// for every inode
 	{
-		uint8_t bit = buffer[i / 8] << (i % 8);		// get its bit in bitmap
+		uint8_t bit = disk_buffer[i / 8] << (i % 8);		// get its bit in bitmap
 		if (bit % 2 == 0)		// if not taken
 		{
 			found = i;
 			uint8_t temp = 1;
 			temp <<= (i % 8);
-			buffer[i / 8] |= temp;		// take it
+			disk_buffer[i / 8] |= temp;		// take it
 			break;
 		}
 	}
-	write_sectors(buffer, superblock->bitmaps, 1);		// write bitmap back
+	write_sectors((uint32_t)disk_buffer, superblock->bitmaps, 1);		// write bitmap back
 	return found;
 }
 
 void release_inode(int inode)
 {
-	read_sectors(buffer, superblock->bitmaps, 1);		// read bitmap
-	uint8_t bit = buffer[inode / 8] << (inode % 8);		// get its bit in bitmap
+	read_sectors((uint32_t)disk_buffer, superblock->bitmaps, 1);		// read bitmap
+	uint8_t bit = disk_buffer[inode / 8] << (inode % 8);		// get its bit in bitmap
 	if (bit % 2 == 1)		// if taken
 	{
 		uint8_t temp = 1;
 		temp <<= (inode % 8);
 		temp ^= 0xFF;
-		buffer[inode / 8] &= temp;		// release it
+		disk_buffer[inode / 8] &= temp;		// release it
 	}
-	write_sectors(buffer, superblock->bitmaps, 1);		// write bitmap back
+	write_sectors((uint32_t)disk_buffer, superblock->bitmaps, 1);		// write bitmap back
 }
 
 void release_block(int block)
 {
-	read_sectors(buffer, superblock->bitmaps, 1);		// read bitmap
-	uint8_t bit = buffer[64 + block / 8] << (block % 8);		// get its bit in bitmap
+	read_sectors((uint32_t)disk_buffer, superblock->bitmaps, 1);		// read bitmap
+	uint8_t bit = disk_buffer[64 + block / 8] << (block % 8);		// get its bit in bitmap
 	if (bit % 2 == 1)		// if taken
 	{
 		uint8_t temp = 1;
 		temp <<= (block % 8);
 		temp ^= 0xFF;
-		buffer[64 + block / 8] &= temp;		// release it
+		disk_buffer[64 + block / 8] &= temp;		// release it
 	}
-	write_sectors(buffer, superblock->bitmaps, 1);		// write bitmap back
+	write_sectors((uint32_t)disk_buffer, superblock->bitmaps, 1);		// write bitmap back
 }
 
 int take_block()
 {
-	read_sectors(buffer, superblock->bitmaps, 1);		// read bitmap
+	read_sectors((uint32_t)disk_buffer, superblock->bitmaps, 1);		// read bitmap
 	int found = -1;
 	for (int i = 0; i < superblock->blocks_num; i++)		// for every inode
 	{
-		uint8_t bit = buffer[64 + i / 8] << (i % 8);		// get its bit in bitmap
+		uint8_t bit = disk_buffer[64 + i / 8] << (i % 8);		// get its bit in bitmap
 		if (bit % 2 == 0)		// if not taken
 		{
 			found = i;
 			uint8_t temp = 1;
 			temp <<= (i % 8);
-			buffer[64 + i / 8] |= temp;		// take it
+			disk_buffer[64 + i / 8] |= temp;		// take it
 			break;
 		}
 	}
-	write_sectors(buffer, superblock->bitmaps, 1);		// write bitmap back
+	write_sectors((uint32_t)disk_buffer, superblock->bitmaps, 1);		// write bitmap back
 	return found;
 }
 
@@ -207,11 +209,11 @@ int followPath(char* path_parts, int size, int prev)
 
 	getBlock(inode->block);
 
-	buffer[data_size] = 0;
-	int lines = split(buffer, '\n');
+	disk_buffer[data_size] = 0;
+	int lines = split(disk_buffer, '\n');
 	for (int i = 0; i < lines; i++)
 	{
-		const char* line = getArg(buffer, lines, i);		// compare every line
+		const char* line = getArg(disk_buffer, lines, i);		// compare every line
 		int j = 0, flag = 1;
 		while(line[j] != ',' && flag)
 		{
@@ -228,24 +230,24 @@ int followPath(char* path_parts, int size, int prev)
 
 Inode* getInode(int inode_num)
 {
-	read_sectors(buffer, superblock->inodes + inode_num / (DISK_SECTOR / superblock->inode_size), 1);		// get inode
-	return (Inode*)(buffer + (inode_num % (DISK_SECTOR / superblock->inode_size)) * superblock->inode_size);
+	read_sectors((uint32_t)disk_buffer, superblock->inodes + inode_num / (DISK_SECTOR / superblock->inode_size), 1);		// get inode
+	return (Inode*)(disk_buffer + (inode_num % (DISK_SECTOR / superblock->inode_size)) * superblock->inode_size);
 }
 
 Block* getBlock(int block_num)
 {
-	read_sectors(buffer, superblock->blocks + block_num, 1);		// get inode
-	return (Block*)(buffer);
+	read_sectors((uint32_t)disk_buffer, superblock->blocks + block_num, 1);		// get inode
+	return (Block*)(disk_buffer);
 }
 
 void writeInode(int inode_num)
 {
-	write_sectors(buffer, superblock->inodes + inode_num / (DISK_SECTOR / superblock->inode_size), 1);
+	write_sectors((uint32_t)disk_buffer, superblock->inodes + inode_num / (DISK_SECTOR / superblock->inode_size), 1);
 }
 
 void writeBlock(int block_num)
 {
-	write_sectors(buffer, superblock->blocks + block_num, 1);
+	write_sectors((uint32_t)disk_buffer, superblock->blocks + block_num, 1);
 }
 
 void addInodeToFolder(char* path, int inode_num)
@@ -267,13 +269,13 @@ void addInodeToFolder(char* path, int inode_num)
 	writeInode(prev);
 	
 	getBlock(dir_block);			// update block data
-	memcpy(buffer[data_size], name, strlen(name));
+	memcpy(disk_buffer + data_size, name, strlen(name));
 	data_size += strlen(name);
-	buffer[data_size] = ',';
+	disk_buffer[data_size] = ',';
 	data_size++;
-	memcpy(buffer[data_size], inode_str, strlen(inode_str));
+	memcpy(disk_buffer + data_size, inode_str, strlen(inode_str));
 	data_size += strlen(inode_str);
-	buffer[data_size] = '\n';
+	disk_buffer[data_size] = '\n';
 	data_size++;
 	writeBlock(dir_block);
 }

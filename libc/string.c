@@ -1,4 +1,5 @@
 #include "string.h"
+#define NULL 0
 
 int strlen(const char* str)
 {

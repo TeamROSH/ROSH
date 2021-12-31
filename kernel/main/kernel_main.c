@@ -5,7 +5,6 @@
 #include "../IDT/idt.h"
 #include "../memory/paging.h"
 #include "../memory/heap.h"
-#include "../ports/ata_pio.h"
 
 /*
 	print ROSH logo
