@@ -5,18 +5,6 @@
 #define FALSE 0
 #define TRUE !FALSE
 
-const char* getArg(const char* argv, int argc, int argNum)
-{
-	if (argNum >= argc)		// prevent buffer overflow
-		return NULL;
-	const char* res = argv;
-	for (int i = 0; i < argNum; i++)		// run until wanted argument reached
-	{
-		res += strlen(res) + 1;		// next argument
-	}
-	return res;
-}
-
 void grep(char* argv, int argc)
 {
 	/*char *token = NULL;

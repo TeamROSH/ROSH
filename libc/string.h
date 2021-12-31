@@ -40,4 +40,21 @@ int digits(int num);
 */
 int strncmp(const char* str1, const char* str2, int n);
 
+/*
+	split string by char. accessed by getArg function
+	@param str: the string
+	@param devidor: the char devidor
+	@returns number of parts created
+*/
+int split(char* str, char devidor);
+
+/*
+	get arguments from splitted string
+	@param argv: splitted string
+	@param argc: value returned from split
+	@param argNum: equivalent of str[argNum]
+	@returns string in array index argNum
+*/
+const char* getArg(const char* argv, int argc, int argNum);
+
 #endif

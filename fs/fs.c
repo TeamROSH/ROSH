@@ -3,17 +3,17 @@
 #include "../libc/memory.h"
 #include "../libc/string.h"
 
-uint8_t buffer[512];
+uint8_t buffer[DISK_SECTOR + 1];
 Superblock s;
 Superblock* superblock = &s;
 char dir[200] = {0};
 
 void getPath(char* path);
-const char* getArg(const char* argv, int argc, int argNum);
 int take_inode();
 int take_block();
 void release_inode(int inode);
 void release_block(int block);
+int followPath(char* path_parts, int size);
 
 void init_fs()
 {
@@ -77,7 +77,7 @@ void release_inode(int inode)
 	write_sectors(buffer, superblock->bitmaps, 1);		// write bitmap back
 }
 
-void release_inode(int block)
+void release_block(int block)
 {
 	read_sectors(buffer, superblock->bitmaps, 1);		// read bitmap
 	uint8_t bit = buffer[64 + block / 8] << (block % 8);		// get its bit in bitmap
@@ -126,7 +126,7 @@ void create_folder(char* path)
 	int block_num = take_block();
 	if (block_num == -1)
 	{
-		// TODO: release inode
+		release_inode(inode_num);
 		return;
 	}
 	inode->block = block_num;
@@ -149,7 +149,7 @@ void create_file(char* path)
 	int block_num = take_block();
 	if (block_num == -1)
 	{
-		// TODO: release inode
+		release_inode(inode_num);
 		return;
 	}
 	inode->block = block_num;
@@ -176,28 +176,47 @@ int getPath(char* path)
 		real[strlen_dir - 1] = '/';
 		memcpy(real + strlen_dir, path, strlen(path));
 	}
-	int counter = 1;
-	int strlen_real = strlen(real);			// split by /
-	for (int i = 0; i < strlen_real; i++)
-	{
-		if (real[i] == '/')
-		{
-			real[i] = 0;
-			counter++;
-		}
-	}
+	int counter = split(real, '/');
 	memcpy(path, real, strlen_real + 1);
 	return counter;
 }
 
-const char* getArg(const char* argv, int argc, int argNum)
+/*
+	get last inode in path
+	@param path_parts: the path
+	@param size: number of parts in path
+	@param prev: prev node. set to 0.
+	@returns last inode
+*/
+int followPath(char* path_parts, int size, int prev)
 {
-	if (argNum >= argc)		// prevent buffer overflow
-		return NULL;
-	const char* res = argv;
-	for (int i = 0; i < argNum; i++)		// run until wanted argument reached
+	if (size == 0)		// inode 0 is "/" folder
+		return prev;
+	
+	read_sectors(buffer, superblock->inodes + prev / (DISK_SECTOR / temp->inode_size), 1);		// get inode
+	Inode* inode = (Inode*)(buffer + (prev % (DISK_SECTOR / temp->inode_size)) * superblock->inode_size);
+	int data_size = inode->size;
+
+	if (!inode->folder)		// if file - return it
+		return prev;
+
+	read_sectors(buffer, superblock->blocks + inode->block);		// get block
+
+	buffer[data_size] = 0;
+	int lines = split(buffer, '\n');
+	for (int i = 0; i < lines; i++)
 	{
-		res += strlen(res) + 1;		// next argument
+		const char* line = getArg(buffer, lines, i);		// compare every line
+		int j = 0, flag = 1;
+		while(line[j] != ',' && flag)
+		{
+			flag = line[j] == path_parts[j];
+			j++;
+		}
+		if (flag && path_parts[j] == 0)		// if equal
+		{
+			return followPath(path_parts + strlen(path_parts) + 1, size - 1, atoi(line + j + 1));
+		}
 	}
-	return res;
+	return -1;
 }
