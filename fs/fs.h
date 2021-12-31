@@ -45,6 +45,6 @@ void create_folder(char* path);
 /*
 	create a file
 */
-void create_file(char* name);
+void create_file(char* path);
 
 #endif

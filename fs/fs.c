@@ -96,17 +96,25 @@ void create_folder(char* path)
 	write_sectors(buffer, superblock->inodes + inode_num / (DISK_SECTOR / temp->inode_size), 1);
 }
 
-void create_file(char* name)
+void create_file(char* path)
 {
 	int inode_num = take_inode();
 	if (inode_num == -1)
 		return;
-	Inode* inode = (Inode*)(superblock->inodes + inode_num);
+
+	read_sectors(buffer, superblock->inodes + inode_num / (DISK_SECTOR / temp->inode_size), 1);
+
+	Inode* inode = (Inode*)(buffer + (inode_num % (DISK_SECTOR / temp->inode_size)) * superblock->inode_size);
 	inode->folder = 0;
 	inode->size = 0;
 	
 	int block_num = take_block();
 	if (block_num == -1)
+	{
+		// TODO: release inode
 		return;
-	inode->block = (Block*)(superblock->blocks + block_num);
+	}
+	inode->block = block_num;
+
+	write_sectors(buffer, superblock->inodes + inode_num / (DISK_SECTOR / temp->inode_size), 1);
 }
