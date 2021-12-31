@@ -63,6 +63,6 @@ const char* getArg(const char* argv, int argc, int argNum);
 	@param c: the char
 	@returns index of the char
 */
-int strfind(char* str, char c);
+int strfind(const char* str, char c);
 
 #endif

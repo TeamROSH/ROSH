@@ -87,7 +87,7 @@ const char* getArg(const char* argv, int argc, int argNum)
 	return res;
 }
 
-int strfind(char* str, char c)
+int strfind(const char* str, char c)
 {
 	for (int i = 0; i < strlen(str); i++)
 		if (str[i] == c)

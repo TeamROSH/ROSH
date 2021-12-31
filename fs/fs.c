@@ -182,7 +182,7 @@ void create_file(char* path)
 */
 int getPath(char* path)
 {
-	int counter = split(path + 1, '/');
+	int counter = strsplit(path + 1, '/');
 	return counter;
 }
 
@@ -207,7 +207,7 @@ int followPath(char* path_parts, int size, int prev)
 	getBlock(inode->block);
 
 	disk_buffer[data_size] = 0;
-	int lines = split(disk_buffer, '\n');
+	int lines = strsplit(disk_buffer, '\n');
 	for (int i = 0; i < lines; i++)
 	{
 		const char* line = getArg(disk_buffer, lines, i);		// compare every line
@@ -247,7 +247,7 @@ void writeBlock(int block_num)
 	write_sectors((uint32_t)disk_buffer, superblock->blocks + block_num, 1);
 }
 
-void addInodeToFolder(char* path, int inode_num)
+int addInodeToFolder(char* path, int inode_num)
 {
 	int parts = getPath(path);		// split path
 	int prev = followPath(path, parts, 0);		// check if exists
