@@ -14,6 +14,10 @@ int take_block();
 void release_inode(int inode);
 void release_block(int block);
 int followPath(char* path_parts, int size);
+Inode* getInode(int inode_num);
+Block* getBlock(int block_num);
+void writeInode(int inode_num);
+void writeBlock(int block_num);
 
 void init_fs()
 {
@@ -113,17 +117,15 @@ int take_block()
 
 void create_folder(char* path)
 {
-	int inode_num = take_inode();
+	int inode_num = take_inode();		// allocate inode
 	if (inode_num == -1)
 		return;
 
-	read_sectors(buffer, superblock->inodes + inode_num / (DISK_SECTOR / temp->inode_size), 1);
-
-	Inode* inode = (Inode*)(buffer + (inode_num % (DISK_SECTOR / temp->inode_size)) * superblock->inode_size);
+	Inode* inode = getInode(inode_num);
 	inode->folder = 1;
 	inode->size = 0;
 	
-	int block_num = take_block();
+	int block_num = take_block();		// allocate block
 	if (block_num == -1)
 	{
 		release_inode(inode_num);
@@ -131,7 +133,34 @@ void create_folder(char* path)
 	}
 	inode->block = block_num;
 
-	write_sectors(buffer, superblock->inodes + inode_num / (DISK_SECTOR / temp->inode_size), 1);
+	writeInode(inode_num);
+
+	char temp[400] = {0};
+	memcpy(temp, path, strlen(path));
+	int parts = getPath(temp);		// split path
+	int prev = followPath(temp, parts - 1, 0);		// get containing dir inode
+	if (prev == -1)
+		return;
+	inode = getInode(prev);
+
+	const char* name = getArg(temp, parts, parts - 1);		// update containing dir size
+	int data_size = inode->size;
+	char inode_str[3] = {0};
+	itoa(inode_num, inode_str);
+	inode->size += strlen(name) + 1 + strlen(inode_str) + 1;
+	int dir_block = inode->block;
+	writeInode(prev);
+	
+	getBlock(dir_block);			// update block data
+	memcpy(buffer[data_size], name, strlen(name));
+	data_size += strlen(name);
+	buffer[data_size] = ',';
+	data_size++;
+	memcpy(buffer[data_size], inode_str, strlen(inode_str));
+	data_size += strlen(inode_str);
+	buffer[data_size] = '\n';
+	data_size++;
+	writeBlock(dir_block);
 }
 
 void create_file(char* path)
@@ -140,9 +169,7 @@ void create_file(char* path)
 	if (inode_num == -1)
 		return;
 
-	read_sectors(buffer, superblock->inodes + inode_num / (DISK_SECTOR / temp->inode_size), 1);
-
-	Inode* inode = (Inode*)(buffer + (inode_num % (DISK_SECTOR / temp->inode_size)) * superblock->inode_size);
+	Inode* inode = getInode(inode_num);
 	inode->folder = 0;
 	inode->size = 0;
 	
@@ -154,7 +181,7 @@ void create_file(char* path)
 	}
 	inode->block = block_num;
 
-	write_sectors(buffer, superblock->inodes + inode_num / (DISK_SECTOR / temp->inode_size), 1);
+	writeInode(inode_num);
 }
 
 /*
@@ -176,8 +203,9 @@ int getPath(char* path)
 		real[strlen_dir - 1] = '/';
 		memcpy(real + strlen_dir, path, strlen(path));
 	}
-	int counter = split(real, '/');
-	memcpy(path, real, strlen_real + 1);
+	int strlen_real = strlen(real);
+	int counter = split(real + 1, '/');
+	memcpy(path, real + 1, strlen_real - 1);
 	return counter;
 }
 
@@ -193,14 +221,13 @@ int followPath(char* path_parts, int size, int prev)
 	if (size == 0)		// inode 0 is "/" folder
 		return prev;
 	
-	read_sectors(buffer, superblock->inodes + prev / (DISK_SECTOR / temp->inode_size), 1);		// get inode
-	Inode* inode = (Inode*)(buffer + (prev % (DISK_SECTOR / temp->inode_size)) * superblock->inode_size);
+	Inode* inode = getInode(prev);
 	int data_size = inode->size;
 
 	if (!inode->folder)		// if file - return it
 		return prev;
 
-	read_sectors(buffer, superblock->blocks + inode->block);		// get block
+	getBlock(inode->block);
 
 	buffer[data_size] = 0;
 	int lines = split(buffer, '\n');
@@ -219,4 +246,26 @@ int followPath(char* path_parts, int size, int prev)
 		}
 	}
 	return -1;
+}
+
+Inode* getInode(int inode_num)
+{
+	read_sectors(buffer, superblock->inodes + inode_num / (DISK_SECTOR / superblock->inode_size), 1);		// get inode
+	return (Inode*)(buffer + (inode_num % (DISK_SECTOR / superblock->inode_size)) * superblock->inode_size);
+}
+
+Block* getBlock(int block_num)
+{
+	read_sectors(buffer, superblock->blocks + block_num, 1);		// get inode
+	return (Block*)(buffer);
+}
+
+void writeInode(int inode_num)
+{
+	write_sectors(buffer, superblock->inodes + inode_num / (DISK_SECTOR / superblock->inode_size), 1);
+}
+
+void writeBlock(int block_num)
+{
+	write_sectors(buffer, superblock->blocks + block_num, 1);
 }
