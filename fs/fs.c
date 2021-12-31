@@ -3,6 +3,7 @@
 #include "../kernel/memory/heap.h"
 #include "../libc/memory.h"
 #include "../libc/string.h"
+#include "../libc/screen.h"
 
 uint8_t disk_buffer[DISK_SECTOR + 1];
 Superblock s;
@@ -183,7 +184,7 @@ void create_file(char* path)
 int getPath(char* path)
 {
 	int counter = strsplit(path + 1, '/');
-	return counter;
+	return counter == 1 ? 0 : counter;
 }
 
 /*
@@ -205,7 +206,6 @@ int followPath(char* path_parts, int size, int prev)
 		return prev;
 
 	getBlock(inode->block);
-
 
 	disk_buffer[data_size] = 0;
 	int lines = strsplit(disk_buffer, '\n');

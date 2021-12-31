@@ -5,6 +5,13 @@
 #define FALSE 0
 #define TRUE !FALSE
 
+char dir[200] = {0};
+
+void init_commands()
+{
+	dir[0] = '/';
+}
+
 void grep(char* argv, int argc)
 {
 	/*char *token = NULL;
@@ -223,3 +230,49 @@ void bc(char* argv, int argc)
 	ufree(nums);
 	ufree(cExp);
 }
+
+void ls(char* argv, int argc)
+{
+	char path[200] = {0};
+	memcpy(path, dir, strlen(dir));
+	if (argc == 2)
+	{
+		const char* rel = getArg(argv, argc, 1);
+		if (rel[0] == '/')
+			memcpy(path, rel, strlen(rel));
+		else{
+			memcpy(path + strlen(dir) + 1, rel, strlen(rel));
+			path[strlen(dir)] = '/';
+		}
+	}
+	else if (argc > 2)
+	{
+		uputs("Invalid syntax. Try \'help ls\'.");
+		return;
+	}
+	int size = ufile_size(path);
+
+	if (size > 0)	
+	{
+		char* data = (char*)umalloc(size + 1);
+		uread_file(path, data);
+		data[size] = 0;
+		int lines = strsplit(data, '\n');
+		for (int i = 0; i < lines; i++)
+		{
+			const char* line = getArg(data, lines, i);
+			const int len = strfind(line, ',');
+			for (int j = 0; j < len; j++)
+				uputc(line[j]);
+			uputc('\n');
+		}
+		ufree(data);
+	}
+}
+
+void pwd(char* argv, int argc){}
+void cd(char* argv, int argc){}
+void cat(char* argv, int argc){}
+void rm(char* argv, int argc){}
+void touch(char* argv, int argc){}
+void mkdir(char* argv, int argc){}

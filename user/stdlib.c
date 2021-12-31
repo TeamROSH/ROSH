@@ -83,7 +83,7 @@ int ufile_type(char* path)
 	uint32_t params[2];
 	params[0] = (uint32_t)path;
 	params[1] = (uint32_t)&res;
-	syscall(G_FS, F_FS_EXISTS, params, 2);
+	syscall(G_FS, F_FS_TYPE, params, 2);
 }
 
 int uread_file(char* path, char* res)
@@ -113,4 +113,5 @@ int ufile_size(char* path)
 	params[0] = (uint32_t)path;
 	params[1] = (uint32_t)&res;
 	syscall(G_FS, F_FS_SIZE, params, 2);
+	return res;
 }

@@ -15,6 +15,8 @@ typedef void (*command)(char* argv, int argc);
 	@returns pointer to requested argument
 */
 
+void init_commands();
+
 void echo(char* argv, int argc);
 
 void color(char* argv, int argc);
