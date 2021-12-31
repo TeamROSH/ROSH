@@ -6,7 +6,6 @@
 uint8_t disk_buffer[DISK_SECTOR + 1];
 Superblock s;
 Superblock* superblock = &s;
-char dir[200] = {0};
 
 int getPath(char* path);
 int take_inode();
@@ -18,13 +17,12 @@ Inode* getInode(int inode_num);
 Block* getBlock(int block_num);
 void writeInode(int inode_num);
 void writeBlock(int block_num);
-void addInodeToFolder(char* path, int inode_num);
+int addInodeToFolder(char* path, int inode_num);
 
 void init_fs()
 {
 	read_sectors((uint32_t)disk_buffer, FS_SECTOR, 1);		// read Superblock
 	Superblock* temp = (Superblock*)disk_buffer;
-	dir[0] = '/';
 	if (temp->checksum == FS_EXISTS)		// if fs exists
 	{
 		memcpy(superblock, disk_buffer, sizeof(Superblock));
@@ -138,7 +136,12 @@ void create_folder(char* path)
 
 	writeInode(inode_num);
 
-	addInodeToFolder(path, inode_num);
+	if (!addInodeToFolder(path, inode_num))
+	{
+		release_inode(inode_num);
+		release_block(block_num);
+		return;
+	}
 }
 
 void create_file(char* path)
@@ -161,31 +164,22 @@ void create_file(char* path)
 
 	writeInode(inode_num);
 
-	addInodeToFolder(path, inode_num);
+	if (!addInodeToFolder(path, inode_num))
+	{
+		release_inode(inode_num);
+		release_block(block_num);
+		return;
+	}
 }
 
 /*
 	get path parts
-	@param path: path to split and return value (size >= 400)
+	@param path: path to split and return value
 	@returns number of parts
 */
 int getPath(char* path)
 {
-	char real[400] = {0};
-	if (path[0] == '/')		// connect paths
-	{
-		memcpy(real, path + 1, strlen(path) - 1);
-	}
-	else
-	{
-		int strlen_dir = strlen(dir);
-		memcpy(real, dir + 1, strlen_dir - 1);
-		real[strlen_dir - 1] = '/';
-		memcpy(real + strlen_dir, path, strlen(path));
-	}
-	int strlen_real = strlen(real);
-	int counter = split(real + 1, '/');
-	memcpy(path, real + 1, strlen_real - 1);
+	int counter = split(path + 1, '/');
 	return counter;
 }
 
@@ -252,15 +246,16 @@ void writeBlock(int block_num)
 
 void addInodeToFolder(char* path, int inode_num)
 {
-	char temp[400] = {0};
-	memcpy(temp, path, strlen(path));
-	int parts = getPath(temp);		// split path
-	int prev = followPath(temp, parts - 1, 0);		// get containing dir inode
-	if (prev == -1)
-		return;
+	int parts = getPath(path);		// split path
+	int prev = followPath(path, parts, 0);		// check if exists
+	if (prev != -1)		// if exists
+		return 0;
+	prev = followPath(path, parts - 1, 0);		// get containing dir inode
+	if (prev == -1)		// if not exists
+		return 0;
 	Inode* inode = getInode(prev);
 
-	const char* name = getArg(temp, parts, parts - 1);		// update containing dir size
+	const char* name = getArg(path, parts, parts - 1);		// update containing dir size
 	int data_size = inode->size;
 	char inode_str[3] = {0};
 	itoa(inode_num, inode_str);
@@ -278,4 +273,12 @@ void addInodeToFolder(char* path, int inode_num)
 	disk_buffer[data_size] = '\n';
 	data_size++;
 	writeBlock(dir_block);
+
+	return 1;
+}
+
+int file_exists(char* path)
+{
+	int parts = getPath(path);		// split path
+	return followPath(path, parts, 0) != -1;
 }

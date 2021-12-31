@@ -33,7 +33,7 @@ typedef struct Superblock
 } Superblock;
 
 /*
-	init a temporary file system
+	init a file system
 */
 void init_fs();
 
@@ -46,5 +46,10 @@ void create_folder(char* path);
 	create a file
 */
 void create_file(char* path);
+
+/*
+	check if file exists
+*/
+int file_exists(char* path);
 
 #endif
