@@ -10,6 +10,10 @@ char dir[200] = {0};
 
 void getPath(char* path);
 const char* getArg(const char* argv, int argc, int argNum);
+int take_inode();
+int take_block();
+void release_inode(int inode);
+void release_block(int block);
 
 void init_fs()
 {
@@ -57,6 +61,34 @@ int take_inode()
 	}
 	write_sectors(buffer, superblock->bitmaps, 1);		// write bitmap back
 	return found;
+}
+
+void release_inode(int inode)
+{
+	read_sectors(buffer, superblock->bitmaps, 1);		// read bitmap
+	uint8_t bit = buffer[inode / 8] << (inode % 8);		// get its bit in bitmap
+	if (bit % 2 == 1)		// if taken
+	{
+		uint8_t temp = 1;
+		temp <<= (inode % 8);
+		temp ^= 0xFF;
+		buffer[inode / 8] &= temp;		// release it
+	}
+	write_sectors(buffer, superblock->bitmaps, 1);		// write bitmap back
+}
+
+void release_inode(int block)
+{
+	read_sectors(buffer, superblock->bitmaps, 1);		// read bitmap
+	uint8_t bit = buffer[64 + block / 8] << (block % 8);		// get its bit in bitmap
+	if (bit % 2 == 1)		// if taken
+	{
+		uint8_t temp = 1;
+		temp <<= (block % 8);
+		temp ^= 0xFF;
+		buffer[64 + block / 8] &= temp;		// release it
+	}
+	write_sectors(buffer, superblock->bitmaps, 1);		// write bitmap back
 }
 
 int take_block()
