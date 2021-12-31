@@ -18,6 +18,7 @@ Inode* getInode(int inode_num);
 Block* getBlock(int block_num);
 void writeInode(int inode_num);
 void writeBlock(int block_num);
+void addInodeToFolder(char* path, int inode_num);
 
 void init_fs()
 {
@@ -135,32 +136,7 @@ void create_folder(char* path)
 
 	writeInode(inode_num);
 
-	char temp[400] = {0};
-	memcpy(temp, path, strlen(path));
-	int parts = getPath(temp);		// split path
-	int prev = followPath(temp, parts - 1, 0);		// get containing dir inode
-	if (prev == -1)
-		return;
-	inode = getInode(prev);
-
-	const char* name = getArg(temp, parts, parts - 1);		// update containing dir size
-	int data_size = inode->size;
-	char inode_str[3] = {0};
-	itoa(inode_num, inode_str);
-	inode->size += strlen(name) + 1 + strlen(inode_str) + 1;
-	int dir_block = inode->block;
-	writeInode(prev);
-	
-	getBlock(dir_block);			// update block data
-	memcpy(buffer[data_size], name, strlen(name));
-	data_size += strlen(name);
-	buffer[data_size] = ',';
-	data_size++;
-	memcpy(buffer[data_size], inode_str, strlen(inode_str));
-	data_size += strlen(inode_str);
-	buffer[data_size] = '\n';
-	data_size++;
-	writeBlock(dir_block);
+	addInodeToFolder(path, inode_num);
 }
 
 void create_file(char* path)
@@ -182,6 +158,8 @@ void create_file(char* path)
 	inode->block = block_num;
 
 	writeInode(inode_num);
+
+	addInodeToFolder(path, inode_num);
 }
 
 /*
@@ -268,4 +246,34 @@ void writeInode(int inode_num)
 void writeBlock(int block_num)
 {
 	write_sectors(buffer, superblock->blocks + block_num, 1);
+}
+
+void addInodeToFolder(char* path, int inode_num)
+{
+	char temp[400] = {0};
+	memcpy(temp, path, strlen(path));
+	int parts = getPath(temp);		// split path
+	int prev = followPath(temp, parts - 1, 0);		// get containing dir inode
+	if (prev == -1)
+		return;
+	Inode* inode = getInode(prev);
+
+	const char* name = getArg(temp, parts, parts - 1);		// update containing dir size
+	int data_size = inode->size;
+	char inode_str[3] = {0};
+	itoa(inode_num, inode_str);
+	inode->size += strlen(name) + 1 + strlen(inode_str) + 1;
+	int dir_block = inode->block;
+	writeInode(prev);
+	
+	getBlock(dir_block);			// update block data
+	memcpy(buffer[data_size], name, strlen(name));
+	data_size += strlen(name);
+	buffer[data_size] = ',';
+	data_size++;
+	memcpy(buffer[data_size], inode_str, strlen(inode_str));
+	data_size += strlen(inode_str);
+	buffer[data_size] = '\n';
+	data_size++;
+	writeBlock(dir_block);
 }
