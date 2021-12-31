@@ -270,7 +270,11 @@ void ls(char* argv, int argc)
 	}
 }
 
-void pwd(char* argv, int argc){}
+void pwd(char* argv, int argc)
+{
+	uputs(dir);
+}
+
 void cd(char* argv, int argc){}
 void cat(char* argv, int argc){}
 void rm(char* argv, int argc){}
