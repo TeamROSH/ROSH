@@ -410,3 +410,22 @@ int read_file(char* path, char* res)
 
 	return data_size;
 }
+
+void write_file(char* path, char* data, int size)
+{
+	char* temp = (char*)kmalloc(strlen(path) + 1);
+	memcpy(temp, path, strlen(path) + 1);
+
+	int parts = getPath(temp);		// split path
+	int curr_num = followPath(temp, parts, 0);
+
+	kfree(temp);
+
+	Inode* curr = getInode(curr_num);
+	curr->size = size;
+	int block = curr->block;
+	writeInode(curr_num);
+
+	memcpy(disk_buffer, data, size);
+	writeBlock(block);
+}
