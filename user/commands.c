@@ -279,6 +279,9 @@ void cd(char* argv, int argc)
 {
 	if (argc == 2)
 	{
+		char temp[200] = {0};
+		memcpy(temp, dir, 200);
+
 		const char* rel = getArg(argv, argc, 1);
 		if (rel[0] == '/')
 			memcpy(dir, rel, strlen(rel) + 1);
@@ -291,12 +294,25 @@ void cd(char* argv, int argc)
 			dir[strlen(dir) + 1] = 0;
 			dir[strlen(dir)] = '/';
 		}
+
+		if (ufile_type(dir) != 1)
+		{
+			memcpy(dir, temp, 200);
+			uputs("Not a folder.");
+		}
 	}
 	else
 		uputs("Invalid syntax. Try \'help cd\'.");
 }
 
-void cat(char* argv, int argc){}
+void cat(char* argv, int argc)
+{
+	if (argc == 2)
+	{
+
+	}
+}
+
 void rm(char* argv, int argc){}
 void touch(char* argv, int argc){}
 void mkdir(char* argv, int argc){}

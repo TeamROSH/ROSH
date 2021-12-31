@@ -131,7 +131,7 @@ void syscall_handler(registers_t* registers)
 		{
 			if (n == 2)
 			{
-				*((int*)params[1]) = file_size((char*)params[0]);
+				*((int*)params[1]) = file_type((char*)params[0]);
 			}
 		}
 	}
