@@ -52,4 +52,9 @@ void create_file(char* path);
 */
 int file_exists(char* path);
 
+/*
+	delete a file
+*/
+void delete_file(char* path);
+
 #endif

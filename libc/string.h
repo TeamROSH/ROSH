@@ -46,7 +46,7 @@ int strncmp(const char* str1, const char* str2, int n);
 	@param devidor: the char devidor
 	@returns number of parts created
 */
-int split(char* str, char devidor);
+int strsplit(char* str, char devidor);
 
 /*
 	get arguments from splitted string
@@ -56,5 +56,13 @@ int split(char* str, char devidor);
 	@returns string in array index argNum
 */
 const char* getArg(const char* argv, int argc, int argNum);
+
+/*
+	get index of char in string
+	@param str: the string
+	@param c: the char
+	@returns index of the char
+*/
+int strfind(char* str, char c);
 
 #endif

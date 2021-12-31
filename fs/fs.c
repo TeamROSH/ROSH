@@ -1,5 +1,6 @@
 #include "fs.h"
 #include "../kernel/ports/ata_pio.h"
+#include "../kernel/memory/heap.h"
 #include "../libc/memory.h"
 #include "../libc/string.h"
 
@@ -18,6 +19,8 @@ Block* getBlock(int block_num);
 void writeInode(int inode_num);
 void writeBlock(int block_num);
 int addInodeToFolder(char* path, int inode_num);
+void delete_single(char* path, int inode);
+void up_delete_file(char* path, int inode);
 
 void init_fs()
 {
@@ -281,4 +284,98 @@ int file_exists(char* path)
 {
 	int parts = getPath(path);		// split path
 	return followPath(path, parts, 0) != -1;
+}
+
+void delete_single(char* path, int inode)
+{
+	if (inode != -1)
+	{
+		Inode* curr = getInode(inode);
+		release_inode(inode);		// remove resources
+		release_block(curr->block);
+		return;
+	}
+
+	char* temp = (char*)kmalloc(strlen(path) + 1);
+	memcpy(temp, path, strlen(path) + 1);
+
+	int parts = getPath(temp);		// split path
+	int curr_num = followPath(temp, parts, 0);
+	if (curr_num == -1)
+		return;
+	Inode* curr = getInode(curr_num);
+	
+	release_inode(curr_num);		// remove resources
+	release_block(curr->block);
+
+	int prev_num = followPath(temp, parts - 1, 0);		// remove from containing folder
+	Inode* prev = getInode(prev_num);
+	int data_size = prev->size;
+	int prev_block = prev->block;
+
+	getBlock(prev_block);				// remove line from dir
+	char temp_buffer[513] = {0};
+	int temp_counter = 0;
+	int lines = strsplit(disk_buffer, '\n');
+	const char* name = getArg(temp, parts, parts - 1);
+	for (int i = 0; i < lines; i++)
+	{
+		const char* line = getArg(disk_buffer, lines, i);
+		if (!(strncmp(name, line, strlen(name)) == 0 && line[strlen(name)] == ','))
+		{
+			memcpy(temp_buffer, line, strlen(line));
+			temp_counter += strlen(line);
+			temp_buffer[temp_counter] = '\n';
+			temp_counter++;
+		}
+	}
+	memcpy(disk_buffer, temp_buffer, temp_counter);
+	writeBlock(prev_block);
+
+	prev_num = followPath(temp, parts - 1, 0);		// update size of containing folder
+	prev = getInode(prev_num);
+	prev->size = strlen(temp_buffer);
+
+	kfree(temp);
+}
+
+void up_delete_file(char* path, int inode)
+{
+	Inode* curr;
+	if (inode == -1)
+	{
+		char* temp = (char*)kmalloc(strlen(path) + 1);
+		memcpy(temp, path, strlen(path) + 1);
+
+		int parts = getPath(temp);		// split path
+		int curr_num = followPath(temp, parts, 0);
+		if (curr_num == -1)
+			return;
+		kfree(temp);
+
+		curr = getInode(curr_num);
+	}
+	else
+	{
+		curr = getInode(inode);
+	}
+
+	if (curr->folder && curr->size > 0)		// if file or empty folder - remove single
+	{
+		getBlock(curr->block);
+		char temp_buffer[513] = {0};
+		memcpy(temp_buffer, disk_buffer, 513);
+		int lines = strsplit(temp_buffer, '\n');
+		for (int i = 0; i < lines; i++)
+		{
+			const char* line = getArg(temp_buffer, lines, i);
+			up_delete_file("", atoi(line + strfind(line, ',')));
+		}
+	}
+	delete_single(path, inode);
+}
+
+void delete_file(char* path)
+{
+	up_delete_file(path, -1);
 }

@@ -60,7 +60,7 @@ int atoi(const char* str)
 	return num;
 }
 
-int split(char* str, char devidor)
+int strsplit(char* str, char devidor)
 {
 	int counter = 1;
 	int strlen_str = strlen(str);
@@ -85,4 +85,12 @@ const char* getArg(const char* argv, int argc, int argNum)
 		res += strlen(res) + 1;		// next argument
 	}
 	return res;
+}
+
+int strfind(char* str, char c)
+{
+	for (int i = 0; i < strlen(str); i++)
+		if (str[i] == c)
+			return i;
+	return -1;
 }
