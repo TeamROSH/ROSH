@@ -57,4 +57,10 @@ int file_exists(char* path);
 */
 void delete_file(char* path);
 
+/*
+	read from file
+	@returns number of bytes read
+*/
+int read_file(char* path, char* res);
+
 #endif

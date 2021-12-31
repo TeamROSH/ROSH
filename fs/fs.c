@@ -249,22 +249,30 @@ void writeBlock(int block_num)
 
 int addInodeToFolder(char* path, int inode_num)
 {
-	int parts = getPath(path);		// split path
-	int prev = followPath(path, parts, 0);		// check if exists
+	char* temp = (char*)kmalloc(strlen(path) + 1);
+	memcpy(temp, path, strlen(path) + 1);
+
+	int parts = getPath(temp);		// split path
+	int prev = followPath(temp, parts, 0);		// check if exists
 	if (prev != -1)		// if exists
 		return 0;
-	prev = followPath(path, parts - 1, 0);		// get containing dir inode
+	prev = followPath(temp, parts - 1, 0);		// get containing dir inode
 	if (prev == -1)		// if not exists
+	{
+		kfree(temp);
 		return 0;
+	}
 	Inode* inode = getInode(prev);
 
-	const char* name = getArg(path, parts, parts - 1);		// update containing dir size
+	const char* name = getArg(temp, parts, parts - 1);		// update containing dir size
 	int data_size = inode->size;
 	char inode_str[3] = {0};
 	itoa(inode_num, inode_str);
 	inode->size += strlen(name) + 1 + strlen(inode_str) + 1;
 	int dir_block = inode->block;
 	writeInode(prev);
+
+	kfree(temp);
 	
 	getBlock(dir_block);			// update block data
 	memcpy(disk_buffer + data_size, name, strlen(name));
@@ -282,8 +290,12 @@ int addInodeToFolder(char* path, int inode_num)
 
 int file_exists(char* path)
 {
-	int parts = getPath(path);		// split path
-	return followPath(path, parts, 0) != -1;
+	char* temp = (char*)kmalloc(strlen(path) + 1);
+	memcpy(temp, path, strlen(path) + 1);
+	int parts = getPath(temp);		// split path
+	int res = followPath(temp, parts, 0) != -1;
+	kfree(temp);
+	return res;
 }
 
 void delete_single(char* path, int inode)
@@ -377,5 +389,24 @@ void up_delete_file(char* path, int inode)
 
 void delete_file(char* path)
 {
-	up_delete_file(path, -1);
+	if (strlen(path) > 1)
+		up_delete_file(path, -1);
+}
+
+int read_file(char* path, char* res)
+{
+	char* temp = (char*)kmalloc(strlen(path) + 1);
+	memcpy(temp, path, strlen(path) + 1);
+
+	int parts = getPath(temp);		// split path
+	int curr_num = followPath(temp, parts, 0);
+
+	kfree(temp);
+
+	Inode* curr = getInode(curr_num);
+	int data_size = curr->size;
+	getBlock(curr->block);
+	memcpy(res, disk_buffer, data_size);
+
+	return data_size;
 }
