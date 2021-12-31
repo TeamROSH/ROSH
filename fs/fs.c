@@ -289,13 +289,18 @@ int addInodeToFolder(char* path, int inode_num)
 	return 1;
 }
 
-int file_exists(char* path)
+int file_type(char* path)
 {
 	char* temp = (char*)kmalloc(strlen(path) + 1);
 	memcpy(temp, path, strlen(path) + 1);
 	int parts = getPath(temp);		// split path
-	int res = followPath(temp, parts, 0) != -1;
+	int res = followPath(temp, parts, 0);
 	kfree(temp);
+
+	if (res == -1)
+		return -1;
+	Inode* inode = getInode(res);
+	res = inode->folder;
 	return res;
 }
 

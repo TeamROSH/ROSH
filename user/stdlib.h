@@ -66,9 +66,9 @@ void ucreate_folder(char* path);
 void ucreate_file(char* path);
 
 /*
-	check if file exists
+	get file type
 */
-int ufile_exists(char* path);
+int ufile_type(char* path);
 
 /*
 	delete a file

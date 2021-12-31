@@ -24,7 +24,7 @@
 	#define F_FS_SIZE	3
 	#define F_FS_READ	4
 	#define F_FS_WRITE	5
-	#define F_FS_EXISTS	6
+	#define F_FS_TYPE	6
 
 /*
 	Syscall handler (Ring 0)

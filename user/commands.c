@@ -74,6 +74,13 @@ void help(char* argv, int argc)
 			"grep - \n"
 			"shutdown - shutdown the computer.\n"
 			"bc - basic calculator.\n"
+			"ls - list items in folder\n"
+			"pwd - print working directory\n"
+			"cd - change working directory\n"
+			"cat - print file content\n"
+			"rm - remove file or folder\n"
+			"touch - create file\n"
+			"mkdir - create folder\n"
 		);
 	}
 	else if (argc == 2)		// for specific command

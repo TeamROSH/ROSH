@@ -127,7 +127,7 @@ void syscall_handler(registers_t* registers)
 				write_file((char*)params[0], (char*)params[1], (int)params[2]);
 			}
 		}
-		else if (function == F_FS_EXISTS)
+		else if (function == F_FS_TYPE)
 		{
 			if (n == 2)
 			{

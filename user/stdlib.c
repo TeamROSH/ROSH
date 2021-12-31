@@ -77,7 +77,7 @@ void udelete_file(char* path)
 	syscall(G_FS, F_FS_DELETE, params, 1);
 }
 
-int ufile_exists(char* path)
+int ufile_type(char* path)
 {
 	int res = 0;
 	uint32_t params[2];

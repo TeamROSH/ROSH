@@ -48,9 +48,9 @@ void create_folder(char* path);
 void create_file(char* path);
 
 /*
-	check if file exists
+	get file type
 */
-int file_exists(char* path);
+int file_type(char* path);
 
 /*
 	delete a file
