@@ -55,4 +55,40 @@ void ubflush();
 */
 void ugetline(char* pStr, int size);
 
+/*
+	create a folder
+*/
+void ucreate_folder(char* path);
+
+/*
+	create a file
+*/
+void ucreate_file(char* path);
+
+/*
+	check if file exists
+*/
+int ufile_exists(char* path);
+
+/*
+	delete a file
+*/
+void udelete_file(char* path);
+
+/*
+	read from file
+	@returns number of bytes read
+*/
+int uread_file(char* path, char* res);
+
+/*
+	write data to file
+*/
+void uwrite_file(char* path, char* data, int size);
+
+/*
+	get file size in bytes
+*/
+int ufile_size(char* path);
+
 #endif

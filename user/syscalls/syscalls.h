@@ -21,6 +21,15 @@
 	#define F_REALLOC	1
 	#define F_FREE		2
 
+#define G_FS		3
+	#define F_CREATE_F	0
+	#define F_CREATE_D	1
+	#define F_FS_DELETE	2
+	#define F_FS_SIZE	3
+	#define F_FS_READ	4
+	#define F_FS_WRITE	5
+	#define F_FS_EXISTS	6
+
 /*
 	Syscaller for usermode (Ring 3)
 	@param group: group of functions
