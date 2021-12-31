@@ -429,3 +429,19 @@ void write_file(char* path, char* data, int size)
 	memcpy(disk_buffer, data, size);
 	writeBlock(block);
 }
+
+int file_size(char* path)
+{
+	char* temp = (char*)kmalloc(strlen(path) + 1);
+	memcpy(temp, path, strlen(path) + 1);
+
+	int parts = getPath(temp);		// split path
+	int curr_num = followPath(temp, parts, 0);
+
+	kfree(temp);
+
+	Inode* curr = getInode(curr_num);
+	int data_size = curr->size;
+
+	return data_size;
+}

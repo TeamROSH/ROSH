@@ -68,4 +68,9 @@ int read_file(char* path, char* res);
 */
 void write_file(char* path, char* data, int size);
 
+/*
+	get file size in bytes
+*/
+int file_size(char* path);
+
 #endif
