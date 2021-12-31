@@ -206,6 +206,7 @@ int followPath(char* path_parts, int size, int prev)
 
 	getBlock(inode->block);
 
+
 	disk_buffer[data_size] = 0;
 	int lines = strsplit(disk_buffer, '\n');
 	for (int i = 0; i < lines; i++)
@@ -326,6 +327,7 @@ void delete_single(char* path, int inode)
 	int prev_block = prev->block;
 
 	getBlock(prev_block);				// remove line from dir
+	disk_buffer[data_size] = 0;
 	char temp_buffer[513] = {0};
 	int temp_counter = 0;
 	int lines = strsplit(disk_buffer, '\n');
@@ -374,7 +376,9 @@ void up_delete_file(char* path, int inode)
 
 	if (curr->folder && curr->size > 0)		// if file or empty folder - remove single
 	{
+		int data_size = curr->size;
 		getBlock(curr->block);
+		disk_buffer[data_size] = 0;
 		char temp_buffer[513] = {0};
 		memcpy(temp_buffer, disk_buffer, 513);
 		int lines = strsplit(temp_buffer, '\n');
