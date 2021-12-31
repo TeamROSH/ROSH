@@ -275,7 +275,27 @@ void pwd(char* argv, int argc)
 	uputs(dir);
 }
 
-void cd(char* argv, int argc){}
+void cd(char* argv, int argc)
+{
+	if (argc == 2)
+	{
+		const char* rel = getArg(argv, argc, 1);
+		if (rel[0] == '/')
+			memcpy(dir, rel, strlen(rel) + 1);
+		else{
+			int strlen_dir = strlen(dir);
+			memcpy(dir + strlen_dir, rel, strlen(rel) + 1);
+		}
+		if (dir[strlen(dir) - 1] != '/')
+		{
+			dir[strlen(dir) + 1] = 0;
+			dir[strlen(dir)] = '/';
+		}
+	}
+	else
+		uputs("Invalid syntax. Try \'help cd\'.");
+}
+
 void cat(char* argv, int argc){}
 void rm(char* argv, int argc){}
 void touch(char* argv, int argc){}
