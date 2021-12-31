@@ -1,15 +1,21 @@
 #include "fs.h"
 #include "../kernel/ports/ata_pio.h"
 #include "../libc/memory.h"
+#include "../libc/string.h"
 
 uint8_t buffer[512];
 Superblock s;
 Superblock* superblock = &s;
+char dir[200] = {0};
+
+void getPath(char* path);
+const char* getArg(const char* argv, int argc, int argNum);
 
 void init_fs()
 {
 	read_sectors((uint32_t)buffer, FS_SECTOR, 1);		// read Superblock
 	Superblock* temp = (Superblock*)buffer;
+	dir[0] = '/';
 	if (temp->checksum == FS_EXISTS)		// if fs exists
 	{
 		memcpy(superblock, buffer, sizeof(Superblock));
@@ -117,4 +123,49 @@ void create_file(char* path)
 	inode->block = block_num;
 
 	write_sectors(buffer, superblock->inodes + inode_num / (DISK_SECTOR / temp->inode_size), 1);
+}
+
+/*
+	get path parts
+	@param path: path to split and return value (size >= 400)
+	@returns number of parts
+*/
+int getPath(char* path)
+{
+	char real[400] = {0};
+	if (path[0] == '/')		// connect paths
+	{
+		memcpy(real, path + 1, strlen(path) - 1);
+	}
+	else
+	{
+		int strlen_dir = strlen(dir);
+		memcpy(real, dir + 1, strlen_dir - 1);
+		real[strlen_dir - 1] = '/';
+		memcpy(real + strlen_dir, path, strlen(path));
+	}
+	int counter = 1;
+	int strlen_real = strlen(real);			// split by /
+	for (int i = 0; i < strlen_real; i++)
+	{
+		if (real[i] == '/')
+		{
+			real[i] = 0;
+			counter++;
+		}
+	}
+	memcpy(path, real, strlen_real + 1);
+	return counter;
+}
+
+const char* getArg(const char* argv, int argc, int argNum)
+{
+	if (argNum >= argc)		// prevent buffer overflow
+		return NULL;
+	const char* res = argv;
+	for (int i = 0; i < argNum; i++)		// run until wanted argument reached
+	{
+		res += strlen(res) + 1;		// next argument
+	}
+	return res;
 }
