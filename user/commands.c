@@ -83,7 +83,7 @@ void help(char* argv, int argc)
 			"help - Print information about available commands.\n"
 			"echo - Print message to the screen.\n"
 			"color - Change the shell's colors.\n"
-			"grep - \n"
+			//"grep - \n"
 			"shutdown - shutdown the computer.\n"
 			"bc - basic calculator.\n"
 		);

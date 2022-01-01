@@ -1,5 +1,10 @@
 #ifndef ELF_H
 #define ELF_H
+#include <stdint.h>
+#include "../../libc/string.h"
+#include "../process/process.h"
+
+#define ELF_MAGIC_NUM "\177ELF"
 
 typedef struct elf_header{
   uint8_t e_ident[4]; 
@@ -28,6 +33,20 @@ typedef struct program_header {
   uint32_t p_flags;
   uint32_t p_align; 
 } program_header;
+
+
+
+/*
+    validates elf signature
+    @param elf: pointer to the elf header
+    retruns true if valid and false if not
+*/
+bool validate_elf(elf_header* elf);
+
+/*
+
+*/
+bool load_process_from_elf(char* process_path, process_context_block* pcb);
 
 
 #endif
