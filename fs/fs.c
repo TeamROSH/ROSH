@@ -27,12 +27,14 @@ void init_fs()
 {
 	read_sectors((uint32_t)disk_buffer, FS_SECTOR, 1);		// read Superblock
 	Superblock* temp = (Superblock*)disk_buffer;
+
 	if (temp->checksum == FS_EXISTS)		// if fs exists
 	{
 		memcpy(superblock, disk_buffer, sizeof(Superblock));
 	}
 	else
 	{
+		temp->checksum = FS_EXISTS;
 		temp->inodes_num = DISK_SECTOR;
 		temp->blocks_num = DISK_SECTOR * 7;
 		temp->inode_size = sizeof(Inode);
@@ -184,7 +186,7 @@ void create_file(char* path)
 int getPath(char* path)
 {
 	int counter = strsplit(path + 1, '/');
-	return counter == 1 ? 0 : counter;
+	return strlen(path + 1) == 0 ? 0 : counter;
 }
 
 /*
@@ -256,7 +258,10 @@ int addInodeToFolder(char* path, int inode_num)
 	int parts = getPath(temp);		// split path
 	int prev = followPath(temp, parts, 0);		// check if exists
 	if (prev != -1)		// if exists
+	{
 		return 0;
+		kfree(temp);
+	}
 	prev = followPath(temp, parts - 1, 0);		// get containing dir inode
 	if (prev == -1)		// if not exists
 	{

@@ -68,9 +68,9 @@ ifeq (,$(wildcard ./rosh.bin))
 else
 	@echo "Drive found."
 endif
-	@dd bs=1 seek=0 status=none < compiled/boot_sect.bin 1<> rosh.bin
-	@dd bs=1 seek=512 status=none < compiled/kernel_main.bin 1<> rosh.bin
-	@dd bs=1 seek=41472 status=none < compiled/user_main.bin 1<> rosh.bin
+	@dd conv=notrunc bs=1 seek=0 status=none if=compiled/boot_sect.bin of=rosh.bin
+	@dd conv=notrunc bs=1 seek=512 status=none if=compiled/kernel_main.bin of=rosh.bin
+	@dd conv=notrunc bs=1 seek=41472 status=none if=compiled/user_main.bin of=rosh.bin
 
 qemu:
 	@echo "Launching..."

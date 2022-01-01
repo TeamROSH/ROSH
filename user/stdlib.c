@@ -93,7 +93,7 @@ int uread_file(char* path, char* res)
 	uint32_t params[3];
 	params[0] = (uint32_t)path;
 	params[1] = (uint32_t)&res;
-	params[3] = (uint32_t)&size;
+	params[2] = (uint32_t)&size;
 	syscall(G_FS, F_FS_READ, params, 3);
 	return size;
 }
@@ -103,7 +103,7 @@ void uwrite_file(char* path, char* data, int size)
 	uint32_t params[3];
 	params[0] = (uint32_t)path;
 	params[1] = (uint32_t)data;
-	params[3] = (uint32_t)size;
+	params[2] = (uint32_t)size;
 	syscall(G_FS, F_FS_WRITE, params, 3);
 }
 

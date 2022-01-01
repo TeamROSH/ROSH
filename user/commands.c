@@ -239,10 +239,10 @@ void ls(char* argv, int argc)
 	{
 		const char* rel = getArg(argv, argc, 1);
 		if (rel[0] == '/')
-			memcpy(path, rel, strlen(rel));
+			memcpy(path, rel, strlen(rel) + 1);
 		else{
-			memcpy(path + strlen(dir) + 1, rel, strlen(rel));
-			path[strlen(dir)] = '/';
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
 		}
 	}
 	else if (argc > 2)
@@ -313,10 +313,10 @@ void cat(char* argv, int argc)
 	{
 		const char* rel = getArg(argv, argc, 1);
 		if (rel[0] == '/')
-			memcpy(path, rel, strlen(rel));
+			memcpy(path, rel, strlen(rel) + 1);
 		else{
-			memcpy(path + strlen(dir) + 1, rel, strlen(rel));
-			path[strlen(dir)] = '/';
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
 		}
 
 		int size = ufile_size(path);
@@ -324,7 +324,7 @@ void cat(char* argv, int argc)
 		{
 			char* data = (char*)umalloc(size);
 			uread_file(path, data);
-			puts(data);
+			uputs(data);
 			ufree(data);
 		}
 	}
@@ -340,10 +340,10 @@ void rm(char* argv, int argc)
 	{
 		const char* rel = getArg(argv, argc, 1);
 		if (rel[0] == '/')
-			memcpy(path, rel, strlen(rel));
+			memcpy(path, rel, strlen(rel) + 1);
 		else{
-			memcpy(path + strlen(dir) + 1, rel, strlen(rel));
-			path[strlen(dir)] = '/';
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
 		}
 
 		udelete_file(path);
@@ -360,10 +360,10 @@ void touch(char* argv, int argc)
 	{
 		const char* rel = getArg(argv, argc, 1);
 		if (rel[0] == '/')
-			memcpy(path, rel, strlen(rel));
+			memcpy(path, rel, strlen(rel) + 1);
 		else{
-			memcpy(path + strlen(dir) + 1, rel, strlen(rel));
-			path[strlen(dir)] = '/';
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
 		}
 
 		ucreate_file(path);
@@ -380,10 +380,10 @@ void mkdir(char* argv, int argc)
 	{
 		const char* rel = getArg(argv, argc, 1);
 		if (rel[0] == '/')
-			memcpy(path, rel, strlen(rel));
+			memcpy(path, rel, strlen(rel) + 1);
 		else{
-			memcpy(path + strlen(dir) + 1, rel, strlen(rel));
-			path[strlen(dir)] = '/';
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
 		}
 
 		ucreate_folder(path);

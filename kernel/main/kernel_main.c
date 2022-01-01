@@ -22,9 +22,10 @@ void main() {
 	initKernelHeap();		// init kernel heap
 	initialize_paging();	// init paging
 	keyboard_initialize();	// initializing keyboard
-	init_fs();				// init file system
 	
 	initConsole();			// init cursor
+	init_fs();				// init file system
+
 	printLogo();		// print ROSH
 
 	getchar();
