@@ -60,7 +60,7 @@ int take_inode()
 	int found = -1;
 	for (int i = 0; i < superblock->inodes_num; i++)		// for every inode
 	{
-		uint8_t bit = disk_buffer[i / 8] << (i % 8);		// get its bit in bitmap
+		uint8_t bit = disk_buffer[i / 8] >> (i % 8);		// get its bit in bitmap
 		if (bit % 2 == 0)		// if not taken
 		{
 			found = i;
@@ -77,7 +77,7 @@ int take_inode()
 void release_inode(int inode)
 {
 	read_sectors((uint32_t)disk_buffer, superblock->bitmaps, 1);		// read bitmap
-	uint8_t bit = disk_buffer[inode / 8] << (inode % 8);		// get its bit in bitmap
+	uint8_t bit = disk_buffer[inode / 8] >> (inode % 8);		// get its bit in bitmap
 	if (bit % 2 == 1)		// if taken
 	{
 		uint8_t temp = 1;
@@ -91,7 +91,7 @@ void release_inode(int inode)
 void release_block(int block)
 {
 	read_sectors((uint32_t)disk_buffer, superblock->bitmaps, 1);		// read bitmap
-	uint8_t bit = disk_buffer[64 + block / 8] << (block % 8);		// get its bit in bitmap
+	uint8_t bit = disk_buffer[64 + block / 8] >> (block % 8);		// get its bit in bitmap
 	if (bit % 2 == 1)		// if taken
 	{
 		uint8_t temp = 1;
@@ -108,7 +108,7 @@ int take_block()
 	int found = -1;
 	for (int i = 0; i < superblock->blocks_num; i++)		// for every inode
 	{
-		uint8_t bit = disk_buffer[64 + i / 8] << (i % 8);		// get its bit in bitmap
+		uint8_t bit = disk_buffer[64 + i / 8] >> (i % 8);		// get its bit in bitmap
 		if (bit % 2 == 0)		// if not taken
 		{
 			found = i;
@@ -127,10 +127,6 @@ void create_folder(char* path)
 	int inode_num = take_inode();		// allocate inode
 	if (inode_num == -1)
 		return;
-
-	Inode* inode = getInode(inode_num);
-	inode->folder = 1;
-	inode->size = 0;
 	
 	int block_num = take_block();		// allocate block
 	if (block_num == -1)
@@ -138,11 +134,14 @@ void create_folder(char* path)
 		release_inode(inode_num);
 		return;
 	}
-	inode->block = block_num;
 
+	Inode* inode = getInode(inode_num);
+	inode->folder = 1;
+	inode->size = 0;
+	inode->block = block_num;
 	writeInode(inode_num);
 
-	if (!addInodeToFolder(path, inode_num))
+	if (strlen(path) > 1 && !addInodeToFolder(path, inode_num))
 	{
 		release_inode(inode_num);
 		release_block(block_num);
@@ -156,18 +155,17 @@ void create_file(char* path)
 	if (inode_num == -1)
 		return;
 
-	Inode* inode = getInode(inode_num);
-	inode->folder = 0;
-	inode->size = 0;
-	
 	int block_num = take_block();
 	if (block_num == -1)
 	{
 		release_inode(inode_num);
 		return;
 	}
-	inode->block = block_num;
 
+	Inode* inode = getInode(inode_num);
+	inode->folder = 0;
+	inode->size = 0;
+	inode->block = block_num;
 	writeInode(inode_num);
 
 	if (!addInodeToFolder(path, inode_num))
@@ -272,7 +270,7 @@ int addInodeToFolder(char* path, int inode_num)
 
 	const char* name = getArg(temp, parts, parts - 1);		// update containing dir size
 	int data_size = inode->size;
-	char inode_str[3] = {0};
+	char inode_str[4] = {0};
 	itoa(inode_num, inode_str);
 	inode->size += strlen(name) + 1 + strlen(inode_str) + 1;
 	int dir_block = inode->block;
@@ -283,12 +281,10 @@ int addInodeToFolder(char* path, int inode_num)
 	getBlock(dir_block);			// update block data
 	memcpy(disk_buffer + data_size, name, strlen(name));
 	data_size += strlen(name);
-	disk_buffer[data_size] = ',';
-	data_size++;
+	disk_buffer[data_size++] = ',';
 	memcpy(disk_buffer + data_size, inode_str, strlen(inode_str));
 	data_size += strlen(inode_str);
-	disk_buffer[data_size] = '\n';
-	data_size++;
+	disk_buffer[data_size++] = '\n';
 	writeBlock(dir_block);
 
 	return 1;

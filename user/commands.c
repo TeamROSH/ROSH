@@ -261,6 +261,8 @@ void ls(char* argv, int argc)
 		for (int i = 0; i < lines; i++)
 		{
 			const char* line = getArg(data, lines, i);
+			if (strlen(line) == 0)
+				continue;
 			const int len = strfind(line, ',');
 			for (int j = 0; j < len; j++)
 				uputc(line[j]);
@@ -389,5 +391,5 @@ void mkdir(char* argv, int argc)
 		ucreate_folder(path);
 	}
 	else
-		uputs("Invalid syntax. Try \'help touch\'.");
+		uputs("Invalid syntax. Try \'help mkdir\'.");
 }
