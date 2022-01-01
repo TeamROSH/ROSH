@@ -84,7 +84,7 @@ int uread_file(char* path, char* res);
 /*
 	write data to file
 */
-void uwrite_file(char* path, char* data, int size);
+void uwrite_file(char* path, const char* data, int size, int append);
 
 /*
 	get file size in bytes

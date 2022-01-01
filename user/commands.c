@@ -48,10 +48,40 @@ void unknown_command(char* argv, int argc)
 
 void echo(char* argv, int argc)
 {
-	for (int i = 1; i < argc; i++)		// for every argument except command name
+	if (argc >= 4 && getArg(argv, argc, argc - 2)[0] == '>' && strlen(getArg(argv, argc, argc - 2)) <= 2)
 	{
-		uputs(getArg(argv, argc, i));		// print it
-		uputc(' ');		// add the space
+		if (strlen(getArg(argv, argc, argc - 2)) == 2 && getArg(argv, argc, argc - 2)[1] != '>')
+		{
+			uputs("Invalid syntax. Try \'help echo\'.");
+			return;
+		}
+		char path[200] = {0};
+		memcpy(path, dir, strlen(dir));
+		const char* rel = getArg(argv, argc, argc - 1);
+		if (rel[0] == '/')
+			memcpy(path, rel, strlen(rel) + 1);
+		else{
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
+		}
+
+		if (strlen(getArg(argv, argc, argc - 2)) == 2)
+			uwrite_file(path, "\n", 1, 1);
+
+		for (int i = 1; i < argc - 2; i++)		// for every argument except function arguments
+		{
+			uwrite_file(path, getArg(argv, argc, i), strlen(getArg(argv, argc, i)), !(strlen(getArg(argv, argc, argc - 2)) == 1 && i == 1));
+			if (i != argc - 3)
+				uwrite_file(path, " ", 1, 1);
+		}
+	}
+	else
+	{
+		for (int i = 1; i < argc; i++)		// for every argument except command name
+		{
+			uputs(getArg(argv, argc, i));		// print it
+			uputc(' ');		// add the space
+		}
 	}
 }
 
@@ -326,7 +356,8 @@ void cat(char* argv, int argc)
 		{
 			char* data = (char*)umalloc(size);
 			uread_file(path, data);
-			uputs(data);
+			for (int i = 0; i < size; i++)
+				uputc(data[i]);
 			ufree(data);
 		}
 	}

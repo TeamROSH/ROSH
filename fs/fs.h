@@ -66,7 +66,7 @@ int read_file(char* path, char* res);
 /*
 	write data to file
 */
-void write_file(char* path, char* data, int size);
+void write_file(char* path, char* data, int size, int append);
 
 /*
 	get file size in bytes

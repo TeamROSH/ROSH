@@ -98,13 +98,14 @@ int uread_file(char* path, char* res)
 	return size;
 }
 
-void uwrite_file(char* path, char* data, int size)
+void uwrite_file(char* path, const char* data, int size, int append)
 {
-	uint32_t params[3];
+	uint32_t params[4];
 	params[0] = (uint32_t)path;
 	params[1] = (uint32_t)data;
 	params[2] = (uint32_t)size;
-	syscall(G_FS, F_FS_WRITE, params, 3);
+	params[3] = (uint32_t)append;
+	syscall(G_FS, F_FS_WRITE, params, 4);
 }
 
 int ufile_size(char* path)

@@ -122,9 +122,9 @@ void syscall_handler(registers_t* registers)
 		}
 		else if (function == F_FS_WRITE)
 		{
-			if (n == 3)
+			if (n == 4)
 			{
-				write_file((char*)params[0], (char*)params[1], (int)params[2]);
+				write_file((char*)params[0], (char*)params[1], (int)params[2], (int)params[3]);
 			}
 		}
 		else if (function == F_FS_TYPE)

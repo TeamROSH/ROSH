@@ -424,7 +424,7 @@ int read_file(char* path, char* res)
 	return data_size;
 }
 
-void write_file(char* path, char* data, int size)
+void write_file(char* path, char* data, int size, int append)
 {
 	char* temp = (char*)kmalloc(strlen(path) + 1);
 	memcpy(temp, path, strlen(path) + 1);
@@ -437,11 +437,13 @@ void write_file(char* path, char* data, int size)
 	kfree(temp);
 
 	Inode* curr = getInode(curr_num);
-	curr->size = size;
+	int prev_size = curr->size;
+	curr->size = size + (append ? 1 : 0) * curr->size;
 	int block = curr->block;
 	writeInode(curr_num);
 
-	memcpy(disk_buffer, data, size);
+	getBlock(block);
+	memcpy(disk_buffer + (append ? 1 : 0) * prev_size, data, size);
 	writeBlock(block);
 }
 
