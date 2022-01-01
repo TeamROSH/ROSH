@@ -183,6 +183,7 @@ void create_file(char* path)
 */
 int getPath(char* path)
 {
+	if (path[strlen(path) - 1] == '/') path[strlen(path) - 1] = 0;		// remove / from end
 	int counter = strsplit(path + 1, '/');
 	return strlen(path + 1) == 0 ? 0 : counter;
 }
@@ -254,13 +255,13 @@ int addInodeToFolder(char* path, int inode_num)
 	memcpy(temp, path, strlen(path) + 1);
 
 	int parts = getPath(temp);		// split path
-	int prev = followPath(temp, parts, 0);		// check if exists
+	int prev = followPath(temp + 1, parts, 0);		// check if exists
 	if (prev != -1)		// if exists
 	{
 		return 0;
 		kfree(temp);
 	}
-	prev = followPath(temp, parts - 1, 0);		// get containing dir inode
+	prev = followPath(temp + 1, parts - 1, 0);		// get containing dir inode
 	if (prev == -1)		// if not exists
 	{
 		kfree(temp);
@@ -268,7 +269,7 @@ int addInodeToFolder(char* path, int inode_num)
 	}
 	Inode* inode = getInode(prev);
 
-	const char* name = getArg(temp, parts, parts - 1);		// update containing dir size
+	const char* name = getArg(temp + 1, parts, parts - 1);		// update containing dir size
 	int data_size = inode->size;
 	char inode_str[4] = {0};
 	itoa(inode_num, inode_str);
@@ -295,7 +296,7 @@ int file_type(char* path)
 	char* temp = (char*)kmalloc(strlen(path) + 1);
 	memcpy(temp, path, strlen(path) + 1);
 	int parts = getPath(temp);		// split path
-	int res = followPath(temp, parts, 0);
+	int res = followPath(temp + 1, parts, 0);
 	kfree(temp);
 
 	if (res == -1)
@@ -319,7 +320,7 @@ void delete_single(char* path, int inode)
 	memcpy(temp, path, strlen(path) + 1);
 
 	int parts = getPath(temp);		// split path
-	int curr_num = followPath(temp, parts, 0);
+	int curr_num = followPath(temp + 1, parts, 0);
 	if (curr_num == -1)
 		return;
 	Inode* curr = getInode(curr_num);
@@ -327,7 +328,7 @@ void delete_single(char* path, int inode)
 	release_inode(curr_num);		// remove resources
 	release_block(curr->block);
 
-	int prev_num = followPath(temp, parts - 1, 0);		// remove from containing folder
+	int prev_num = followPath(temp + 1, parts - 1, 0);		// remove from containing folder
 	Inode* prev = getInode(prev_num);
 	int data_size = prev->size;
 	int prev_block = prev->block;
@@ -352,7 +353,7 @@ void delete_single(char* path, int inode)
 	memcpy(disk_buffer, temp_buffer, temp_counter);
 	writeBlock(prev_block);
 
-	prev_num = followPath(temp, parts - 1, 0);		// update size of containing folder
+	prev_num = followPath(temp + 1, parts - 1, 0);		// update size of containing folder
 	prev = getInode(prev_num);
 	prev->size = strlen(temp_buffer);
 
@@ -368,7 +369,7 @@ void up_delete_file(char* path, int inode)
 		memcpy(temp, path, strlen(path) + 1);
 
 		int parts = getPath(temp);		// split path
-		int curr_num = followPath(temp, parts, 0);
+		int curr_num = followPath(temp + 1, parts, 0);
 		if (curr_num == -1)
 			return;
 		kfree(temp);
@@ -409,7 +410,7 @@ int read_file(char* path, char* res)
 	memcpy(temp, path, strlen(path) + 1);
 
 	int parts = getPath(temp);		// split path
-	int curr_num = followPath(temp, parts, 0);
+	int curr_num = followPath(temp + 1, parts, 0);
 	if (curr_num == -1)
 		return 0;
 
@@ -429,7 +430,7 @@ void write_file(char* path, char* data, int size)
 	memcpy(temp, path, strlen(path) + 1);
 
 	int parts = getPath(temp);		// split path
-	int curr_num = followPath(temp, parts, 0);
+	int curr_num = followPath(temp + 1, parts, 0);
 	if (curr_num == -1)
 		return;
 
@@ -450,7 +451,7 @@ int file_size(char* path)
 	memcpy(temp, path, strlen(path) + 1);
 
 	int parts = getPath(temp);		// split path
-	int curr_num = followPath(temp, parts, 0);
+	int curr_num = followPath(temp + 1, parts, 0);
 	if (curr_num == -1)
 		return 0;
 
