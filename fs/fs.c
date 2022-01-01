@@ -409,6 +409,8 @@ int read_file(char* path, char* res)
 
 	int parts = getPath(temp);		// split path
 	int curr_num = followPath(temp, parts, 0);
+	if (curr_num == -1)
+		return 0;
 
 	kfree(temp);
 
@@ -427,6 +429,8 @@ void write_file(char* path, char* data, int size)
 
 	int parts = getPath(temp);		// split path
 	int curr_num = followPath(temp, parts, 0);
+	if (curr_num == -1)
+		return;
 
 	kfree(temp);
 
@@ -446,6 +450,8 @@ int file_size(char* path)
 
 	int parts = getPath(temp);		// split path
 	int curr_num = followPath(temp, parts, 0);
+	if (curr_num == -1)
+		return 0;
 
 	kfree(temp);
 
