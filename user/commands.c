@@ -352,5 +352,42 @@ void rm(char* argv, int argc)
 		uputs("Invalid syntax. Try \'help rm\'.");
 }
 
-void touch(char* argv, int argc){}
-void mkdir(char* argv, int argc){}
+void touch(char* argv, int argc)
+{
+	char path[200] = {0};
+	memcpy(path, dir, strlen(dir));
+	if (argc == 2)
+	{
+		const char* rel = getArg(argv, argc, 1);
+		if (rel[0] == '/')
+			memcpy(path, rel, strlen(rel));
+		else{
+			memcpy(path + strlen(dir) + 1, rel, strlen(rel));
+			path[strlen(dir)] = '/';
+		}
+
+		ucreate_file(path);
+	}
+	else
+		uputs("Invalid syntax. Try \'help touch\'.");
+}
+
+void mkdir(char* argv, int argc)
+{
+	char path[200] = {0};
+	memcpy(path, dir, strlen(dir));
+	if (argc == 2)
+	{
+		const char* rel = getArg(argv, argc, 1);
+		if (rel[0] == '/')
+			memcpy(path, rel, strlen(rel));
+		else{
+			memcpy(path + strlen(dir) + 1, rel, strlen(rel));
+			path[strlen(dir)] = '/';
+		}
+
+		ucreate_folder(path);
+	}
+	else
+		uputs("Invalid syntax. Try \'help touch\'.");
+}
