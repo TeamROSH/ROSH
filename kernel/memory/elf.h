@@ -44,9 +44,11 @@ typedef struct program_header {
 bool validate_elf(elf_header* elf);
 
 /*
-
+  this function loads the elf file into process
+  @param process_path: pointer to the file path
+  @param pcb: pointer to the process context block
 */
-bool load_process_from_elf(char* process_path, process_context_block* pcb);
+bool load_process_from_elf(char* elf_path, process_context_block* pcb);
 
 
 #endif
