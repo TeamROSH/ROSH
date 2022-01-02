@@ -228,6 +228,12 @@ void bc(char* argv, int argc)
 		return calculate(opers, nums, opersNum - 1);
 	}
 
+	if (argc != 2)
+	{
+		uputs("Invalid syntax. Try \'help bc\'.");
+		return;
+	}
+
 	// checks
 	const char* exp = getArg(argv, argc, 1);		// get math expression
 	int size = strlen(exp);					// get its size
@@ -235,7 +241,7 @@ void bc(char* argv, int argc)
 	char* cExp = (char*)umalloc(size + 1);		// copy exp
 	memcpy(cExp, exp, size + 1);
 
-	if (argc != 2 || !isValidExp(cExp, size) || size == 0)
+	if (!isValidExp(cExp, size) || size == 0)
 	{
 		uputs("Invalid syntax. Try \'help bc\'.");
 		return;
