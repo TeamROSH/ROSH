@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "../../libc/string.h"
 #include "../process/process.h"
-
+#include "paging.h"
 #define ELF_MAGIC_NUM "\177ELF"
 
 typedef struct elf_header{

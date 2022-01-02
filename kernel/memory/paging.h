@@ -41,9 +41,27 @@ typedef struct{
     page_table_entry directory_entries[1024];
 } page_directory __attribute__((aligned(0x1000)));
 
-/*
-    This function initializes the paging
-*/
 void initialize_paging();
+void allow_paging();
+void load_directory_table(page_directory* directory);
+uint32_t page_to_address(uint32_t page_number);
+uint32_t address_to_page(uint32_t address);
+void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags);
+void page_unmap(uint32_t vadd);
+void update_pages_array(uint32_t page_num, int is_on);
+uint32_t page_alloc();
+void page_free(uint32_t page_num);
+void initialize_page_table_entry(page_table_entry* table_entry,
+uint32_t address,
+uint8_t present,    
+uint8_t rw,         
+uint8_t us,        
+uint8_t pwt,        
+uint8_t pcd,       
+uint8_t accessed,
+uint8_t dirty,
+uint8_t pat,      
+uint8_t global,     
+uint8_t avl);
 
 #endif

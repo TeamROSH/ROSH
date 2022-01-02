@@ -1,5 +1,7 @@
 #include "elf.h"
 
+extern page_directory* g_page_directory;
+
 bool validate_elf(elf_header* elf);
 bool load_process_from_elf(char* elf_path, process_context_block* pcb);
 
@@ -64,10 +66,27 @@ bool load_process_from_elf(char* elf_path, process_context_block* pcb)
 
     }
 
-    uint32_t elf_add = kmalloc(sizeof(program size));
+    int j = 0, k =0;
     for(int i = 0; i < elf.e_phnum; i++)
     {
-        //memcpy()
+        elf_program_header = res + elf.e_phoff + elf.e_phentsize * i;
+        int num_of_pages = elf_program_header->p_memsz/ 4096 + 1; 
+        while( j = 0; j < num_of_pages; j ++)
+        {
+            pcb->process_pages[k + 5] = page_to_address(page_alloc());
+            page_map(&g_page_directory, pcb->process_pages[k + 5], pcb->process_pages[k + 5], 
+            flags & PAGE_FLAG_READONLY) ? 1 : 0, 
+            (flags & PAGE_FLAG_USER) ? 0 : 1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0););
+            k++;
+        }
+
     }
 
 }
