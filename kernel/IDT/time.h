@@ -5,6 +5,7 @@
 #include "reg_def.h"
 
 typedef void (*interrupt_handler)(registers_t* registers);
+typedef void (*callback_function)(void);
 
 
 /*
@@ -24,4 +25,9 @@ void print_time_seconds();
 */
 void sleep(uint64_t sleep_ms);
 
+/*
+    This function sets the scheduler function to be called every 200 miliseconds 
+    @parma scheduler: the scheduler function 
+*/
+void set_scheduler(callback_function scheduler);
 #endif
