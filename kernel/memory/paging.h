@@ -31,7 +31,6 @@ typedef struct {
     uint32_t address : 20;      // page physical address
 }__attribute__((packed)) page_table_entry;
 
-typedef struct page_table_entry page_directory_entery;
 
 typedef struct{
     page_table_entry table_entries[1024];

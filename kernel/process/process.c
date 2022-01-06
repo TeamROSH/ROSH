@@ -9,22 +9,23 @@ process_context_block* g_curr_process;
 list g_process_list;
 list g_ready_processes_list;
 
-process_context_block* create_process(int is_kernel);
+process_context_block* create_process(int is_kernel, char* process_name);
 int generate_pid();
 void initialize_process_regs(process_context_block* pcb);
 void load_process_code(process_context_block* pcb, char* file_name);
 void kill_process(process_context_block* pcb);
+void process_scheduler();
 
 
-process_context_block* create_process(int is_kernel, char[PROCESS_NAME] process_name)
+process_context_block* create_process(int is_kernel, char* process_name)
 {
-    process_context_block* pcb = heap_malloc(&g_kernelHeap, sizeof(process_context_block));
+    process_context_block* pcb = (process_context_block*)heap_malloc(&g_kernelHeap, sizeof(process_context_block));
 
     pcb->is_kernel = is_kernel;
     pcb->pid = generate_pid();
     memcpy(pcb->name, process_name, PROCESS_NAME);
     initialize_process_regs(pcb);
-    
+
     //mapping stack
     pcb->process_pages[1] = page_to_address(page_alloc());
     pcb->process_pages[0] = page_to_address(page_alloc());
@@ -93,4 +94,9 @@ void kill_process(process_context_block* pcb)
     }
 
     heap_free(g_kernelHeap, pcb);
+}
+
+void process_scheduler()
+{
+    if(g_ready_processes_list == NULL)   
 }

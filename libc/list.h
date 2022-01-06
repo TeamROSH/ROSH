@@ -1,6 +1,7 @@
 #ifndef LIST_H
 #define LIST_H
 #include "../kernel/memory/heap.h"
+#include <stdint.h>
 #include "memory.h"
 
 typedef struct node

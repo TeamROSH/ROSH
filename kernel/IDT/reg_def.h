@@ -1,6 +1,8 @@
 #ifndef REG_DEF_H
 #define REG_DEF_H
 
+#include <stdint.h>
+
 typedef struct {
     uint32_t es;
     uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; // pusha

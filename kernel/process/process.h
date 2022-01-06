@@ -6,7 +6,7 @@
 #include "../memory/paging.h"
 #include "../../libc/list.h"
 #include "../../libc/memory.h"
-#include "../heap.h"
+#include "../memory/heap.h"
 
 #define PROCESS_NAME 512
 
@@ -28,6 +28,7 @@ typedef struct process_context_block{
     uint32_t process_state;          // the process state
     uint8_t is_kernel;              // kernel or user process
     uint32_t process_pages[MAX_PROCESS_PAGES];
+    //page_directory* curr_page_directory;
     uint32_t stack_base;
     Heap process_heap;
     }process_context_block;
@@ -37,9 +38,10 @@ typedef struct process_context_block{
 /*
     This function creates a process
     @param is_kernel: 1 if kernel 0 if user
+    @param process_name: the process path
     @returns the pcb of the new process 
 */
-process_context_block* create_process(int is_kernel);
+process_context_block* create_process(int is_kernel, char* process_name);
 
 /*
     This function generates pid
@@ -66,3 +68,9 @@ void load_process_code(process_context_block* pcb, char* file_name);
     @param pcb: the process context block
 */
 void kill_process(process_context_block* pcb);
+
+
+/*
+    This function schedules the process in a fixed time
+*/
+void process_scheduler();

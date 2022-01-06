@@ -18,4 +18,10 @@ void time_handler(registers_t* registers);
 */
 void print_time_seconds();
 
+/*
+    this function sleeps for specific amount of miliseconds
+    @param sleep_ms: the wanted sleep time
+*/
+void sleep(uint64_t sleep_ms);
+
 #endif
