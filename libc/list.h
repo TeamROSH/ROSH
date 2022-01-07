@@ -56,6 +56,13 @@ node* insert_tail(list* list, void* data);
 node* pop_head(list* list);
 
 /*
+    This function picks the node from the tail and returns it 
+    @param list: the doubly linked list
+    this function returns the node from the tail
+*/
+node* pop_tail(list* list);
+
+/*
     This function deletes a node from list
     @param list: the list that the node will be deleted from
     @param node: the node that willbe deleted
