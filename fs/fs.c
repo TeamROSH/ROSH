@@ -338,16 +338,15 @@ void delete_single(char* path, int inode)
 	char temp_buffer[513] = {0};
 	int temp_counter = 0;
 	int lines = strsplit(disk_buffer, '\n');
-	const char* name = getArg(temp, parts, parts - 1);
-	for (int i = 0; i < lines; i++)
+	const char* name = getArg(temp + 1, parts, parts - 1);
+	for (int i = 0; i < lines - 1; i++)
 	{
 		const char* line = getArg(disk_buffer, lines, i);
 		if (!(strncmp(name, line, strlen(name)) == 0 && line[strlen(name)] == ','))
 		{
 			memcpy(temp_buffer, line, strlen(line));
 			temp_counter += strlen(line);
-			temp_buffer[temp_counter] = '\n';
-			temp_counter++;
+			temp_buffer[temp_counter++] = '\n';
 		}
 	}
 	memcpy(disk_buffer, temp_buffer, temp_counter);
@@ -355,7 +354,8 @@ void delete_single(char* path, int inode)
 
 	prev_num = followPath(temp + 1, parts - 1, 0);		// update size of containing folder
 	prev = getInode(prev_num);
-	prev->size = strlen(temp_buffer);
+	prev->size = temp_counter;
+	writeInode(prev_num);
 
 	kfree(temp);
 }
@@ -389,7 +389,7 @@ void up_delete_file(char* path, int inode)
 		char temp_buffer[513] = {0};
 		memcpy(temp_buffer, disk_buffer, 513);
 		int lines = strsplit(temp_buffer, '\n');
-		for (int i = 0; i < lines; i++)
+		for (int i = 0; i < lines - 1; i++)
 		{
 			const char* line = getArg(temp_buffer, lines, i);
 			up_delete_file("", atoi(line + strfind(line, ',')));
