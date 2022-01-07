@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "../../libc/screen.h"
 #include "reg_def.h"
+#define NULL 0
 
 typedef void (*interrupt_handler)(registers_t* registers);
 typedef void (*callback_function)(void);

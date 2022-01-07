@@ -4,6 +4,7 @@
 #define FALSE 0
 #define TRUE !FALSE
 
+
 uint8_t g_symbol_arr[NUM_OF_SYMBOLS];
 uint8_t g_keyboard_input[NUM_OF_SYMBOLS];
 char buffer[100] = {0};

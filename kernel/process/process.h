@@ -7,6 +7,7 @@
 #include "../../libc/list.h"
 #include "../../libc/memory.h"
 #include "../memory/heap.h"
+#include "../IDT/time.h"
 
 #define PROCESS_NAME 512
 
@@ -32,7 +33,6 @@ typedef struct process_context_block{
     uint32_t stack_base;
     Heap process_heap;
     }process_context_block;
-
 #endif
 
 /*
@@ -74,3 +74,8 @@ void kill_process(process_context_block* pcb);
     This function schedules the process in a fixed time
 */
 void process_scheduler();
+
+/*
+    This function intializes the system process
+*/
+void process_init();

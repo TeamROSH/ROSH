@@ -6,8 +6,8 @@ extern page_directory* g_page_directory;
 int g_highest_pid = 1;
 process_context_block* g_curr_process; 
 
-list g_process_list;
-list g_ready_processes_list;
+list* g_process_list;
+list* g_ready_processes_list;
 
 process_context_block* create_process(int is_kernel, char* process_name);
 int generate_pid();
@@ -15,7 +15,7 @@ void initialize_process_regs(process_context_block* pcb);
 void load_process_code(process_context_block* pcb, char* file_name);
 void kill_process(process_context_block* pcb);
 void process_scheduler();
-
+void process_init();
 
 process_context_block* create_process(int is_kernel, char* process_name)
 {
@@ -98,5 +98,23 @@ void kill_process(process_context_block* pcb)
 
 void process_scheduler()
 {
-    if(g_ready_processes_list == NULL)   
+    if(*(g_ready_processes_list) == (list)0)
+    {
+
+    }
+}
+
+void process_init()
+{
+    //initilizing the processes lists 
+    g_process_list = create_list();
+    g_ready_processes_list = create_list();
+
+    // initializing the scheduler
+    set_scheduler((callback_function)process_scheduler);
+
+    // initializing the first process idle
+    process_context_block* idle = create_process(0, "idle.elf");
+    insert_head(g_ready_processes_list, idle);
+    insert_head(g_process_list, idle);
 }
