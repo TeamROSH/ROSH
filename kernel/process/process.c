@@ -91,6 +91,7 @@ void kill_process(process_context_block* pcb)
     for(int i = 0; i < 5; i++)
     {
         page_free(address_to_page(pcb->process_pages[i]));
+        memset(page_to_address(pcb->process_pages[i]), 0, PAGE_SIZE);
     }
 
     heap_free(g_kernelHeap, pcb);
@@ -98,6 +99,7 @@ void kill_process(process_context_block* pcb)
 
 void process_scheduler()
 {
+    process_context_block* next_process;
     // if no running processes 
     if(g_ready_processes_list->size == NULL)
     {
@@ -105,11 +107,18 @@ void process_scheduler()
         return;
     }
 
-    // if this is the first process
-    if(g_curr_process == NULL)
+    // going through the ready processes list and getting ready process
+    while(next_process->process_state == PROCESS_READY && next_process!= NULL)
     {
-        
+        next_process = (process_context_block*)pop_tail(g_ready_processes_list)->data;
     }
+
+    // pushing the current process to the list head
+    insert_head(g_ready_processes_list, g_curr_process);
+    g_curr_process->process_state = PROCESS_READY;
+
+    // context switching to the next process 
+    context_switch(next_process);
 
 
 }
@@ -125,6 +134,7 @@ void process_init()
 
     // initializing the first process idle
     process_context_block* idle = create_process(0, "idle.elf");
+    idle->process_state = PROCESS_ZOMBI;
     insert_head(g_ready_processes_list, idle);
     insert_head(g_process_list, idle);
 }

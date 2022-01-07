@@ -83,7 +83,6 @@ void process_init();
 /*
     This function switch between the current process to the next process
     @param next_process: the next process
-    @param current_process: the current process
     the function return 0 if error and 1 if ok
 */
-int context_switch(process_context_block* next_process, process_context_block* current_process);
+int context_switch(process_context_block* next_process);
