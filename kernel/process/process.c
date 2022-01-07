@@ -98,10 +98,20 @@ void kill_process(process_context_block* pcb)
 
 void process_scheduler()
 {
-    if(*(g_ready_processes_list) == (list)0)
+    // if no running processes 
+    if(g_ready_processes_list->size == NULL)
     {
-
+        puts("Error - no running process");
+        return;
     }
+
+    // if this is the first process
+    if(g_curr_process == NULL)
+    {
+        
+    }
+
+
 }
 
 void process_init()

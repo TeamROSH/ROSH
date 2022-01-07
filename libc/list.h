@@ -3,7 +3,7 @@
 #include "../kernel/memory/heap.h"
 #include <stdint.h>
 #include "memory.h"
-
+#include "../kernel/IDT/time.h"
 typedef struct node
 {
     node* next;
@@ -47,6 +47,13 @@ node* insert_head(list* list, void* data);
     @retruns a pointer to the new node 
 */
 node* insert_tail(list* list, void* data);
+
+/*
+    This function picks the node from the head and returns it
+    @param list: the doubly linked list
+    this function returns the node from the head
+*/
+node* pop_head(list* list);
 
 /*
     This function deletes a node from list

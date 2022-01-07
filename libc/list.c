@@ -6,6 +6,7 @@ list* create_list();
 node* create_node(void* data);
 node* insert_head(list* list, void* data);
 node* insert_tail(list* list, void* data);
+node* pop_head(list* list);
 void delete_node(list* list, node* node);
 void delete_node_at_pos(list* list, int pos);
 
@@ -103,6 +104,35 @@ node* insert_tail(list* list, void* data)
     list->size = list->size + 1;
 
     return new_node;    
+}
+
+node* pop_head(list* list)
+{
+    node* head_node;
+
+    // if list not null
+    if(list)
+    {
+        head_node = list->head;
+        
+        // if only one node
+        if(list->size == 1)
+        {
+            list->head = NULL;
+            list->tail = NULL;
+        }
+
+        // more than one node
+        else
+        {
+            list->head = head_node->next;
+        }
+
+        // resizing the list size
+        list->size--;
+    }
+
+    return head_node;
 }
 
 void delete_node(list* list, node* node)
