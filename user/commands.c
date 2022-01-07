@@ -118,6 +118,7 @@ void help(char* argv, int argc)
 			"rm - remove file or folder\n"
 			"touch - create file\n"
 			"mkdir - create folder\n"
+			"test - test several key features of the OS.\n"
 		);
 	}
 	else if (argc == 2)		// for specific command
@@ -429,4 +430,50 @@ void mkdir(char* argv, int argc)
 	}
 	else
 		uputs("Invalid syntax. Try \'help mkdir\'.");
+}
+
+void test(char* argv, int argc)
+{
+	if (argc == 2)
+	{
+		const char* option = getArg(argv, argc, 1);
+		if (strlen(option) != 1)
+		{
+			uputs("Invalid syntax. Try \'help test\'.");
+			return;
+		}
+		if (option[0] == 'i')
+		{
+			uputs(
+				"Interrupts test:\n"
+				"The system will now run \'int x = 1 / 0;\'\n"
+				"The expected result should be \'Division By Zero\':\n"
+				);
+			int a = 0;
+			int x = 1 / a;
+		}
+		else if (option[0] == 'u')
+		{
+			uputs(
+				"Usermode test:\n"
+				"The system will now try to run a privileged instruction from usermode.\n"
+				"Those instruction can only be performed in kernel mode.\n\n"
+				"Calling \'cli\' instruction (clear interrupts) from usermode.\n"
+				"The expected result should be \'General Protection Fault\':\n"
+				);
+			asm volatile("cli");
+		}
+		else if (option[0] == 'p')
+		{
+			uputs(
+				"Paging test:\n"
+				"The system will now try to access an unmapped memory.\n\n"
+				"Calling \'((char*)0)[0] = 0;\'\n"
+				"The expected result should be \'Page Fault\':\n"
+				);
+			((char*)0)[0] = 0;
+		}
+	}
+	else
+		uputs("Invalid syntax. Try \'help test\'.");
 }
