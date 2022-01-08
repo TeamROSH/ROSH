@@ -164,7 +164,6 @@ int context_switch(process_context_block* next_process)
 
     // return to usermode 
     return_to_usermode(next_process->reg);
-    int x = 0; 
 }
 
 void save_registers(process_context_block* pcb, registers_t* registers)

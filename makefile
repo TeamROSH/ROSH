@@ -20,6 +20,7 @@ compile_libc:
 	@i386-elf-gcc -ffreestanding -c libc/string.c -o objects/string.o
 	@i386-elf-gcc -ffreestanding -c libc/memory.c -o objects/memory.o
 	@i386-elf-gcc -ffreestanding -c libc/system.c -o objects/system.o
+	@i386-elf-gcc -ffreestanding -c libc/list.c -o objects/list.o
 	
 compile_kernel:
 	@echo "Compiling kernel..."
