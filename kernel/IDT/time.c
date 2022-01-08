@@ -20,7 +20,7 @@ void time_handler(registers_t* registers)
     // cals the scheduler function every 200 ms 
     if(i % 2 == 0)
     {
-        g_scheduler();
+        g_scheduler(registers);
     } 
 }
 

@@ -29,7 +29,7 @@ typedef struct process_context_block{
     uint32_t process_state;          // the process state
     uint8_t is_kernel;              // kernel or user process
     uint32_t process_pages[MAX_PROCESS_PAGES];
-    //page_directory* curr_page_directory;
+    page_directory* curr_page_directory;
     uint32_t stack_base;
     Heap process_heap;
     }process_context_block;
@@ -73,7 +73,7 @@ void kill_process(process_context_block* pcb);
 /*
     This function schedules the process in a fixed time
 */
-void process_scheduler();
+void process_scheduler(registers_t* registers);
 
 /*
     This function intializes the system process
@@ -86,3 +86,10 @@ void process_init();
     the function return 0 if error and 1 if ok
 */
 int context_switch(process_context_block* next_process);
+
+/*
+    This function saves the registers values into the pcb registers
+    @param pcb: the changed process 
+    @param registers: the saved registers
+*/
+void save_registers(process_context_block* pcb, registers_t* registers);

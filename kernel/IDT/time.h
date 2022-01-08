@@ -6,7 +6,7 @@
 #define NULL 0
 
 typedef void (*interrupt_handler)(registers_t* registers);
-typedef void (*callback_function)(void);
+typedef void (*callback_function)(registers_t* registers);
 
 
 /*
