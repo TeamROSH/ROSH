@@ -5,6 +5,7 @@
 #include "../IDT/idt.h"
 #include "../memory/paging.h"
 #include "../memory/heap.h"
+#include "../process/process.h"
 
 /*
 	print ROSH logo
@@ -21,12 +22,15 @@ void main() {
 	initKernelHeap();		// init kernel heap
 	initialize_paging();	// init paging
 	keyboard_initialize();	// initializing keyboard
+	process_init();
 	
 	initConsole();			// init cursor
 	printLogo();		// print ROSH
 
 	getchar();
 	clearConsole();
+
+
 
 	usermode();
 }
