@@ -25,8 +25,14 @@ void main() {
 	initConsole();			// init cursor
 	printLogo();		// print ROSH
 
+	puts("ROEI GAY2");
+
 	getchar();
+
+	puts("ROEI GAY3");
 	clearConsole();
+
+	puts("ROEI GAY1");
 
 	usermode();
 }

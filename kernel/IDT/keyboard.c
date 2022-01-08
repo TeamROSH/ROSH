@@ -136,6 +136,7 @@ void bflush()
 */
 char pop_buffer()
 {
+	puts("ROEI GAY4");
 	char val = 0;
 	if (buffer_size > 0)
 	{
@@ -149,7 +150,9 @@ char pop_buffer()
 char getchar()
 {
 	pending = TRUE;
+	puts("ROEI GAY6");
 	while (!enterPress){}		// wait until enter
+	puts("ROEI GAY5");
 	enterPress = FALSE;
 	pending = FALSE;
 	return pop_buffer();
