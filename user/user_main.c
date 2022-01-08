@@ -5,12 +5,15 @@ void callCommand(char* argv, int argc);
 
 void umain()
 {
+	init_commands();
 	initUserHeap();		// init the usermode heap
 
 	char input[INPUT_SIZE] = {0};
 	while (1)
 	{
-		uputs("\n\n$ ");
+		uputs("\n\n");
+		pwd(0, 0);
+		uputs(" $ ");
 		ubflush();		// clear buffer
 		ugetline(input, INPUT_SIZE);		// get input
 		cmd(input);				// get output

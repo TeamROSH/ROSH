@@ -72,9 +72,13 @@ void idt_initialize()
 	idt_gate_initialize(47,(uint32_t)irq15,KERNEL_CS,0x8e);
 	idt_gate_initialize(128,(uint32_t)isr128,KERNEL_CS,0xee);		// syscalls in ring 3: 0xee
 
-	for (int i = 0; i < IDT_ENTRIES; i++)
+	for (int i = 0; i < 32; i++)
 	{
 		set_interrupt(i, general_handler);
+	}
+	for (int i = 32; i < 48; i++)
+	{
+		set_interrupt(i, empty_irq);
 	}
 	
 	set_interrupt(32, time_handler);

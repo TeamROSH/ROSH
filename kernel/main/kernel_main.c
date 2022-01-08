@@ -5,6 +5,7 @@
 #include "../IDT/idt.h"
 #include "../memory/paging.h"
 #include "../memory/heap.h"
+#include "../../fs/fs.h"
 
 /*
 	print ROSH logo
@@ -23,6 +24,8 @@ void main() {
 	keyboard_initialize();	// initializing keyboard
 	
 	initConsole();			// init cursor
+	init_fs();				// init file system
+
 	printLogo();		// print ROSH
 
 	getchar();

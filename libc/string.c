@@ -1,4 +1,5 @@
 #include "string.h"
+#define NULL 0
 
 int strlen(const char* str)
 {
@@ -57,4 +58,39 @@ int atoi(const char* str)
 		}
 	}
 	return num;
+}
+
+int strsplit(char* str, char devidor)
+{
+	int counter = 1;
+	int strlen_str = strlen(str);
+	for (int i = 0; i < strlen_str; i++)
+	{
+		if (str[i] == devidor)
+		{
+			str[i] = 0;
+			counter++;
+		}
+	}
+	return counter;
+}
+
+const char* getArg(const char* argv, int argc, int argNum)
+{
+	if (argNum >= argc)		// prevent buffer overflow
+		return NULL;
+	const char* res = argv;
+	for (int i = 0; i < argNum; i++)		// run until wanted argument reached
+	{
+		res += strlen(res) + 1;		// next argument
+	}
+	return res;
+}
+
+int strfind(const char* str, char c)
+{
+	for (int i = 0; i < strlen(str); i++)
+		if (str[i] == c)
+			return i;
+	return -1;
 }
