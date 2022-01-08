@@ -22,7 +22,7 @@ list* create_list()
 
 node* create_node(void* data)
 {
-    node* new_node = (node*)heap_malloc(&g_kernelHeap, sizeod(node));
+    node* new_node = (node*)heap_malloc(&g_kernelHeap, sizeof(node));
     
     // assigning data
     new_node->data = data;
@@ -36,7 +36,7 @@ node* insert_head(list* list, void* data)
     //if list is NUll
     if(list == NULL)
     {
-        list = (list*)create_list();
+        list = create_list();
         // if failed to alloc new list
         if(list == NULL)
         {
@@ -48,7 +48,7 @@ node* insert_head(list* list, void* data)
     // if no more kernel heap space
     if(new_node == NULL)
     {
-        retrun NULL;
+        return  NULL;
     }
 
     // making nodes pointing to each other
@@ -74,7 +74,7 @@ node* insert_tail(list* list, void* data)
     //if list is NUll
     if(list == NULL)
     {
-        list = (list*)create_list();
+        list = create_list();
         // if failed to alloc new list
         if(list == NULL)
         {
@@ -86,7 +86,7 @@ node* insert_tail(list* list, void* data)
     // if no more kernel heap space
     if(new_node == NULL)
     {
-        retrun NULL;
+        return NULL;
     }
 
     // making nodes pointing to each other

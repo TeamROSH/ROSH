@@ -35,6 +35,8 @@ typedef struct process_context_block{
     }process_context_block;
 #endif
 
+extern void return_to_usermode(registers_t registers);
+
 /*
     This function creates a process
     @param is_kernel: 1 if kernel 0 if user

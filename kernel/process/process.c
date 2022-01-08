@@ -45,7 +45,7 @@ process_context_block* create_process(int is_kernel, char* process_name)
     }
     
     // crating heap object 
-    heap_init(pcb->process_heap, pcb->process_pages[2], PAGE_SIZE * 3);
+    heap_init(&(pcb->process_heap), pcb->process_pages[2], PAGE_SIZE * 3);
 
 
     load_process_code(pcb, process_name);
@@ -70,7 +70,7 @@ int generate_pid()
     // inc the pid counter
     g_highest_pid++;
 
-    retrun g_highest_pid - 1;
+    return g_highest_pid - 1;
 }
 
 void initialize_process_regs(process_context_block* pcb)
@@ -98,10 +98,10 @@ void kill_process(process_context_block* pcb)
     for(int i = 0; i < 5; i++)
     {
         page_free(address_to_page(pcb->process_pages[i]));
-        memset(page_to_address(pcb->process_pages[i]), 0, PAGE_SIZE);
+        memset((void*)page_to_address(pcb->process_pages[i]), 0, PAGE_SIZE);
     }
 
-    heap_free(g_kernelHeap, pcb);
+    heap_free(&(g_kernelHeap), pcb);
 }
 
 void process_scheduler(registers_t* registers)
@@ -119,6 +119,9 @@ void process_scheduler(registers_t* registers)
     {
         next_process = (process_context_block*)pop_tail(g_ready_processes_list)->data;
     }
+
+    // saving the old process registers
+    save_registers(g_curr_process, registers);
 
     // pushing the current process to the list head
     insert_head(g_ready_processes_list, g_curr_process);
@@ -149,7 +152,6 @@ void process_init()
 int context_switch(process_context_block* next_process)
 {
     next_process->process_state = PROCESS_RUNNING;
-
     for (int i = 0; i < MAX_PROCESS_PAGES; i++)
     {
         // unmaping the old process meory
@@ -159,13 +161,14 @@ int context_switch(process_context_block* next_process)
         page_map(next_process->curr_page_directory, next_process->process_pages[i], next_process->process_pages[i], PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
     }
 
-    //TODO
-    // return to user mode and restore registers
-    //TODO
+
+    // return to usermode 
+    return_to_usermode(next_process->reg);
+    int x = 0; 
 }
 
 void save_registers(process_context_block* pcb, registers_t* registers)
 {
     // copying the updated registers vlues into the process pcb
-    memcpy(pcb->reg, registers, sizeof(registers));
+    memcpy(&(pcb->reg), registers, sizeof(registers));
 }

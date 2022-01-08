@@ -4,10 +4,12 @@
 #include <stdint.h>
 #include "memory.h"
 #include "../kernel/IDT/time.h"
+
+
 typedef struct node
 {
-    node* next;
-    node* prev;
+    struct node* next;
+    struct node* prev;
     void* data;
 }node;
 
