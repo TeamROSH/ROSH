@@ -6,6 +6,8 @@
 #include "paging.h"
 #define ELF_MAGIC_NUM "\177ELF"
 
+struct page_directory;
+
 typedef struct elf_header{
   uint8_t e_ident[4]; 
   uint16_t e_type;

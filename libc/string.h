@@ -2,6 +2,14 @@
 #define STRINGH
 
 #define ASCII_NUM_OFFSET 48
+#define SHIFT_B64 43
+#define MAX_CHAR 255
+#include <stdint.h>
+#include "../kernel/memory/heap.h"
+
+#ifndef NULL
+#define NULL 0
+#endif
 
 /*
 	get length of str
@@ -40,4 +48,13 @@ int digits(int num);
 */
 int strncmp(const char* str1, const char* str2, int n);
 
+
+/*
+	This function decodes base64 encoded string 
+	@param encoded_string: the base 64 encoded string
+	@parma decoded_string: the decoded string 
+	the function returns 1 if successful and 0
+	 if not 
+*/
+int base64_decode(char* encoded_string, char* decoded_string);
 #endif

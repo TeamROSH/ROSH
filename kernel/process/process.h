@@ -2,13 +2,13 @@
 #define PROCESS_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "../IDT/reg_def.h"
-#include "../memory/paging.h"
 #include "../../libc/list.h"
 #include "../../libc/memory.h"
 #include "../memory/heap.h"
 #include "../IDT/time.h"
-
+#include "../memory/paging.h"
 #define PROCESS_NAME 512
 
 #define PROCESS_CREATED 0
@@ -21,6 +21,7 @@
 #define MAX_PROCESS_PAGES 20
 #define MAX_PROCESS 1024    // there is a limited amount of pages
 
+struct page_directory;
 
 typedef struct process_context_block{
     char name[PROCESS_NAME];        // process name
