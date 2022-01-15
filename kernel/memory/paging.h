@@ -4,7 +4,6 @@
 
 #include "memorylayout.h"
 #include "../../libc/memory.h"
-#include "elf.h"
 
 //specifies flags for mapped page
 #define PAGE_FLAG_USER        0

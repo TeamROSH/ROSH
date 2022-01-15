@@ -8,6 +8,7 @@
 #include "../../libc/memory.h"
 #include "../memory/heap.h"
 #include "../IDT/time.h"
+#include "../IDT/isr.h"
 #include "../memory/paging.h"
 #define PROCESS_NAME 512
 

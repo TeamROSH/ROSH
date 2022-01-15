@@ -16,27 +16,19 @@ void kernelShutdown();
 extern void usermode(void);
 
 void main() {
-	char in[] = "eW9hdg==";
-	char* output = NULL;
-
 	gdt_initialize();		// initializing gdt
 	
 	idt_initialize();		// initializing idt
 	initKernelHeap();		// init kernel heap
 	initialize_paging();	// init paging
 	keyboard_initialize();	// initializing keyboard
-	//process_init();
+	process_init();
 	
 	initConsole();			// init cursor
 	printLogo();		// print ROSH
 
-	base64_decode(in, output);
-	puts(output);
-
 	getchar();
 	clearConsole();
-
-
 
 	usermode();
 }

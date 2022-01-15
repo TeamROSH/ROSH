@@ -139,6 +139,9 @@ void process_init()
     g_process_list = create_list();
     g_ready_processes_list = create_list();
 
+	// ***	Create first process before this line	***
+	set_interrupt(32, time_handler);
+
     // initializing the scheduler
     set_scheduler((callback_function)process_scheduler);
 
