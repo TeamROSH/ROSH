@@ -15,6 +15,7 @@ void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags
 void page_unmap(uint32_t vadd);
 void update_pages_array(uint32_t page_num, int is_on);
 uint32_t page_alloc();
+void page_free(uint32_t page_num);
 void initialize_page_table_entry(page_table_entry* table_entry,
 uint32_t address,
 uint8_t present,    
@@ -235,6 +236,11 @@ uint32_t page_alloc()
 
     // no pages left and allocation failed returning null
     return NULL;
+}
+
+void page_free(uint32_t page_num)
+{
+    update_pages_array(page_num, 0);
 }
 
 /*

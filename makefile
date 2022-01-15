@@ -20,6 +20,7 @@ compile_libc:
 	@i386-elf-gcc -ffreestanding -c libc/string.c -o objects/string.o
 	@i386-elf-gcc -ffreestanding -c libc/memory.c -o objects/memory.o
 	@i386-elf-gcc -ffreestanding -c libc/system.c -o objects/system.o
+	@i386-elf-gcc -ffreestanding -c libc/list.c -o objects/list.o
 	
 compile_kernel:
 	@echo "Compiling kernel..."
@@ -35,6 +36,7 @@ compile_kernel:
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/idt.c -o objects/idt.o
 	@i386-elf-gcc -ffreestanding -c kernel/IDT/isr.c -o objects/isr.o
 	@i386-elf-gcc -ffreestanding -c kernel/syscalls/syscalls.c -o objects/syscalls.o
+	@i386-elf-gcc -ffreestanding -c kernel/process/process.c -o objects/process.o
 	@i386-elf-gcc -ffreestanding -c kernel/memory/heap.c -o objects/heap.o
 	@i386-elf-gcc -ffreestanding -c fs/fs.c -o objects/fs.o
 

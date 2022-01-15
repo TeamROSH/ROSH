@@ -11,6 +11,7 @@
 		"paging.h": "c",
 		"idt.h": "c",
 		"keyboard.h": "c",
+		"time.h": "c",
 		"device.h": "c",
 		"memorylayout.h": "c",
 		"ata_pio.h": "c",
