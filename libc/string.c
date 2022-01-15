@@ -116,18 +116,6 @@ int calc_base64_output(char* encoded_string)
 {
     return strlen(encoded_string) / 4 * 3;
 }
-	int size = strlen(str);
-	int num = 0;
-	for (int i = 0; i < size; i++)		// for every const char*
-	{
-		if (str[i] >= ASCII_NUM_OFFSET && str[i] < ASCII_NUM_OFFSET + 10)		// if in range (0-9)
-		{
-			num *= 10;			// add to int
-			num += str[i] - ASCII_NUM_OFFSET;
-		}
-	}
-	return num;
-}
 
 int strsplit(char* str, char devidor)
 {
