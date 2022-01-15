@@ -23,7 +23,6 @@ void main() {
 	initKernelHeap();		// init kernel heap
 	initialize_paging();	// init paging
 	keyboard_initialize();	// initializing keyboard
-	process_init();
 	
 	initConsole();			// init cursor
 	init_fs();				// init file system
@@ -32,6 +31,8 @@ void main() {
 
 	getchar();
 	clearConsole();
+
+	process_init();
 
 	usermode();
 }

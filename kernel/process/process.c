@@ -46,7 +46,6 @@ process_context_block* create_process(int is_kernel, char* process_name)
     // crating heap object 
     heap_init(&(pcb->process_heap), pcb->process_pages[2], PAGE_SIZE * 3);
 
-
     load_process_code(pcb, process_name);
 
     pcb->process_state = PROCESS_READY;
@@ -99,6 +98,7 @@ void load_process_code(process_context_block* pcb, char* file_name)
 		pcb->process_pages[i + 5] = page_to_address(page_alloc());
 		memcpy((void*)pcb->process_pages[i + 5], code + i * PAGE_SIZE, (i == size / PAGE_SIZE) ? (size % PAGE_SIZE) : PAGE_SIZE);
 	}
+	kfree(code);
 
 	pcb->reg.eip = pcb->process_pages[5];
 }
@@ -157,11 +157,11 @@ void process_init()
     insert_head(g_ready_processes_list, idle);
     insert_head(g_process_list, idle);
 
+	// initializing the scheduler
+    set_scheduler((callback_function)process_scheduler);
+
 	// ***	Create first process before this line	***
 	set_interrupt(32, time_handler);
-
-    // initializing the scheduler
-    set_scheduler((callback_function)process_scheduler);
 }
 
 int context_switch(process_context_block* next_process)
