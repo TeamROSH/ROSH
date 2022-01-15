@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [[ $# -eq 0 ]] ; then
+	echo "Error: Add asm file as first argument."
+	exit 1
+fi
+
+nasm $1 -f elf -o $1.elf
+i386-elf-objcopy -O binary $1.elf $1.bin
+base64 $1.bin
+rm $1.elf
+rm $1.bin

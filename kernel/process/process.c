@@ -152,7 +152,7 @@ void process_init()
     g_ready_processes_list = create_list();
 
 	// initializing the first process idle
-    process_context_block* idle = create_process(0, "idle.bin");
+    process_context_block* idle = create_process(0, "/idle.bin");
     idle->process_state = PROCESS_ZOMBI;
     insert_head(g_ready_processes_list, idle);
     insert_head(g_process_list, idle);
