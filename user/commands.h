@@ -3,7 +3,7 @@
 
 #define FUN_NAME_SIZE 11
 #define FUN_INFO_SIZE 400
-#define FUNS_NUM 6
+#define FUNS_NUM 14
 
 typedef void (*command)(char* argv, int argc);
 
@@ -14,7 +14,8 @@ typedef void (*command)(char* argv, int argc);
 	@param argNum: requested argument
 	@returns pointer to requested argument
 */
-const char* getArg(const char* argv, int argc, int argNum);
+
+void init_commands();
 
 void echo(char* argv, int argc);
 
@@ -30,6 +31,16 @@ void unknown_command(char* argv, int argc);
 
 void grep(char* argv, int argc);
 
+void ls(char* argv, int argc);
+void pwd(char* argv, int argc);
+void cd(char* argv, int argc);
+void cat(char* argv, int argc);
+void rm(char* argv, int argc);
+void touch(char* argv, int argc);
+void mkdir(char* argv, int argc);
+
+void test(char* argv, int argc);
+
 
 // After functions are defined:
 static const char fun_names[FUNS_NUM][FUN_NAME_SIZE] = 
@@ -39,7 +50,15 @@ static const char fun_names[FUNS_NUM][FUN_NAME_SIZE] =
 	"help",
 	"color",
 	"shutdown",
-	"bc"
+	"bc",
+	"ls",
+	"pwd",
+	"cd",
+	"cat",
+	"rm",
+	"touch",
+	"mkdir",
+	"test"
 };
 
 static const command commands[FUNS_NUM] = 
@@ -49,7 +68,15 @@ static const command commands[FUNS_NUM] =
 	help,
 	color,
 	shutdownCommand,
-	bc
+	bc,
+	ls,
+	pwd,
+	cd,
+	cat,
+	rm,
+	touch,
+	mkdir,
+	test
 };
 
 static const char fun_info[] = 
@@ -93,6 +120,51 @@ static const char fun_info[] =
 	"bc - basic calculator.\n"
 	"Usage: \'bc <expression>\'\n"
 	"Only +,-,/,* and integers are allowed.\n"
+
+	"\0"
+
+	"ls - list items in folder\n"
+	"Usage: \'ls <path - optional>\'\n"
+	
+	"\0"
+
+	"pwd - print working directory\n"
+	"Usage: \'pwd\'\n"
+
+	"\0"
+
+	"cd - change working directory\n"
+	"Usage: \'cd <path>\'\n"
+
+	"\0"
+
+	"cat - print file content\n"
+	"Usage: \'cat <path>\'\n"
+
+	"\0"
+
+	"rm - remove file or folder\n"
+	"Usage: \'rm <path>\'\n"
+
+
+	"\0"
+
+	"touch - create file\n"
+	"Usage: \'touch <path>\'\n"
+
+	"\0"
+
+	"mkdir - create folder\n"
+	"Usage: \'mkdir <path>\'\n"
+
+	"\0"
+
+	"test - test several key features of the OS.\n"
+	"Usage: \'test <option>\'\n"
+	"Options:\n"
+	"i - test interrupts\n"
+	"u - test usermode\n"
+	"p - test paging\n"
 };
 
 #endif

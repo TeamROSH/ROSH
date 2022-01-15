@@ -5,16 +5,11 @@
 #define FALSE 0
 #define TRUE !FALSE
 
-const char* getArg(const char* argv, int argc, int argNum)
+char dir[200] = {0};
+
+void init_commands()
 {
-	if (argNum >= argc)		// prevent buffer overflow
-		return NULL;
-	const char* res = argv;
-	for (int i = 0; i < argNum; i++)		// run until wanted argument reached
-	{
-		res += strlen(res) + 1;		// next argument
-	}
-	return res;
+	dir[0] = '/';
 }
 
 void grep(char* argv, int argc)
@@ -53,10 +48,40 @@ void unknown_command(char* argv, int argc)
 
 void echo(char* argv, int argc)
 {
-	for (int i = 1; i < argc; i++)		// for every argument except command name
+	if (argc >= 4 && getArg(argv, argc, argc - 2)[0] == '>' && strlen(getArg(argv, argc, argc - 2)) <= 2)
 	{
-		uputs(getArg(argv, argc, i));		// print it
-		uputc(' ');		// add the space
+		if (strlen(getArg(argv, argc, argc - 2)) == 2 && getArg(argv, argc, argc - 2)[1] != '>')
+		{
+			uputs("Invalid syntax. Try \'help echo\'.");
+			return;
+		}
+		char path[200] = {0};
+		memcpy(path, dir, strlen(dir));
+		const char* rel = getArg(argv, argc, argc - 1);
+		if (rel[0] == '/')
+			memcpy(path, rel, strlen(rel) + 1);
+		else{
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
+		}
+
+		if (strlen(getArg(argv, argc, argc - 2)) == 2)
+			uwrite_file(path, "\n", 1, 1);
+
+		for (int i = 1; i < argc - 2; i++)		// for every argument except function arguments
+		{
+			uwrite_file(path, getArg(argv, argc, i), strlen(getArg(argv, argc, i)), !(strlen(getArg(argv, argc, argc - 2)) == 1 && i == 1));
+			if (i != argc - 3)
+				uwrite_file(path, " ", 1, 1);
+		}
+	}
+	else
+	{
+		for (int i = 1; i < argc; i++)		// for every argument except command name
+		{
+			uputs(getArg(argv, argc, i));		// print it
+			uputc(' ');		// add the space
+		}
 	}
 }
 
@@ -86,6 +111,14 @@ void help(char* argv, int argc)
 			//"grep - \n"
 			"shutdown - shutdown the computer.\n"
 			"bc - basic calculator.\n"
+			"ls - list items in folder\n"
+			"pwd - print working directory\n"
+			"cd - change working directory\n"
+			"cat - print file content\n"
+			"rm - remove file or folder\n"
+			"touch - create file\n"
+			"mkdir - create folder\n"
+			"test - test several key features of the OS.\n"
 		);
 	}
 	else if (argc == 2)		// for specific command
@@ -196,6 +229,12 @@ void bc(char* argv, int argc)
 		return calculate(opers, nums, opersNum - 1);
 	}
 
+	if (argc != 2)
+	{
+		uputs("Invalid syntax. Try \'help bc\'.");
+		return;
+	}
+
 	// checks
 	const char* exp = getArg(argv, argc, 1);		// get math expression
 	int size = strlen(exp);					// get its size
@@ -203,7 +242,7 @@ void bc(char* argv, int argc)
 	char* cExp = (char*)umalloc(size + 1);		// copy exp
 	memcpy(cExp, exp, size + 1);
 
-	if (argc != 2 || !isValidExp(cExp, size) || size == 0)
+	if (!isValidExp(cExp, size) || size == 0)
 	{
 		uputs("Invalid syntax. Try \'help bc\'.");
 		return;
@@ -227,4 +266,214 @@ void bc(char* argv, int argc)
 	ufree(opers);
 	ufree(nums);
 	ufree(cExp);
+}
+
+void ls(char* argv, int argc)
+{
+	char path[200] = {0};
+	memcpy(path, dir, strlen(dir));
+	if (argc == 2)
+	{
+		const char* rel = getArg(argv, argc, 1);
+		if (rel[0] == '/')
+			memcpy(path, rel, strlen(rel) + 1);
+		else{
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
+		}
+	}
+	else if (argc > 2)
+	{
+		uputs("Invalid syntax. Try \'help ls\'.");
+		return;
+	}
+	int size = ufile_size(path);
+
+	if (size > 0)	
+	{
+		char* data = (char*)umalloc(size + 1);
+		uread_file(path, data);
+		data[size] = 0;
+		int lines = strsplit(data, '\n');
+		for (int i = 0; i < lines; i++)
+		{
+			const char* line = getArg(data, lines, i);
+			if (strlen(line) == 0)
+				continue;
+			const int len = strfind(line, ',');
+			for (int j = 0; j < len; j++)
+				uputc(line[j]);
+			uputc('\n');
+		}
+		ufree(data);
+	}
+}
+
+void pwd(char* argv, int argc)
+{
+	uputs(dir);
+}
+
+void cd(char* argv, int argc)
+{
+	if (argc == 2)
+	{
+		char temp[200] = {0};
+		memcpy(temp, dir, 200);
+
+		const char* rel = getArg(argv, argc, 1);
+		if (rel[0] == '/')
+			memcpy(dir, rel, strlen(rel) + 1);
+		else{
+			int strlen_dir = strlen(dir);
+			memcpy(dir + strlen_dir, rel, strlen(rel) + 1);
+		}
+		if (dir[strlen(dir) - 1] != '/')
+		{
+			dir[strlen(dir) + 1] = 0;
+			dir[strlen(dir)] = '/';
+		}
+
+		if (ufile_type(dir) != 1)
+		{
+			memcpy(dir, temp, 200);
+			uputs("Not a folder.");
+		}
+	}
+	else
+		uputs("Invalid syntax. Try \'help cd\'.");
+}
+
+void cat(char* argv, int argc)
+{
+	char path[200] = {0};
+	memcpy(path, dir, strlen(dir));
+	if (argc == 2)
+	{
+		const char* rel = getArg(argv, argc, 1);
+		if (rel[0] == '/')
+			memcpy(path, rel, strlen(rel) + 1);
+		else{
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
+		}
+
+		int size = ufile_size(path);
+		if (size > 0)
+		{
+			char* data = (char*)umalloc(size);
+			uread_file(path, data);
+			for (int i = 0; i < size; i++)
+				uputc(data[i]);
+			ufree(data);
+		}
+	}
+	else
+		uputs("Invalid syntax. Try \'help cat\'.");
+}
+
+void rm(char* argv, int argc)
+{
+	char path[200] = {0};
+	memcpy(path, dir, strlen(dir));
+	if (argc == 2)
+	{
+		const char* rel = getArg(argv, argc, 1);
+		if (rel[0] == '/')
+			memcpy(path, rel, strlen(rel) + 1);
+		else{
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
+		}
+
+		udelete_file(path);
+	}
+	else
+		uputs("Invalid syntax. Try \'help rm\'.");
+}
+
+void touch(char* argv, int argc)
+{
+	char path[200] = {0};
+	memcpy(path, dir, strlen(dir));
+	if (argc == 2)
+	{
+		const char* rel = getArg(argv, argc, 1);
+		if (rel[0] == '/')
+			memcpy(path, rel, strlen(rel) + 1);
+		else{
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
+		}
+
+		ucreate_file(path);
+	}
+	else
+		uputs("Invalid syntax. Try \'help touch\'.");
+}
+
+void mkdir(char* argv, int argc)
+{
+	char path[200] = {0};
+	memcpy(path, dir, strlen(dir));
+	if (argc == 2)
+	{
+		const char* rel = getArg(argv, argc, 1);
+		if (rel[0] == '/')
+			memcpy(path, rel, strlen(rel) + 1);
+		else{
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
+		}
+
+		ucreate_folder(path);
+	}
+	else
+		uputs("Invalid syntax. Try \'help mkdir\'.");
+}
+
+void test(char* argv, int argc)
+{
+	if (argc == 2)
+	{
+		const char* option = getArg(argv, argc, 1);
+		if (strlen(option) != 1)
+		{
+			uputs("Invalid syntax. Try \'help test\'.");
+			return;
+		}
+		if (option[0] == 'i')
+		{
+			uputs(
+				"Interrupts test:\n"
+				"The system will now run \'int x = 1 / 0;\'\n"
+				"The expected result should be \'Division By Zero\':\n"
+				);
+			int a = 0;
+			int x = 1 / a;
+		}
+		else if (option[0] == 'u')
+		{
+			uputs(
+				"Usermode test:\n"
+				"The system will now try to run a privileged instruction from usermode.\n"
+				"Those instruction can only be performed in kernel mode.\n\n"
+				"Calling \'cli\' instruction (clear interrupts) from usermode.\n"
+				"The expected result should be \'General Protection Fault\':\n"
+				);
+			asm volatile("cli");
+		}
+		else if (option[0] == 'p')
+		{
+			uputs(
+				"Paging test:\n"
+				"The system will now try to access an unmapped memory.\n\n"
+				"Calling \'((char*)0)[0] = 0;\'\n"
+				"The expected result should be \'Page Fault\':\n"
+				);
+			((char*)0)[0] = 0;
+		}
+	}
+	else
+		uputs("Invalid syntax. Try \'help test\'.");
 }

@@ -47,7 +47,6 @@ int digits(int num);
 */
 int strncmp(const char* str1, const char* str2, int n);
 
-
 /*
     This function decodes base64 encoded string 
     @param encoded_string: the base 64 encoded string
@@ -63,4 +62,30 @@ int base64_decode(char* encoded_string, char* decoded_string);
     This function returns the encoded string value
 */
 int calc_base64_output(char* encoded_string);
+
+/*
+	split string by char. accessed by getArg function
+	@param str: the string
+	@param devidor: the char devidor
+	@returns number of parts created
+*/
+int strsplit(char* str, char devidor);
+
+/*
+	get arguments from splitted string
+	@param argv: splitted string
+	@param argc: value returned from split
+	@param argNum: equivalent of str[argNum]
+	@returns string in array index argNum
+*/
+const char* getArg(const char* argv, int argc, int argNum);
+
+/*
+	get index of char in string
+	@param str: the string
+	@param c: the char
+	@returns index of the char
+*/
+int strfind(const char* str, char c);
+
 #endif

@@ -1,5 +1,4 @@
 #include "string.h"
-//extern Heap g_kernelHeap;
 
 int8_t g_decode_table[] = { 62, -1, -1, -1, 63, 52, 53, 54, 55, 56, 57, 58,
     59, 60, 61, -1, -1, -1, -1, -1, -1, -1, 0, 1, 2, 3, 4, 5,
@@ -11,6 +10,7 @@ int8_t g_decode_table[] = { 62, -1, -1, -1, 63, 52, 53, 54, 55, 56, 57, 58,
 
 int base64_decode(char* encoded_string, char* decoded_string);
 int calc_base64_output(char* encoded_string);
+#define NULL 0
 
 int strlen(const char* str)
 {
@@ -115,4 +115,51 @@ int base64_decode(char* encoded_string, char* decoded_string)
 int calc_base64_output(char* encoded_string)
 {
     return strlen(encoded_string) / 4 * 3;
+}
+	int size = strlen(str);
+	int num = 0;
+	for (int i = 0; i < size; i++)		// for every const char*
+	{
+		if (str[i] >= ASCII_NUM_OFFSET && str[i] < ASCII_NUM_OFFSET + 10)		// if in range (0-9)
+		{
+			num *= 10;			// add to int
+			num += str[i] - ASCII_NUM_OFFSET;
+		}
+	}
+	return num;
+}
+
+int strsplit(char* str, char devidor)
+{
+	int counter = 1;
+	int strlen_str = strlen(str);
+	for (int i = 0; i < strlen_str; i++)
+	{
+		if (str[i] == devidor)
+		{
+			str[i] = 0;
+			counter++;
+		}
+	}
+	return counter;
+}
+
+const char* getArg(const char* argv, int argc, int argNum)
+{
+	if (argNum >= argc)		// prevent buffer overflow
+		return NULL;
+	const char* res = argv;
+	for (int i = 0; i < argNum; i++)		// run until wanted argument reached
+	{
+		res += strlen(res) + 1;		// next argument
+	}
+	return res;
+}
+
+int strfind(const char* str, char c)
+{
+	for (int i = 0; i < strlen(str); i++)
+		if (str[i] == c)
+			return i;
+	return -1;
 }

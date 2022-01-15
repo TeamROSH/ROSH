@@ -3,6 +3,7 @@
 #include "../../libc/screen.h"
 #include "../IDT/keyboard.h"
 #include "../memory/heap.h"
+#include "../../fs/fs.h"
 
 void syscall_handler(registers_t* registers)
 {
@@ -79,6 +80,58 @@ void syscall_handler(registers_t* registers)
 			if (n == 0)
 			{
 				bflush();
+			}
+		}
+	}
+	else if(group == G_FS)
+	{
+		if (function == F_CREATE_F)
+		{
+			if (n == 1)
+			{
+				create_file((char*)params[0]);
+			}
+		}
+		else if (function == F_CREATE_D)
+		{
+			if (n == 1)
+			{
+				create_folder((char*)params[0]);
+			}
+		}
+		else if (function == F_FS_DELETE)
+		{
+			if (n == 1)
+			{
+				delete_file((char*)params[0]);
+			}
+		}
+		else if (function == F_FS_SIZE)
+		{
+			if (n == 2)
+			{
+				*((int*)params[1]) = file_size((char*)params[0]);
+			}
+		}
+		else if (function == F_FS_READ)
+		{
+			if (n == 3)
+			{
+				*((int*)params[2]) = read_file((char*)params[0], *((char**)(params[1])));
+			}
+		}
+		else if (function == F_FS_WRITE)
+		{
+			if (n == 4)
+			{
+				write_file((char*)params[0], (char*)params[1], (int)params[2], (int)params[3]);
+			}
+		}
+		else if (function == F_FS_TYPE)
+		{
+			if (n == 2)
+			{
+				*((int*)params[1]) = file_type((char*)params[0]);
 			}
 		}
 	}

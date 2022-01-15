@@ -6,7 +6,8 @@
 #include "../memory/paging.h"
 #include "../memory/heap.h"
 #include "../process/process.h"
-#include "../../libc/string.h"
+#include "../../fs/fs.h"
+
 /*
 	print ROSH logo
 */
@@ -25,6 +26,8 @@ void main() {
 	process_init();
 	
 	initConsole();			// init cursor
+	init_fs();				// init file system
+
 	printLogo();		// print ROSH
 
 	getchar();
