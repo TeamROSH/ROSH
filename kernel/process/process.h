@@ -6,10 +6,12 @@
 #include "../IDT/reg_def.h"
 #include "../../libc/list.h"
 #include "../../libc/memory.h"
+#include "../../libc/string.h"
 #include "../memory/heap.h"
 #include "../IDT/time.h"
 #include "../IDT/isr.h"
 #include "../memory/paging.h"
+#include "../../fs/fs.h"
 #define PROCESS_NAME 512
 
 #define PROCESS_CREATED 0
@@ -36,8 +38,6 @@ typedef struct process_context_block{
     Heap process_heap;
     }process_context_block;
 #endif
-
-extern void return_to_usermode(registers_t registers);
 
 /*
     This function creates a process

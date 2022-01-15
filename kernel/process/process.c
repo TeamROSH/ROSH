@@ -1,6 +1,5 @@
 #include "process.h"
 
-extern Heap g_kernelHeap;
 extern page_directory* g_page_directory;
 
 int g_highest_pid = 1;
@@ -22,7 +21,7 @@ void save_registers(process_context_block* pcb, registers_t* registers);
 
 process_context_block* create_process(int is_kernel, char* process_name)
 {
-    process_context_block* pcb = (process_context_block*)heap_malloc(&g_kernelHeap, sizeof(process_context_block));
+    process_context_block* pcb = (process_context_block*)kmalloc(sizeof(process_context_block));
 
     pcb->is_kernel = is_kernel;
     pcb->pid = generate_pid();
@@ -86,9 +85,22 @@ void initialize_process_regs(process_context_block* pcb)
 
 void load_process_code(process_context_block* pcb, char* file_name)
 {
-    // TODO
-    // will be implemented when elf end file system will be implemented 
-    // TODO
+    int size = file_size(file_name) + 1;
+	char* b64 = (char*)kmalloc(size);
+	read_file(file_name, b64);		// read file
+	b64[size - 1] = 0;
+	size = calc_base64_output(b64);
+	char* code = (char*)kmalloc(size);		// decode file
+	base64_decode(b64, code);
+	kfree(b64);
+
+	for (int i = 0; i < size / PAGE_SIZE + 1; i++)
+	{
+		pcb->process_pages[i + 5] = page_to_address(page_alloc());
+		memcpy((void*)pcb->process_pages[i + 5], code + i * PAGE_SIZE, (i == size / PAGE_SIZE) ? (size % PAGE_SIZE) : PAGE_SIZE);
+	}
+
+	pcb->reg.eip = pcb->process_pages[5];
 }
 
 void kill_process(process_context_block* pcb)
@@ -101,7 +113,7 @@ void kill_process(process_context_block* pcb)
         memset((void*)page_to_address(pcb->process_pages[i]), 0, PAGE_SIZE);
     }
 
-    heap_free(&(g_kernelHeap), pcb);
+    kfree(pcb);
 }
 
 void process_scheduler(registers_t* registers)
@@ -139,17 +151,17 @@ void process_init()
     g_process_list = create_list();
     g_ready_processes_list = create_list();
 
+	// initializing the first process idle
+    process_context_block* idle = create_process(0, "idle.bin");
+    idle->process_state = PROCESS_ZOMBI;
+    insert_head(g_ready_processes_list, idle);
+    insert_head(g_process_list, idle);
+
 	// ***	Create first process before this line	***
 	set_interrupt(32, time_handler);
 
     // initializing the scheduler
     set_scheduler((callback_function)process_scheduler);
-
-    // initializing the first process idle
-    process_context_block* idle = create_process(0, "idle.elf");
-    idle->process_state = PROCESS_ZOMBI;
-    insert_head(g_ready_processes_list, idle);
-    insert_head(g_process_list, idle);
 }
 
 int context_switch(process_context_block* next_process)
@@ -163,10 +175,6 @@ int context_switch(process_context_block* next_process)
         // mapping the new process memory
         page_map(next_process->curr_page_directory, next_process->process_pages[i], next_process->process_pages[i], PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
     }
-
-
-    // return to usermode 
-    return_to_usermode(next_process->reg);
 }
 
 void save_registers(process_context_block* pcb, registers_t* registers)
