@@ -3,6 +3,8 @@
 ; from irq.c:
 [extern irq_handler]
 
+global jump_usermode
+
 isr_main:
 	pushad			; Save State
 	mov ax, ds		; save data segment
@@ -41,6 +43,17 @@ irq_main:
 	cld		; clear DF flag for C
 	call irq_handler	; call C handler
 
+	pop ebx			; Restore data segment
+	pop ebx
+	mov ds, bx		; update registers
+	mov es, bx
+	mov fs, bx
+	mov gs, bx
+	popad			; Restore state
+	add esp, 8		; clean pushed bytes (error, IRQ number)
+	iret			; pop and return
+
+jump_usermode:
 	pop ebx			; Restore data segment
 	pop ebx
 	mov ds, bx		; update registers
