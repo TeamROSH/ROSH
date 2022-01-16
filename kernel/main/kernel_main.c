@@ -33,8 +33,6 @@ void main() {
 	clearConsole();
 
 	process_init();
-
-	usermode();
 }
 
 void printLogo()

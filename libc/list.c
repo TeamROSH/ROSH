@@ -202,7 +202,7 @@ void delete_node(list* list, node* node)
     memset(node, 0, sizeof(node));
     kfree(node);
     node = NULL;
-
+	list->size--;
 }
 
 void delete_node_at_pos(list* list, int pos)
@@ -220,6 +220,41 @@ void delete_node_at_pos(list* list, int pos)
     {
         curr_node = curr_node->next;
         i++;
+    }
+
+    // deleting the curr node
+    if(curr_node != NULL)
+    {
+        delete_node(list, curr_node);
+    }
+}
+
+void delete_node_by_data(list* list, void* data)
+{
+    // invalid arguments
+    if(list == NULL)
+    {
+        return;
+    }
+    node* curr_node = list->head;
+
+    // oing through the nodes
+    while(curr_node != NULL)
+    {
+		if (curr_node->data == data)
+		{
+			if (curr_node->prev == NULL)
+				list->head = curr_node;
+			else
+				curr_node->prev->next = curr_node->next;
+
+			if (curr_node->next == NULL)
+				list->tail = curr_node;
+			else
+				curr_node->next->prev = curr_node->prev;
+			break;
+		}
+        curr_node = curr_node->next;
     }
 
     // deleting the curr node

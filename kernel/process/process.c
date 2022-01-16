@@ -20,6 +20,7 @@ void save_registers(process_context_block* pcb, registers_t* registers);
 process_context_block* init_usermain_process();
 
 extern void jump_usermode(registers_t registers);
+extern void usermode(void);
 
 
 process_context_block* init_usermain_process()
@@ -37,11 +38,10 @@ process_context_block* init_usermain_process()
 	pcb->process_pages[5] = USER_MODE_START;
 
 	pcb->reg.eip = pcb->process_pages[5];
-	pcb->process_state = PROCESS_READY;
+	pcb->process_state = PROCESS_RUNNING;
 
     // adding the process to the processes list
     insert_head(g_process_list, pcb);
-    insert_head(g_ready_processes_list, pcb);
 
     return pcb;
 }
@@ -153,37 +153,34 @@ void kill_process(process_context_block* pcb)
         page_free(address_to_page(pcb->process_pages[i]));
         memset((void*)page_to_address(pcb->process_pages[i]), 0, PAGE_SIZE);
     }
+	delete_node_by_data(g_process_list, pcb);
+	delete_node_by_data(g_ready_processes_list, pcb);
 
     kfree(pcb);
 }
 
 void process_scheduler(registers_t* registers)
 {
-    process_context_block* next_process;
-    // if no running processes 
-    if(g_ready_processes_list->size == NULL)
-    {
-        puts("Error - no running process");
-        return;
-    }
+    node* next_process;
 
-    // going through the ready processes list and getting ready process
-    while(next_process->process_state == PROCESS_READY && next_process!= NULL)
-    {
-        next_process = (process_context_block*)pop_tail(g_ready_processes_list)->data;
-    }
+    for (next_process = g_ready_processes_list->head; next_process != NULL; next_process = next_process->next)
+	{
+		process_context_block* proc = ((process_context_block*)next_process->data);
+		if (proc->process_state == PROCESS_READY)
+		{
+			// saving the old process registers
+			save_registers(g_curr_process, registers);
 
-    // saving the old process registers
-    save_registers(g_curr_process, registers);
+			// pushing the current process to the list head
+			insert_tail(g_ready_processes_list, g_curr_process);
+			g_curr_process->process_state = PROCESS_READY;
 
-    // pushing the current process to the list head
-    insert_head(g_ready_processes_list, g_curr_process);
-    g_curr_process->process_state = PROCESS_READY;
+			delete_node_by_data(g_ready_processes_list, proc);
 
-    // context switching to the next process 
-    context_switch(next_process);
-
-
+			// context switching to the next process 
+			context_switch(proc);
+		}
+	}
 }
 
 void process_init()
@@ -200,6 +197,8 @@ void process_init()
 
 	// ***	Create first process before this line	***
 	set_interrupt(32, time_handler);
+
+	usermode();
 }
 
 int context_switch(process_context_block* next_process)

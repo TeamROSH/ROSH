@@ -78,4 +78,11 @@ void delete_node(list* list, node* node);
 */
 void delete_node_at_pos(list* list, int pos);
 
+/*
+    This function deletes the node by data
+    @param data: the data
+    @param list: the list that the node will be deleted from
+*/
+void delete_node_by_data(list* list, void* data);
+
 #endif
