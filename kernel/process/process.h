@@ -48,6 +48,12 @@ typedef struct process_context_block{
 process_context_block* create_process(int is_kernel, char* process_name);
 
 /*
+    Add process to ready list
+    @param process_name: the process path
+*/
+void new_process(char* process_name);
+
+/*
     This function generates pid
     @returns the new pid
 */

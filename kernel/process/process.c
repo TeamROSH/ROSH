@@ -93,7 +93,7 @@ process_context_block* create_process(int is_kernel, char* process_name)
 
     // adding the process to the processes list
     insert_head(g_process_list, pcb);
-    insert_head(g_ready_processes_list, pcb);
+    insert_tail(g_ready_processes_list, pcb);
 
     return pcb;
 }
@@ -220,4 +220,9 @@ void save_registers(process_context_block* pcb, registers_t* registers)
 {
     // copying the updated registers vlues into the process pcb
     memcpy(&(pcb->reg), registers, sizeof(registers));
+}
+
+void new_process(char* process_name)
+{
+	process_context_block* process = create_process(0, process_name);
 }

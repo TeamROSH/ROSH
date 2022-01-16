@@ -4,6 +4,7 @@
 #include "../IDT/keyboard.h"
 #include "../memory/heap.h"
 #include "../../fs/fs.h"
+#include "../process/process.h"
 
 void syscall_handler(registers_t* registers)
 {
@@ -132,6 +133,16 @@ void syscall_handler(registers_t* registers)
 			if (n == 2)
 			{
 				*((int*)params[1]) = file_type((char*)params[0]);
+			}
+		}
+	}
+	else if (group == G_PROCESS)
+	{
+		if (function == F_NEW_PROC)
+		{
+			if (n == 1)
+			{
+				new_process((char*)params[0]);
 			}
 		}
 	}

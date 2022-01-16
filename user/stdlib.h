@@ -91,4 +91,9 @@ void uwrite_file(char* path, const char* data, int size, int append);
 */
 int ufile_size(char* path);
 
+/*
+	create a new process
+*/
+void unew_process(char* path);
+
 #endif

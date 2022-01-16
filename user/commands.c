@@ -119,6 +119,7 @@ void help(char* argv, int argc)
 			"touch - create file\n"
 			"mkdir - create folder\n"
 			"test - test several key features of the OS.\n"
+			"exec - run binary file.\n"
 		);
 	}
 	else if (argc == 2)		// for specific command
@@ -476,4 +477,24 @@ void test(char* argv, int argc)
 	}
 	else
 		uputs("Invalid syntax. Try \'help test\'.");
+}
+
+void exec(char* argv, int argc)
+{
+	char path[200] = {0};
+	memcpy(path, dir, strlen(dir));
+	if (argc == 2)
+	{
+		const char* rel = getArg(argv, argc, 1);
+		if (rel[0] == '/')
+			memcpy(path, rel, strlen(rel) + 1);
+		else{
+			int strlen_dir = strlen(dir);
+			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
+		}
+
+		unew_process(path);
+	}
+	else
+		uputs("Invalid syntax. Try \'help exec\'.");
 }

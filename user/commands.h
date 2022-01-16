@@ -3,7 +3,7 @@
 
 #define FUN_NAME_SIZE 11
 #define FUN_INFO_SIZE 400
-#define FUNS_NUM 14
+#define FUNS_NUM 15
 
 typedef void (*command)(char* argv, int argc);
 
@@ -40,6 +40,7 @@ void touch(char* argv, int argc);
 void mkdir(char* argv, int argc);
 
 void test(char* argv, int argc);
+void exec(char* argv, int argc);
 
 
 // After functions are defined:
@@ -58,7 +59,8 @@ static const char fun_names[FUNS_NUM][FUN_NAME_SIZE] =
 	"rm",
 	"touch",
 	"mkdir",
-	"test"
+	"test",
+	"exec"
 };
 
 static const command commands[FUNS_NUM] = 
@@ -76,7 +78,8 @@ static const command commands[FUNS_NUM] =
 	rm,
 	touch,
 	mkdir,
-	test
+	test,
+	exec
 };
 
 static const char fun_info[] = 
@@ -165,6 +168,11 @@ static const char fun_info[] =
 	"i - test interrupts\n"
 	"u - test usermode\n"
 	"p - test paging\n"
+
+	"\0"
+
+	"exec - run binary file.\n"
+	"Usage: \'exec <path>\'\n"
 };
 
 #endif

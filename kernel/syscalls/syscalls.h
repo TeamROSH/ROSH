@@ -26,6 +26,9 @@
 	#define F_FS_WRITE	5
 	#define F_FS_TYPE	6
 
+#define G_PROCESS	4
+	#define F_NEW_PROC	0
+
 /*
 	Syscall handler (Ring 0)
 */

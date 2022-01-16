@@ -117,3 +117,11 @@ int ufile_size(char* path)
 	syscall(G_FS, F_FS_SIZE, params, 2);
 	return res;
 }
+
+void unew_process(char* path)
+{
+	int res = 0;
+	uint32_t params[1];
+	params[0] = (uint32_t)path;
+	syscall(G_PROCESS, F_NEW_PROC, params, 1);
+}
