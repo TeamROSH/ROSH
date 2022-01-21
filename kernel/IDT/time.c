@@ -7,6 +7,7 @@
 void print_time_seconds();
 void sleep(uint32_t sleep_ms);
 void set_scheduler(callback_function scheduler);
+uint32_t get_time();
 
 
 void time_handler(registers_t* registers)
@@ -44,4 +45,9 @@ void sleep(uint32_t sleep_ms)
 void set_scheduler(callback_function scheduler)
 {
     g_scheduler = scheduler;
+}
+
+uint32_t get_time()
+{
+    return g_ms_counter;
 }

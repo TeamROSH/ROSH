@@ -31,4 +31,10 @@ void sleep(uint32_t sleep_ms);
     @parma scheduler: the scheduler function 
 */
 void set_scheduler(callback_function scheduler);
+
+/*
+    This function returns the curr time 
+    returns the currtime in ms
+*/
+uint32_t get_time();
 #endif
