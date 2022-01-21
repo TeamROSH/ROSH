@@ -5,6 +5,6 @@
 
 uint32_t rand();
 
-void srnd(int new_seed);
+void srand(uint32_t new_seed);
 
 #endif
