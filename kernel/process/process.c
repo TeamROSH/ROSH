@@ -19,7 +19,7 @@ int context_switch(process_context_block* next_process);
 void save_registers(process_context_block* pcb, registers_t* registers);
 process_context_block* init_usermain_process();
 
-extern void jump_usermode(registers_t registers);
+extern void jump_usermode(uint32_t esp, uint32_t eip, registers_t registers);
 extern void usermode(void);
 
 
@@ -69,6 +69,7 @@ process_context_block* create_process(int is_kernel, char* process_name)
     pcb->process_pages[0] = page_to_address(page_alloc());
     pcb->process_pages[1] = page_to_address(page_alloc());
     pcb->stack_base = pcb->process_pages[0];
+	pcb->reg.esp = pcb->process_pages[1] + PAGE_SIZE - 4;
 
     // allocating apace for heap
     for(int i =2; i < 5; i ++)
@@ -162,7 +163,6 @@ void kill_process(process_context_block* pcb)
 void process_scheduler(registers_t* registers)
 {
     node* next_process;
-
     for (next_process = g_ready_processes_list->head; next_process != NULL; next_process = next_process->next)
 	{
 		process_context_block* proc = ((process_context_block*)next_process->data);
@@ -177,7 +177,9 @@ void process_scheduler(registers_t* registers)
 
 			delete_node_by_data(g_ready_processes_list, proc);
 
-			// context switching to the next process 
+			// context switching to the next process
+
+			asm volatile("sti");
 			context_switch(proc);
 		}
 	}
@@ -204,6 +206,7 @@ void process_init()
 int context_switch(process_context_block* next_process)
 {
     next_process->process_state = PROCESS_RUNNING;
+	g_curr_process = next_process;
     // for (int i = 0; i < MAX_PROCESS_PAGES; i++)
     // {
     //     // unmaping the old process meory
@@ -212,14 +215,13 @@ int context_switch(process_context_block* next_process)
     //     // mapping the new process memory
     //     page_map(next_process->curr_page_directory, next_process->process_pages[i], next_process->process_pages[i], PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
     // }
-
-	jump_usermode(next_process->reg);
+	jump_usermode(next_process->reg.esp, next_process->reg.eip, next_process->reg);
 }
 
 void save_registers(process_context_block* pcb, registers_t* registers)
 {
     // copying the updated registers vlues into the process pcb
-    memcpy(&(pcb->reg), registers, sizeof(registers));
+    memcpy(&(pcb->reg), registers, sizeof(registers_t));
 }
 
 void new_process(char* process_name)

@@ -1,4 +1,4 @@
 global func
 
 func:
-	int 0
+	jmp $
