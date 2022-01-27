@@ -15,6 +15,7 @@ void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags
 void page_unmap(uint32_t vadd);
 void update_pages_array(uint32_t page_num, int is_on);
 uint32_t page_alloc();
+uint32_t rand_page_alloc(uint32_t num_of_pages);
 void page_free(uint32_t page_num);
 void initialize_page_table_entry(page_table_entry* table_entry,
 uint32_t address,
@@ -236,6 +237,89 @@ uint32_t page_alloc()
 
     // no pages left and allocation failed returning null
     return NULL;
+}
+/*
+    This function allocates randomely a certain number of pages
+    @param num_of_pages: pages to be mapped under or equal to 8
+    returns page num of the first page allocated
+*/
+uint32_t rand_page_alloc(uint32_t num_of_pages)
+{
+
+    uint8_t curr_bit = 0;
+
+    while(true)
+    {
+        uint32_t rand_byte = rand() % PAGES_COUNT;
+        //if there is a space for pages to be mapped
+        if(g_pages_array[rand_byte] != 0xFF)
+        {
+            //saving the curr pages bit array
+            curr_bit= g_pages_array[i];
+
+            //going through the bits in the bit array
+            for(int j = 0; j < BITS_IN_BYTE; j++)
+            {
+                //moving to the next bit
+                curr_bit =(1 << j);
+                
+                // if an empty bit
+                if(!(g_pages_array[i] & curr_bit))
+                {
+                    //  initializing the page with NULL
+                    memset((uint32_t*)(page_to_address(curr_bit * BITS_IN_BYTE + j)), NULL, PAGE_SIZE);
+                    //updating the page_array 
+                    update_pages_array(curr_bit * BITS_IN_BYTE + j, 1);
+
+                    //returning the page num    
+                    return curr_bit * BITS_IN_BYTE +j;
+                }
+
+            }
+        }
+    }
+}
+
+/*
+    if 
+*/
+uint32_t check_bits_in_byte(uint8_t byte, int num_of_bits)
+{
+    int i = 0;
+    uint8_t curr_byte = 0;
+    uint8_t chaecked_byte = 0;
+    bool is_found = true;
+    
+    for(int j = 0; j < BITS_IN_BYTE; j++)
+    {
+        curr_byte = 1 << j;
+
+        if(BITS_IN_BYTE - num_of_bits < j)
+        {
+            return -1;
+        }
+
+        checked_byte = curr_byte;
+        
+        while(i < num_of_bits)
+        {
+            if(byte & checked_byte)
+            {
+                is_found = false;
+            }
+            checked_byte = 1 << (j + i);  
+            i++;
+        }
+
+        if(is_found == true)
+        {
+            return j;
+        }
+
+        i = 0;
+    }
+
+    return -1;
 }
 
 void page_free(uint32_t page_num)

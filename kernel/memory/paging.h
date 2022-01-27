@@ -4,6 +4,7 @@
 
 #include "memorylayout.h"
 #include "../../libc/memory.h"
+#include "../../libc/rand.h"
 
 //specifies flags for mapped page
 #define PAGE_FLAG_USER        0
@@ -48,6 +49,7 @@ void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags
 void page_unmap(uint32_t vadd);
 void update_pages_array(uint32_t page_num, int is_on);
 uint32_t page_alloc();
+uint32_t rand_page_alloc(uint32_t num_of_pages);
 void page_free(uint32_t page_num);
 void initialize_page_table_entry(page_table_entry* table_entry,
 uint32_t address,
