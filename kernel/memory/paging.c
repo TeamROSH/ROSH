@@ -16,6 +16,7 @@ void page_unmap(uint32_t vadd);
 void update_pages_array(uint32_t page_num, int is_on);
 uint32_t page_alloc();
 uint32_t rand_page_alloc(uint32_t num_of_pages);
+uint32_t check_bits_in_byte(uint8_t byte, int num_of_bits);
 void page_free(uint32_t page_num);
 void initialize_page_table_entry(page_table_entry* table_entry,
 uint32_t address,
@@ -281,36 +282,46 @@ uint32_t rand_page_alloc(uint32_t num_of_pages)
 }
 
 /*
-    if 
+    This function checks if there is enoghth frre bits in byte fot page alloc
+    @param byte: the checked byte
+    @param num_of_bits: the num_o_bits to be checked 
 */
 uint32_t check_bits_in_byte(uint8_t byte, int num_of_bits)
 {
     int i = 0;
     uint8_t curr_byte = 0;
-    uint8_t chaecked_byte = 0;
+    uint8_t checked_byte = 0;
     bool is_found = true;
     
+    // saving the curr byte
     for(int j = 0; j < BITS_IN_BYTE; j++)
     {
         curr_byte = 1 << j;
 
+        // if not enough empty bits
         if(BITS_IN_BYTE - num_of_bits < j)
         {
             return -1;
         }
 
+        // going through the curr byte
         checked_byte = curr_byte;
-        
+
         while(i < num_of_bits)
         {
+            // if the checked byte has no space
             if(byte & checked_byte)
             {
                 is_found = false;
+                break;
             }
+
+            // going to the next bit
             checked_byte = 1 << (j + i);  
             i++;
         }
 
+        // if the curr checked byte is good
         if(is_found == true)
         {
             return j;
