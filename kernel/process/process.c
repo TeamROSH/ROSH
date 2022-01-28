@@ -7,6 +7,7 @@ process_context_block* g_curr_process;
 
 list* g_process_list;
 list* g_ready_processes_list;
+int times = 0;
 
 process_context_block* create_process(int is_kernel, char* process_name);
 int generate_pid();
@@ -19,7 +20,7 @@ int context_switch(process_context_block* next_process);
 void save_registers(process_context_block* pcb, registers_t* registers);
 process_context_block* init_usermain_process();
 
-extern void jump_usermode(uint32_t esp, uint32_t eip, registers_t registers);
+extern void context_jump(uint32_t es, uint32_t cs, uint32_t esp, uint32_t eip, registers_t registers);
 extern void usermode(void);
 
 
@@ -42,6 +43,8 @@ process_context_block* init_usermain_process()
 
     // adding the process to the processes list
     insert_head(g_process_list, pcb);
+
+	g_curr_process = pcb;
 
     return pcb;
 }
@@ -122,6 +125,8 @@ void initialize_process_regs(process_context_block* pcb)
     pcb->reg.esi = 0;
     pcb->reg.edi = 0;
     pcb->reg.eflags = 518;
+	pcb->reg.cs = 0x18 | 3;
+	pcb->reg.es = 0x20 | 3;
 }
 
 void load_process_code(process_context_block* pcb, char* file_name)
@@ -162,6 +167,8 @@ void kill_process(process_context_block* pcb)
 
 void process_scheduler(registers_t* registers)
 {
+	if (times > 1)
+		return;
     node* next_process;
     for (next_process = g_ready_processes_list->head; next_process != NULL; next_process = next_process->next)
 	{
@@ -176,6 +183,8 @@ void process_scheduler(registers_t* registers)
 			g_curr_process->process_state = PROCESS_READY;
 
 			delete_node_by_data(g_ready_processes_list, proc);
+
+			times++;
 
 			// context switching to the next process
 
@@ -215,7 +224,7 @@ int context_switch(process_context_block* next_process)
     //     // mapping the new process memory
     //     page_map(next_process->curr_page_directory, next_process->process_pages[i], next_process->process_pages[i], PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
     // }
-	jump_usermode(next_process->reg.esp, next_process->reg.eip, next_process->reg);
+	context_jump(next_process->reg.es, next_process->reg.cs, next_process->reg.esp, next_process->reg.eip, next_process->reg);
 }
 
 void save_registers(process_context_block* pcb, registers_t* registers)
