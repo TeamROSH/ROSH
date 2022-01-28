@@ -248,6 +248,10 @@ uint32_t rand_page_alloc(uint32_t num_of_pages)
 {
 
     uint8_t curr_bit = 0;
+    uint32_t shift_num = 0;
+    int i = 0;
+    int j = 0;
+
 
     while(true)
     {
@@ -256,26 +260,30 @@ uint32_t rand_page_alloc(uint32_t num_of_pages)
         if(g_pages_array[rand_byte] != 0xFF)
         {
             //saving the curr pages bit array
-            curr_bit= g_pages_array[i];
+            shift_num = check_bits_in_byte(g_pages_array[rand_byte], num_of_pages);
 
-            //going through the bits in the bit array
-            for(int j = 0; j < BITS_IN_BYTE; j++)
+            if(shift_num != -1)
             {
-                //moving to the next bit
-                curr_bit =(1 << j);
                 
-                // if an empty bit
-                if(!(g_pages_array[i] & curr_bit))
+                //going through the bits in the bit array
+                for(j = 0; j < num_of_pages; j++)
                 {
-                    //  initializing the page with NULL
-                    memset((uint32_t*)(page_to_address(curr_bit * BITS_IN_BYTE + j)), NULL, PAGE_SIZE);
-                    //updating the page_array 
-                    update_pages_array(curr_bit * BITS_IN_BYTE + j, 1);
+                    //moving to the next bit
+                    curr_bit = 1 << (shift_num + j);
+                
+                    // if an empty bit
+                    if(!(g_pages_array[rand_byte] & curr_bit))
+                    {
+                        //  initializing the page with NULL
+                        memset((uint32_t*)(page_to_address(curr_bit * BITS_IN_BYTE + j)), NULL, PAGE_SIZE);
+                        //updating the page_array 
+                        update_pages_array(curr_bit * BITS_IN_BYTE + j, 1);
+                    }
 
-                    //returning the page num    
-                    return curr_bit * BITS_IN_BYTE +j;
                 }
 
+                //returning the page num    
+                return (1 << shift_num) * BITS_IN_BYTE +j;
             }
         }
     }
@@ -291,15 +299,15 @@ uint32_t check_bits_in_byte(uint8_t byte, int num_of_bits)
     int i = 0;
     uint8_t curr_byte = 0;
     uint8_t checked_byte = 0;
-    bool is_found = true;
-    
+    int is_found = 1;
+
     // saving the curr byte
-    for(int j = 0; j < BITS_IN_BYTE; j++)
+    for (int j = 0; j < 8; j++)
     {
         curr_byte = 1 << j;
 
         // if not enough empty bits
-        if(BITS_IN_BYTE - num_of_bits < j)
+        if (8 - num_of_bits < j)
         {
             return -1;
         }
@@ -307,27 +315,27 @@ uint32_t check_bits_in_byte(uint8_t byte, int num_of_bits)
         // going through the curr byte
         checked_byte = curr_byte;
 
-        while(i < num_of_bits)
+        while (i < num_of_bits)
         {
             // if the checked byte has no space
-            if(byte & checked_byte)
+            if (byte & checked_byte)
             {
-                is_found = false;
+                is_found = 0;
                 break;
             }
 
             // going to the next bit
-            checked_byte = 1 << (j + i);  
             i++;
+            checked_byte = 1 << (j + i);
         }
-
         // if the curr checked byte is good
-        if(is_found == true)
+        if (is_found == 1)
         {
             return j;
         }
 
         i = 0;
+        is_found = 1;
     }
 
     return -1;

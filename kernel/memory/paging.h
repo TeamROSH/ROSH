@@ -1,11 +1,15 @@
 #ifndef PAGING_H
 #define PAGING_H
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "memorylayout.h"
 #include "../../libc/memory.h"
 #include "../../libc/rand.h"
 
+
+//TODO DELETE LATER
+#include "../../libc/screen.h"
 //specifies flags for mapped page
 #define PAGE_FLAG_USER        0
 #define PAGE_FLAG_KERNEL      1
