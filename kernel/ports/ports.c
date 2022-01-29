@@ -25,3 +25,7 @@ uint32_t indw(uint16_t port){
     asm("in %%dx, %%ax" : "=a" (result) : "d" (port));
     return result;
 }
+
+void outdw(uint16_t port, uint32_t data){
+    asm volatile("out %%ax, %%dx" : : "a" (data), "d" (port));
+}
