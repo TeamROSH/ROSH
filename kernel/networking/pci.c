@@ -9,6 +9,10 @@ uint16_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t 
     ((uint32_t)func) << 8 |                            // aliging func
     (register_ofset & 0xFC)                            // and func other than 2 first bits
     );
-    
-    outb()
+
+    // sending the data address to the pci config io register 
+    outdw(CONFIG_ADDRESS, data_address);
+
+    // returning 16 bit result
+    return (indw(CONFIG_DATA) >> ((register_ofset & 2) * 8)) & 0xFFFF;    
 }
