@@ -159,6 +159,7 @@ void getline(char* pStr, int size)
 {
 	pending = TRUE;
 	while (!enterPress){}		// wait until enter
+	register int b asm("esp"); puts("SYS: "); puti(b); putc('\n');
 	for (int i = 0; i < size - 1; i++)
 		pStr[i] = pop_buffer();
 	pStr[size - 1] = 0;

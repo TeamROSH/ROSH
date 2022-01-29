@@ -19,8 +19,9 @@ void process_init();
 int context_switch(process_context_block* next_process);
 void save_registers(process_context_block* pcb, registers_t* registers);
 process_context_block* init_usermain_process();
+void init_process_stack(process_context_block* pcb);
 
-extern void context_jump(uint32_t es, uint32_t cs, uint32_t esp, uint32_t eip, registers_t registers);
+extern void context_jump(uint32_t ptr);
 extern void usermode(void);
 
 
@@ -84,6 +85,7 @@ process_context_block* create_process(int is_kernel, char* process_name)
     heap_init(&(pcb->process_heap), pcb->process_pages[2], PAGE_SIZE * 3);
 
     load_process_code(pcb, process_name);
+	init_process_stack(pcb);
 
 	for (int i = 0; i < 20; i++)
 	{
@@ -127,6 +129,27 @@ void initialize_process_regs(process_context_block* pcb)
     pcb->reg.eflags = 518;
 	pcb->reg.cs = 0x18 | 3;
 	pcb->reg.es = 0x20 | 3;
+}
+
+void init_process_stack(process_context_block* pcb)
+{
+	pcb->reg.esp -= 64;
+	*((uint32_t*)(pcb->reg.esp) + 15) = pcb->reg.es;
+	*((uint32_t*)(pcb->reg.esp) + 14) = pcb->reg.esp + 64;
+	*((uint32_t*)(pcb->reg.esp) + 13) = pcb->reg.eflags;
+	*((uint32_t*)(pcb->reg.esp) + 12) = pcb->reg.cs;
+	*((uint32_t*)(pcb->reg.esp) + 11) = pcb->reg.eip;
+	*((uint32_t*)(pcb->reg.esp) + 10) = 0;
+	*((uint32_t*)(pcb->reg.esp) + 9) = 0;
+	*((uint32_t*)(pcb->reg.esp) + 8) = pcb->reg.eax;
+	*((uint32_t*)(pcb->reg.esp) + 7) = pcb->reg.ecx;
+	*((uint32_t*)(pcb->reg.esp) + 6) = pcb->reg.edx;
+	*((uint32_t*)(pcb->reg.esp) + 5) = pcb->reg.ebx;
+	*((uint32_t*)(pcb->reg.esp) + 4) = pcb->reg.esp + 64;
+	*((uint32_t*)(pcb->reg.esp) + 3) = pcb->reg.ebp;
+	*((uint32_t*)(pcb->reg.esp) + 2) = pcb->reg.esi;
+	*((uint32_t*)(pcb->reg.esp) + 1) = pcb->reg.edi;
+	*((uint32_t*)(pcb->reg.esp) + 0) = pcb->reg.es;
 }
 
 void load_process_code(process_context_block* pcb, char* file_name)
@@ -176,7 +199,9 @@ void process_scheduler(registers_t* registers)
 		if (proc->process_state == PROCESS_READY)
 		{
 			// saving the old process registers
+			// registers->esp += 8;
 			save_registers(g_curr_process, registers);
+			g_curr_process->reg.esp = (uint32_t)registers;
 
 			// pushing the current process to the list head
 			insert_tail(g_ready_processes_list, g_curr_process);
@@ -224,7 +249,7 @@ int context_switch(process_context_block* next_process)
     //     // mapping the new process memory
     //     page_map(next_process->curr_page_directory, next_process->process_pages[i], next_process->process_pages[i], PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
     // }
-	context_jump(next_process->reg.es, next_process->reg.cs, next_process->reg.esp, next_process->reg.eip, next_process->reg);
+	context_jump(next_process->reg.esp);
 }
 
 void save_registers(process_context_block* pcb, registers_t* registers)

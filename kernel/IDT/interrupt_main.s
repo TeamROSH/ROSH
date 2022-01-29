@@ -56,36 +56,17 @@ irq_main:
 context_jump:
 	add esp, 4		; clear return address
 
-	add esp, 16		; get registers
-	popad
-	pushad
+	pop eax
+	mov esp, eax
 
-	sub esp, 16		; save eax, ebp
-	push eax
-	push ebp
-	mov ebp, esp
-
-	mov eax, [ebp + 8] ; user data segment
-	mov ds, ax
-	mov es, ax 
-	mov fs, ax 
+	pop eax
+	mov ds, ax		; update registers
+	mov es, ax
+	mov fs, ax
 	mov gs, ax
-	push eax ; user data segment
- 
-	mov eax, [ebp + 16]
-	push eax ; current esp
-	pushf
-
-	mov eax, [ebp + 12]
-	push eax ; user code segment
-
-	mov eax, [ebp + 20]
-	push eax ; jump usermode
-
-	mov eax, [ebp + 4]
-	mov ebp, [ebp]
-
-	iret
+	popad			; Restore state
+	add esp, 8		; clean pushed bytes (error, IRQ number)
+	iret			; pop and return
 
 %include "kernel/IDT/defines.s"
 %include "kernel/IDT/isr_handlers.s"
