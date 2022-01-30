@@ -15,6 +15,8 @@ void page_map(page_directory* directory, uint32_t vadd, uint32_t padd, int flags
 void page_unmap(uint32_t vadd);
 void update_pages_array(uint32_t page_num, int is_on);
 uint32_t page_alloc();
+uint32_t rand_page_alloc(uint32_t num_of_pages);
+uint32_t check_bits_in_byte(uint8_t byte, int num_of_bits);
 void page_free(uint32_t page_num);
 void initialize_page_table_entry(page_table_entry* table_entry,
 uint32_t address,
@@ -242,6 +244,107 @@ uint32_t page_alloc()
 
     // no pages left and allocation failed returning null
     return NULL;
+}
+/*
+    This function allocates randomely a certain number of pages
+    @param num_of_pages: pages to be mapped under or equal to 8
+    returns page num of the first page allocated
+*/
+uint32_t rand_page_alloc(uint32_t num_of_pages)
+{
+
+    uint8_t curr_bit = 0;
+    uint32_t shift_num = 0;
+    int i = 0;
+    int j = 0;
+
+
+    while(true)
+    {
+        uint32_t rand_byte = rand() % PAGES_COUNT;
+        //if there is a space for pages to be mapped
+        if(g_pages_array[rand_byte] != 0xFF)
+        {
+            //saving the curr pages bit array
+            shift_num = check_bits_in_byte(g_pages_array[rand_byte], num_of_pages);
+
+            if(shift_num != -1)
+            {
+                
+                //going through the bits in the bit array
+                for(j = 0; j < num_of_pages; j++)
+                {
+                    //moving to the next bit
+                    curr_bit = 1 << (shift_num + j);
+                
+                    // if an empty bit
+                    if(!(g_pages_array[rand_byte] & curr_bit))
+                    {
+                        //  initializing the page with NULL
+                        memset((uint32_t*)(page_to_address(curr_bit * BITS_IN_BYTE + j)), NULL, PAGE_SIZE);
+                        //updating the page_array 
+                        update_pages_array(curr_bit * BITS_IN_BYTE + j, 1);
+                    }
+
+                }
+
+                //returning the page num    
+                return (1 << shift_num) * BITS_IN_BYTE +j;
+            }
+        }
+    }
+}
+
+/*
+    This function checks if there is enoghth frre bits in byte fot page alloc
+    @param byte: the checked byte
+    @param num_of_bits: the num_o_bits to be checked 
+*/
+uint32_t check_bits_in_byte(uint8_t byte, int num_of_bits)
+{
+    int i = 0;
+    uint8_t curr_byte = 0;
+    uint8_t checked_byte = 0;
+    int is_found = 1;
+
+    // saving the curr byte
+    for (int j = 0; j < 8; j++)
+    {
+        curr_byte = 1 << j;
+
+        // if not enough empty bits
+        if (8 - num_of_bits < j)
+        {
+            return -1;
+        }
+
+        // going through the curr byte
+        checked_byte = curr_byte;
+
+        while (i < num_of_bits)
+        {
+            // if the checked byte has no space
+            if (byte & checked_byte)
+            {
+                is_found = 0;
+                break;
+            }
+
+            // going to the next bit
+            i++;
+            checked_byte = 1 << (j + i);
+        }
+        // if the curr checked byte is good
+        if (is_found == 1)
+        {
+            return j;
+        }
+
+        i = 0;
+        is_found = 1;
+    }
+
+    return -1;
 }
 
 void page_free(uint32_t page_num)
