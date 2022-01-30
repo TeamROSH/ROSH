@@ -1,4 +1,5 @@
 global func
 
 func:
-	jmp $
+	mov ecx, 0
+	div ecx

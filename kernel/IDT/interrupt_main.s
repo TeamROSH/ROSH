@@ -54,8 +54,9 @@ irq_main:
 	iret			; pop and return
 
 context_jump:
-	add esp, 4		; clear return address
+	sti				; enable interrupts
 
+	add esp, 4		; clear return address
 	pop eax
 	mov esp, eax
 

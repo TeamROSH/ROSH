@@ -1,6 +1,9 @@
 #include "process.h"
 #include "../GDT/tss.h"
 
+#define hlt() asm volatile("hlt")
+#define cli() asm volatile("cli")
+
 extern page_directory* g_page_directory;
 
 int g_highest_pid = 1;
@@ -180,8 +183,8 @@ void kill_process(process_context_block* pcb)
     // free stack and heap
     for(int i = 0; i < 5; i++)
     {
-        page_free(address_to_page(pcb->process_pages[i]));
-        memset((void*)page_to_address(pcb->process_pages[i]), 0, PAGE_SIZE);
+        memset((void*)pcb->process_pages[i], 0, PAGE_SIZE);
+		page_free(address_to_page(pcb->process_pages[i]));
     }
 	delete_node_by_data(g_process_list, pcb);
 	delete_node_by_data(g_ready_processes_list, pcb);
@@ -209,8 +212,6 @@ void process_scheduler(registers_t* registers)
 			delete_node_by_data(g_ready_processes_list, proc);
 
 			// context switching to the next process
-
-			asm volatile("sti");
 			context_switch(proc);
 		}
 	}
@@ -265,4 +266,27 @@ void save_registers(process_context_block* pcb, registers_t* registers)
 void new_process(char* process_name)
 {
 	process_context_block* process = create_process(0, process_name);
+}
+
+void kill_running_process()
+{
+	if (g_curr_process->pid == 1)		// if usermain process dead
+	{
+		cli();		// hlt the cpu
+		hlt();
+	}
+	else
+	{
+		kill_process(g_curr_process);
+		node* next_process;
+		for (next_process = g_ready_processes_list->head; next_process != NULL; next_process = next_process->next)
+		{
+			process_context_block* proc = ((process_context_block*)next_process->data);
+			if (proc->process_state == PROCESS_READY)
+			{
+				delete_node_by_data(g_ready_processes_list, proc);
+				context_switch(proc);
+			}
+		}
+	}
 }

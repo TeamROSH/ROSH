@@ -79,6 +79,11 @@ void load_process_code(process_context_block* pcb, char* file_name);
 */
 void kill_process(process_context_block* pcb);
 
+/*
+    kill running process
+*/
+void kill_running_process();
+
 
 /*
     This function schedules the process in a fixed time

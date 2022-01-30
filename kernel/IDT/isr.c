@@ -1,6 +1,5 @@
 #include "isr.h"
-#define hlt() asm volatile("hlt")
-#define cli() asm volatile("cli")
+#include "../process/process.h"
 
 extern interrupt_handler g_interrupt_handlers[IDT_ENTRIES];
 
@@ -66,6 +65,6 @@ void set_interrupt(uint8_t interrupt_num, interrupt_handler interrupt)
 void general_handler(registers_t* registers)
 {
 	puts(exceptions[registers->interrupt_num]);
-	cli();		// hlt the cpu
-	hlt();
+	putc('\n');
+	kill_running_process();
 }
