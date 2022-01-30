@@ -2,7 +2,8 @@
 
 uint16_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset);
 pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device);
-pci_header_data* get_pci_device(uint8_t class_code, uint8_t subclass, uint8_t prog_if);
+device_data* get_pci_device(uint8_t class_code, uint8_t subclass);
+device_data* get_ethernet_controller();
 
 uint16_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset)
 {
@@ -44,7 +45,7 @@ pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device)
     return header;   
 }
 
-pci_header_data* get_pci_device(uint8_t class_code, uint8_t subclass, uint8_t prog_if)
+device_data* get_pci_device(uint8_t class_code, uint8_t subclass)
 {
 
     // going through the pci devices
@@ -59,11 +60,14 @@ pci_header_data* get_pci_device(uint8_t class_code, uint8_t subclass, uint8_t pr
             if(header != NULL)
             {   
                 // if requested device
-                if(header->prog_if == prog_if &&
-                header->subclass == subclass &&
+                if(header->subclass == subclass &&
                 header->class_code == class_code)
                 {
-                    return header;
+                    device_data* data = (device_data*)kmalloc(sizeof(device_data));
+                    data->bus_num = bus;
+                    data->device_num = device;
+                    data->device_header = header;
+                    return data;
                 }
             }
         }
@@ -71,4 +75,9 @@ pci_header_data* get_pci_device(uint8_t class_code, uint8_t subclass, uint8_t pr
     }
     // device wasn't found
     return NULL;
+}
+
+device_data* get_ethernet_controller()
+{
+    return get_pci_device(ETHERNET_CLASS_CODE, ETHERNET_SUBCLASS);   
 }

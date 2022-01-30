@@ -9,8 +9,12 @@
 #define CONFIG_ADDRESS 0XCF8
 #define CONFIG_DATA 0XCFC
 
+// number of buses and devices in pci
 #define BUS_NUM 256
 #define DEVICE_NUM 32 
+
+#define ETHERNET_SUBCLASS 0
+#define ETHERNET_CLASS_CODE 2 
 
 #ifndef NULL
 #define NULL 0
@@ -57,13 +61,18 @@ pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device);
 
 
 /*
-    This function gets pci device 
+    This function gets pci device data
     @param class_code: the pci device class cde
     @param subclass: the pci device subclass
-    @parma prog_if: the pci device prog_if
-    This function returns the pci header data, device and bus num of requested pci device
+    This function returns the pci device data
     if not found returns null
 */
-pci_header_data* get_pci_device(uint8_t class_code, uint8_t subclass, uint8_t prog_if)
+device_data* get_pci_device(uint8_t class_code, uint8_t subclass);
+
+/*
+    This functon gets the ethernet controller device data
+    if not found returns 0
+*/
+device_data* get_ethernet_controller();
 
 #endif
