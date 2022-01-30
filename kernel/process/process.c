@@ -1,4 +1,5 @@
 #include "process.h"
+#include "../GDT/tss.h"
 
 extern page_directory* g_page_directory;
 
@@ -7,7 +8,7 @@ process_context_block* g_curr_process;
 
 list* g_process_list;
 list* g_ready_processes_list;
-int times = 0;
+uint32_t g_curr_stack = 0;
 
 process_context_block* create_process(int is_kernel, char* process_name);
 int generate_pid();
@@ -34,7 +35,7 @@ process_context_block* init_usermain_process()
 	initialize_process_regs(pcb);
 
 	pcb->process_pages[0] = USER_STACK_START_ADDR;
-	pcb->stack_base = pcb->process_pages[0];
+	pcb->stack_base = PROCESS_STACK + PROCESS_STACK_SIZE * PAGE_SIZE - 4;
 
 	pcb->process_pages[2] = USER_HEAP_START;
 	pcb->process_pages[5] = USER_MODE_START;
@@ -72,7 +73,7 @@ process_context_block* create_process(int is_kernel, char* process_name)
     //mapping stack
     pcb->process_pages[0] = page_to_address(page_alloc());
     pcb->process_pages[1] = page_to_address(page_alloc());
-    pcb->stack_base = pcb->process_pages[0];
+    pcb->stack_base = 0;
 	pcb->reg.esp = pcb->process_pages[1] + PAGE_SIZE - 4;
 
     // allocating apace for heap
@@ -190,8 +191,6 @@ void kill_process(process_context_block* pcb)
 
 void process_scheduler(registers_t* registers)
 {
-	if (times > 1)
-		return;
     node* next_process;
     for (next_process = g_ready_processes_list->head; next_process != NULL; next_process = next_process->next)
 	{
@@ -208,8 +207,6 @@ void process_scheduler(registers_t* registers)
 			g_curr_process->process_state = PROCESS_READY;
 
 			delete_node_by_data(g_ready_processes_list, proc);
-
-			times++;
 
 			// context switching to the next process
 
@@ -239,6 +236,12 @@ void process_init()
 
 int context_switch(process_context_block* next_process)
 {
+	if (next_process->stack_base == 0)
+	{
+		next_process->stack_base = g_curr_process->stack_base - PAGE_SIZE;
+	}
+	g_curr_stack = next_process->stack_base;
+
     next_process->process_state = PROCESS_RUNNING;
 	g_curr_process = next_process;
     // for (int i = 0; i < MAX_PROCESS_PAGES; i++)
@@ -249,6 +252,7 @@ int context_switch(process_context_block* next_process)
     //     // mapping the new process memory
     //     page_map(next_process->curr_page_directory, next_process->process_pages[i], next_process->process_pages[i], PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
     // }
+	set_kernel_stack(g_curr_stack);
 	context_jump(next_process->reg.esp);
 }
 

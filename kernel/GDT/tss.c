@@ -29,7 +29,7 @@ void init_tss(gdt_entry_bits* entry)
 	memset(&tss, 0, sizeof(tss_entry));		// zero tss
 
 	tss.ss0 = 0x10;		// kernel data segment
-	tss.esp0 = KERNEL_STACK_START_ADDR;		// kernel stack
+	tss.esp0 = PROCESS_STACK + PROCESS_STACK_SIZE * PAGE_SIZE - 4;		// kernel stack
 }
 
 void set_kernel_stack(uint32_t stack)
