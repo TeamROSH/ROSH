@@ -2,6 +2,7 @@
 
 uint16_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset);
 pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device);
+pci_header_data* get_pci_device(uint8_t class_code, uint8_t subclass, uint8_t prog_if);
 
 uint16_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset)
 {
@@ -41,4 +42,33 @@ pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device)
     header->header_type = read_dword_from_pci(bus, device, 3, 0XE) & 0xFF;
     header->bist = read_dword_from_pci(bus, device, 3, 0XE) >> 8;
     return header;   
+}
+
+pci_header_data* get_pci_device(uint8_t class_code, uint8_t subclass, uint8_t prog_if)
+{
+
+    // going through the pci devices
+    for(uint8_t bus = 0; bus < BUS_NUM; bus++)
+    {
+        for (uint8_t device = 0; device < DEVICE_NUM; device++)
+        {
+            // getting device header
+            pci_header_data* header = (pci_header_data*)get_pci_device_data(bus, device);
+            
+            // if device exist
+            if(header != NULL)
+            {   
+                // if requested device
+                if(header->prog_if == prog_if &&
+                header->subclass == subclass &&
+                header->class_code == class_code)
+                {
+                    return header;
+                }
+            }
+        }
+        
+    }
+    // device wasn't found
+    return NULL;
 }

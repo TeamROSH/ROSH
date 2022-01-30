@@ -9,6 +9,9 @@
 #define CONFIG_ADDRESS 0XCF8
 #define CONFIG_DATA 0XCFC
 
+#define BUS_NUM 256
+#define DEVICE_NUM 32 
+
 #ifndef NULL
 #define NULL 0
 #endif
@@ -28,6 +31,12 @@ typedef struct pci_header_data{
     uint8_t header_type;
     uint8_t bist;
 }pci_header_data;
+
+typedef struct device_data{
+    uint8_t bus_num;
+    uint8_t device_num;
+    pci_header_data* device_header;
+}device_data;
 /*
     This function reads a 16 bit value from the pci register
     @param bus: the pci bus number
@@ -45,5 +54,16 @@ uint16_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t 
     returns the pci device header data
 */
 pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device);
+
+
+/*
+    This function gets pci device 
+    @param class_code: the pci device class cde
+    @param subclass: the pci device subclass
+    @parma prog_if: the pci device prog_if
+    This function returns the pci header data, device and bus num of requested pci device
+    if not found returns null
+*/
+pci_header_data* get_pci_device(uint8_t class_code, uint8_t subclass, uint8_t prog_if)
 
 #endif
