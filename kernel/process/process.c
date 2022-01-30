@@ -76,7 +76,7 @@ process_context_block* create_process(int is_kernel, char* process_name)
     //mapping stack
     pcb->process_pages[0] = page_to_address(page_alloc());
     pcb->process_pages[1] = page_to_address(page_alloc());
-    pcb->stack_base = 0;
+    pcb->stack_base = PROCESS_STACK + PROCESS_STACK_SIZE * PAGE_SIZE;
 	pcb->reg.esp = pcb->process_pages[1] + PAGE_SIZE - 4;
 
     // allocating apace for heap
@@ -237,9 +237,16 @@ void process_init()
 
 int context_switch(process_context_block* next_process)
 {
-	if (next_process->stack_base == 0)
+	if (next_process->stack_base == PROCESS_STACK + PROCESS_STACK_SIZE * PAGE_SIZE)
 	{
-		next_process->stack_base = g_curr_process->stack_base - PAGE_SIZE;
+		uint32_t min = PROCESS_STACK + PROCESS_STACK_SIZE * PAGE_SIZE - 4;
+		node* loop_process;
+		for (loop_process = g_process_list->head; loop_process != NULL; loop_process = loop_process->next)		// find min stack base
+		{
+			process_context_block* proc = ((process_context_block*)loop_process->data);
+			min = proc->stack_base < min ? proc->stack_base : min;
+		}
+		next_process->stack_base = min - PAGE_SIZE;
 	}
 	g_curr_stack = next_process->stack_base;
 
