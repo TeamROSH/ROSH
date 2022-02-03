@@ -14,12 +14,28 @@
 #define DEVICE_NUM 32 
 
 #define ETHERNET_SUBCLASS 0
-#define ETHERNET_CLASS_CODE 2 
+#define ETHERNET_CLASS_CODE 2
+
+// pci devices header types
+#define HEADER_DEFUALT 0x0
+#define HEADER_PCI_TO_PCI 0X1
+#define HEADER_PCI_TO_CARDBUS 0X2
+#define HEADER_MULTY_FUNCTION 0x80
 
 #ifndef NULL
 #define NULL 0
 #endif
 
+typedef struct bar{
+    union 
+    {
+        uint32_t address;
+        uint32_t io_address;
+    }value;
+
+    uint32_t type;
+    
+}bar;
 
 typedef struct pci_header_data{
     uint16_t vendor_id;
@@ -34,6 +50,7 @@ typedef struct pci_header_data{
     uint8_t latency_timer;
     uint8_t header_type;
     uint8_t bist;
+    bar bars[5];
 }pci_header_data;
 
 typedef struct device_data{
@@ -41,6 +58,7 @@ typedef struct device_data{
     uint8_t device_num;
     pci_header_data* device_header;
 }device_data;
+
 /*
     This function reads a 16 bit value from the pci register
     @param bus: the pci bus number
@@ -49,7 +67,18 @@ typedef struct device_data{
     @param regiter_offset: the pci register offset 
     This function returns the data requested
 */
-uint16_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset);
+uint16_t read_word_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset);
+
+/*
+    This function reads a 32 bit value from the pci register
+    @param bus: the pci bus number
+    @param device: the pci device number
+    @param func: the pci device function
+    @param regiter_offset: the pci register offset 
+    This function returns the data requested
+*/
+uint32_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset);
+
 
 /*
     This function gets pci header data of pci device
