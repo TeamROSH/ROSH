@@ -22,6 +22,9 @@
 #define HEADER_PCI_TO_CARDBUS 0X2
 #define HEADER_MULTY_FUNCTION 0x80
 
+// num of bars in header defualt pci device
+#define BAR_NUM 5
+
 #ifndef NULL
 #define NULL 0
 #endif
@@ -33,6 +36,8 @@ typedef struct bar{
         uint32_t io_address;
     }value;
 
+    // 1 - I/O
+    // 0 - memory address
     uint32_t type;
     
 }bar;
@@ -103,5 +108,13 @@ device_data* get_pci_device(uint8_t class_code, uint8_t subclass);
     if not found returns 0
 */
 device_data* get_ethernet_controller();
+
+/*
+    This function reads the bar information from type 0 pci device
+    @parma header: the pci device header struct
+    @param bus: the pci bus number
+    @param device: the pci device number
+*/
+void read_device_bars(pci_header_data* header, uint8_t bus, uint8_t device);
 
 #endif

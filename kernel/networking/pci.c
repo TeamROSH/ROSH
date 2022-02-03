@@ -5,6 +5,7 @@ uint32_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t 
 pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device);
 device_data* get_pci_device(uint8_t class_code, uint8_t subclass);
 device_data* get_ethernet_controller();
+void read_device_bars(pci_header_data* header, uint8_t bus, uint8_t device);
 
 uint16_t read_word_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset)
 {
@@ -59,9 +60,10 @@ pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device)
     header->header_type = read_word_from_pci(bus, device, 3, 0XE) & 0xFF;
     header->bist = read_word_from_pci(bus, device, 3, 0XE) >> 8;
 
+    // reading device bars
     if(header->header_type == HEADER_DEFUALT)
     {
-        header->bars[0].type = header->device_id = read_word_from_pci(bus, device, 4, 0x10);
+        read_device_bars(header, bus, device);   
     }
     return header;   
 }
@@ -101,4 +103,27 @@ device_data* get_pci_device(uint8_t class_code, uint8_t subclass)
 device_data* get_ethernet_controller()
 {
     return get_pci_device(ETHERNET_CLASS_CODE, ETHERNET_SUBCLASS);   
+}
+
+void read_device_bars(pci_header_data* header, uint8_t bus, uint8_t device)
+{
+
+    // going through the header bars
+    for(int i = 0; i < BAR_NUM; i++)
+    {
+        // getting the bar type
+        header->bars[i].type = read_dword_from_pci(bus, device, 4 + i, 0x10 + 4 * i) & 1;
+        
+        // if IO bar
+        if (header->bars[i].type == 1)
+        {
+            header->bars[i].value.io_address = read_dword_from_pci(bus, device, 4 + i, 0x10 + 4 * i) >> 2;
+        }
+
+        // if memory address bar
+        else
+        {
+            header->bars[0].value.address = read_dword_from_pci(bus, device, 4 + i, 0x10 + 4 * i) >> 4;
+        }
+    }
 }
