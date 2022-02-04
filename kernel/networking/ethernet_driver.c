@@ -58,5 +58,11 @@ initialize_ethernet_driver()
 
 void read_mac_address()
 {
-    
+    // reading the mac address
+    g_ethernet_device->mac_address[0] = inb(g_ethernet_device->io_base); 
+    g_ethernet_device->mac_address[1] = inb(g_ethernet_device->io_base + 1); 
+    g_ethernet_device->mac_address[2] = inb(g_ethernet_device->io_base + 2); 
+    g_ethernet_device->mac_address[3] = inb(g_ethernet_device->io_base + 3); 
+    g_ethernet_device->mac_address[4] = inb(g_ethernet_device->io_base + 4); 
+    g_ethernet_device->mac_address[5] = inb(g_ethernet_device->io_base + 5);   
 }

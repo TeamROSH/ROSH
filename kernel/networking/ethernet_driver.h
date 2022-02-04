@@ -24,7 +24,7 @@ typedef struct ethernet_device{
     uint32_t io_base;
     uint32_t rx_buff;
     uint32_t tx_buff;
-    char[6] mac_address;
+    char mac_address[6];
 }ethernet_device;
 
 /*
