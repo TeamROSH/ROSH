@@ -59,6 +59,7 @@ typedef struct pci_header_data{
     uint8_t header_type;
     uint8_t bist;
     bar bars[5];
+    uint8_t interrupt_line;
 }pci_header_data;
 
 typedef struct device_data{

@@ -63,6 +63,7 @@ pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device)
     // reading device bars
     if(header->header_type == HEADER_DEFUALT)
     {
+        header->interrupt_line = (bus, device, 0XF, 0x3C) & 0xFF;
         read_device_bars(header, bus, device);   
     }
     return header;   
