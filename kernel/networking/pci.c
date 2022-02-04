@@ -3,7 +3,7 @@
 uint16_t read_word_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset);
 uint32_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset);
 pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device);
-device_data* get_pci_device(uint8_t class_code, uint8_t subclass);
+device_data* get_pci_device(uint16_t device_id, uint16_t vendor_id);
 device_data* get_ethernet_controller();
 void read_device_bars(pci_header_data* header, uint8_t bus, uint8_t device);
 
@@ -68,7 +68,7 @@ pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device)
     return header;   
 }
 
-device_data* get_pci_device(uint8_t class_code, uint8_t subclass)
+device_data* get_pci_device(uint16_t device_id, uint16_t vendor_id)
 {
 
     // going through the pci devices
@@ -83,8 +83,8 @@ device_data* get_pci_device(uint8_t class_code, uint8_t subclass)
             if(header != NULL)
             {   
                 // if requested device
-                if(header->subclass == subclass &&
-                header->class_code == class_code)
+                if(header->device_id == device_id &&
+                header->vendor_id == vendor_id)
                 {
                     device_data* data = (device_data*)kmalloc(sizeof(device_data));
                     data->bus_num = bus;
@@ -102,7 +102,7 @@ device_data* get_pci_device(uint8_t class_code, uint8_t subclass)
 
 device_data* get_ethernet_controller()
 {
-    return get_pci_device(ETHERNET_CLASS_CODE, ETHERNET_SUBCLASS);   
+    return get_pci_device(RTL8139_DEVICE_ID, RTL8139_VENDOR_ID);   
 }
 
 void read_device_bars(pci_header_data* header, uint8_t bus, uint8_t device)

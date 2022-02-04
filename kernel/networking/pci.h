@@ -13,8 +13,11 @@
 #define BUS_NUM 256
 #define DEVICE_NUM 32 
 
-#define ETHERNET_SUBCLASS 0
-#define ETHERNET_CLASS_CODE 2
+#define RTL8139_VENDOR_ID 0x10EC 
+#define RTL8139_DEVICE_ID 0x8139
+
+//#define ETHERNET_SUBCLASS 0
+//#define ETHERNET_CLASS_CODE 2
 
 // pci devices header types
 #define HEADER_DEFUALT 0x0
@@ -96,12 +99,12 @@ pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device);
 
 /*
     This function gets pci device data
-    @param class_code: the pci device class cde
-    @param subclass: the pci device subclass
+    @param device_id: the pci device id
+    @param vendor_id: the pci device vendor id
     This function returns the pci device data
     if not found returns null
 */
-device_data* get_pci_device(uint8_t class_code, uint8_t subclass);
+device_data* get_pci_device(uint16_t device_id, uint16_t vendor_id);
 
 /*
     This functon gets the ethernet controller device data
