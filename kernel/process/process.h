@@ -108,3 +108,7 @@ int context_switch(process_context_block* next_process);
     @param registers: the saved registers
 */
 void save_registers(process_context_block* pcb, registers_t* registers);
+
+void lock_mutex();
+
+void release_mutex();

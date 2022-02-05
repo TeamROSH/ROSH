@@ -12,6 +12,7 @@ process_context_block* g_curr_process;
 list* g_process_list;
 list* g_ready_processes_list;
 uint32_t g_curr_stack = 0;
+uint8_t g_mutex = 0;
 
 process_context_block* create_process(int is_kernel, char* process_name);
 int generate_pid();
@@ -68,10 +69,6 @@ process_context_block* create_process(int is_kernel, char* process_name)
 	{
 		pcb->process_pages[i] = -1;
 	}
-
-    //alloc process page directory
-    // pcb->curr_page_directory = (page_directory*)kmalloc(sizeof(page_directory));
-    // memcpy(pcb->curr_page_directory, g_page_directory, sizeof(page_directory));
 
     //mapping stack
     pcb->process_pages[0] = page_to_address(page_alloc());
@@ -194,6 +191,8 @@ void kill_process(process_context_block* pcb)
 
 void process_scheduler(registers_t* registers)
 {
+	if (g_mutex)
+		return;
     node* next_process;
     for (next_process = g_ready_processes_list->head; next_process != NULL; next_process = next_process->next)
 	{
@@ -201,7 +200,6 @@ void process_scheduler(registers_t* registers)
 		if (proc->process_state == PROCESS_READY)
 		{
 			// saving the old process registers
-			// registers->esp += 8;
 			save_registers(g_curr_process, registers);
 			g_curr_process->reg.esp = (uint32_t)registers;
 
@@ -252,14 +250,7 @@ int context_switch(process_context_block* next_process)
 
     next_process->process_state = PROCESS_RUNNING;
 	g_curr_process = next_process;
-    // for (int i = 0; i < MAX_PROCESS_PAGES; i++)
-    // {
-    //     // unmaping the old process meory
-    //     page_unmap(g_curr_process->process_pages[i]);
 
-    //     // mapping the new process memory
-    //     page_map(next_process->curr_page_directory, next_process->process_pages[i], next_process->process_pages[i], PAGE_FLAG_READWRITE | PAGE_FLAG_USER);
-    // }
 	set_kernel_stack(g_curr_stack);
 	context_jump(next_process->reg.esp);
 }
@@ -296,4 +287,14 @@ void kill_running_process()
 			}
 		}
 	}
+}
+
+void lock_mutex()
+{
+	g_mutex = 1;
+}
+
+void release_mutex()
+{
+	g_mutex = 0;
 }
