@@ -1,5 +1,6 @@
 global func
 
 func:
-	mov ecx, 0
-	div ecx
+	mov cl, 'A'
+	mov [123527168], cl
+	jmp $
