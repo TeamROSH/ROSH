@@ -2,14 +2,14 @@
 
 ethernet_device* g_ethernet_device;
 
-initialize_ethernet_driver();
+void initialize_ethernet_driver();
 void network_handler(registers_t* registers);
 void read_mac_address();
 
 
-initialize_ethernet_driver()
+void initialize_ethernet_driver()
 {
-    g_ethernet_device = (ethernet_device*)kmalloc(ethernet_device);
+    g_ethernet_device = (ethernet_device*)kmalloc(sizeof(ethernet_device));
     
     // getting ethernet device data
     g_ethernet_device->ethernet_device_data = get_ethernet_controller();
@@ -24,7 +24,7 @@ initialize_ethernet_driver()
     outb(io_base + IO_CONFIG1_OFFSET, 0 );
 
     // reseting ethernet device
-    outb(io_base + IO_CMD_OFFSET, 0x10)    
+    outb(io_base + IO_CMD_OFFSET, 0x10);    
 
     // waiting for reseting to finish
     while(inb(io_base + IO_CMD_OFFSET) & 0x10 !=0){}
@@ -55,6 +55,10 @@ initialize_ethernet_driver()
     read_mac_address();
 }
 
+void network_handler(registers_t* registers)
+{
+    
+}
 
 void read_mac_address()
 {

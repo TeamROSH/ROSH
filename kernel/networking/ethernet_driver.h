@@ -2,7 +2,7 @@
 #define ETHERNET_DRIVER_H
 
 #include "pci.h"
-#include "idt.h"
+#include "../IDT/idt.h"
 
 
 // device registers offsets
@@ -30,7 +30,7 @@ typedef struct ethernet_device{
 /*
     This function intializes the RTL8139 ethernet card
 */
-initialize_ethernet_driver();
+void initialize_ethernet_driver();
 
 /*
     This funciton handles recived packet interrupt

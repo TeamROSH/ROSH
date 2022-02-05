@@ -40,6 +40,7 @@ compile_kernel:
 	@i386-elf-gcc -ffreestanding -c kernel/process/process.c -o objects/process.o
 	@i386-elf-gcc -ffreestanding -c kernel/memory/heap.c -o objects/heap.o
 	@i386-elf-gcc -ffreestanding -c kernel/networking/pci.c -o objects/pci.o
+	@i386-elf-gcc -ffreestanding -c kernel/networking/ethernet_driver.c -o objects/ethernet_driver.o
 	@i386-elf-gcc -ffreestanding -c fs/fs.c -o objects/fs.o
 
 	@nasm kernel/main/kernel_entry.s -f elf -o objects/kernel/kernel_entry.o
