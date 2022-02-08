@@ -1,9 +1,11 @@
 #include "ethernet_driver.h"
 
 ethernet_device* g_ethernet_device;
-
+uint8_t g_ts_reg[] = {0x20, 0x24, 0x28, 0x2C};
+uint8_t g_tc_reg[] = {0x10, 0x14, 0x18, 0x1C};
 void initialize_ethernet_driver();
 void network_handler(registers_t* registers);
+void send_packet(void* content, uint32_t packet_len);
 void read_mac_address();
 
 
@@ -48,6 +50,8 @@ void initialize_ethernet_driver()
     // setting recive and transmits
     outb(io_base + IO_CMD_OFFSET, 0x0C);
 
+    g_ethernet_device->curr_reg = 0;
+
     // setting interrupt handler
     set_interrupt(g_ethernet_device->ethernet_device_data->device_header->interrupt_line + IRQ0, network_handler);
 
@@ -57,7 +61,24 @@ void initialize_ethernet_driver()
 
 void network_handler(registers_t* registers)
 {
+
+}
+
+void send_packet(void* content, uint32_t packet_len)
+{
+    uint32_t transmit_buff = (uint32_t)kmalloc(packet_len);
+
+    // making sure and allocating space for packet in kernel heap
+    memcpy((void*)transmit_buff, content, packet_len);
+
+    // sending packet data
+    outdw((uint16_t)g_ethernet_device + g_ts_reg[g_ethernet_device->curr_reg], transmit_buff);
     
+    // sending packet len
+    outdw((uint16_t)g_ethernet_device + g_tc_reg[g_ethernet_device->curr_reg], packet_len);
+    
+    // only 4 elements in array
+    g_ethernet_device->curr_reg = (++(g_ethernet_device->curr_reg)) > 3 ? 0 : g_ethernet_device->curr_reg; 
 }
 
 void read_mac_address()

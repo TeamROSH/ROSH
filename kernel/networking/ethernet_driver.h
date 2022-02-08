@@ -3,7 +3,7 @@
 
 #include "pci.h"
 #include "../IDT/idt.h"
-
+#include "../../libc/memory.h"
 
 // device registers offsets
 #define IO_MAC_OFFSET 0
@@ -25,6 +25,7 @@ typedef struct ethernet_device{
     uint32_t rx_buff;
     uint32_t tx_buff;
     char mac_address[6];
+    uint8_t curr_reg;
 }ethernet_device;
 
 /*
@@ -38,6 +39,12 @@ void initialize_ethernet_driver();
 */
 void network_handler(registers_t* registers);
 
+/*
+    This function sends a packet
+    @param content: the packet content
+    @param packet_len: the packet len
+*/
+void send_packet(void* content, uint32_t packet_len);
 /*
     This function reads the mac address and updates the g_ethernet_device 
 */
