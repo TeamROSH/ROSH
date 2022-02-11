@@ -1,4 +1,5 @@
 #include "pci.h"
+#include "../../libc/screen.h"
 
 uint16_t read_word_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset);
 uint32_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset);
@@ -43,7 +44,10 @@ pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device)
     pci_header_data* header = (pci_header_data*) kmalloc(sizeof(pci_header_data));
 
     // if device is valid
-    if ((header->vendor_id = read_word_from_pci(bus, device, 0, 0)) == 0xFFFF) {
+	header->vendor_id = read_word_from_pci(bus, device, 0, 0);
+	puti(header->vendor_id); putc('\n');
+    if (header->vendor_id == 0xFFFF) {
+		kfree(header);
         return NULL;
     } 
 
@@ -60,11 +64,13 @@ pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device)
     header->header_type = read_word_from_pci(bus, device, 3, 0XE) & 0xFF;
     header->bist = read_word_from_pci(bus, device, 3, 0XE) >> 8;
 
+	if (header->device_id != 0) {puti(header->device_id); putc('\n');}
+
     // reading device bars
     if(header->header_type == HEADER_DEFUALT)
     {
-        header->interrupt_line = (bus, device, 0XF, 0x3C) & 0xFF;
-        read_device_bars(header, bus, device);   
+        header->interrupt_line = read_word_from_pci(bus, device, 0XF, 0x3C) & 0xFF;
+        read_device_bars(header, bus, device); 
     }
     return header;   
 }
@@ -73,7 +79,7 @@ device_data* get_pci_device(uint16_t device_id, uint16_t vendor_id)
 {
 
     // going through the pci devices
-    for(uint8_t bus = 0; bus < BUS_NUM; bus++)
+    for(uint32_t bus = 0; bus < BUS_NUM; bus++)
     {
         for (uint8_t device = 0; device < DEVICE_NUM; device++)
         {
@@ -94,8 +100,8 @@ device_data* get_pci_device(uint16_t device_id, uint16_t vendor_id)
                     return data;
                 }
             }
+			kfree(header);
         }
-        
     }
     // device wasn't found
     return NULL;

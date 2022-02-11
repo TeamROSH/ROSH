@@ -7,6 +7,7 @@
 #include "../memory/heap.h"
 #include "../process/process.h"
 #include "../../fs/fs.h"
+#include "../networking/ethernet_driver.h"
 
 /*
 	print ROSH logo
@@ -23,6 +24,7 @@ void main() {
 	initKernelHeap();		// init kernel heap
 	initialize_paging();	// init paging
 	keyboard_initialize();	// initializing keyboard
+	initialize_ethernet_driver();
 	
 	initConsole();			// init cursor
 	init_fs();				// init file system

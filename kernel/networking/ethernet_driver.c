@@ -11,11 +11,11 @@ void read_mac_address();
 
 void initialize_ethernet_driver()
 {
+	putc('1');
     g_ethernet_device = (ethernet_device*)kmalloc(sizeof(ethernet_device));
     
     // getting ethernet device data
     g_ethernet_device->ethernet_device_data = get_ethernet_controller();
-
 
     // setting ethernet device io address
     g_ethernet_device->io_base = g_ethernet_device->ethernet_device_data->device_header->bars[0].value.io_address;
@@ -30,7 +30,6 @@ void initialize_ethernet_driver()
 
     // waiting for reseting to finish
     while(inb(io_base + IO_CMD_OFFSET) & 0x10 !=0){}
-
 
     //TODO 
     // make sure that setting the virt and not phys address is ok
@@ -96,4 +95,5 @@ void read_mac_address()
     g_ethernet_device->mac_address[3] = inb(g_ethernet_device->io_base + 3); 
     g_ethernet_device->mac_address[4] = inb(g_ethernet_device->io_base + 4); 
     g_ethernet_device->mac_address[5] = inb(g_ethernet_device->io_base + 5);   
+	puti(g_ethernet_device->mac_address[0]);
 }
