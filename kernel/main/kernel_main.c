@@ -29,10 +29,6 @@ void main() {
 
 	printLogo();		// print ROSH
 
-	uint8_t check = 146;
-
-	puti(check_bits_in_byte(check, 2));
-
 	getchar();
 	clearConsole();
 
