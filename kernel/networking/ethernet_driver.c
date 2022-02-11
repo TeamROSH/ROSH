@@ -61,7 +61,13 @@ void initialize_ethernet_driver()
 
 void network_handler(registers_t* registers)
 {
+    uint16_t isr_value= inw(g_ethernet_device->io_base + IO_ISR_OFFSET);
 
+    // if packet recived (ROK bit set)
+    if(isr_value & 1)
+    {
+        
+    }
 }
 
 void send_packet(void* content, uint32_t packet_len)
@@ -72,10 +78,10 @@ void send_packet(void* content, uint32_t packet_len)
     memcpy((void*)transmit_buff, content, packet_len);
 
     // sending packet data
-    outdw((uint16_t)g_ethernet_device + g_ts_reg[g_ethernet_device->curr_reg], transmit_buff);
+    outdw((uint16_t)g_ethernet_device->io_base + g_ts_reg[g_ethernet_device->curr_reg], transmit_buff);
     
     // sending packet len
-    outdw((uint16_t)g_ethernet_device + g_tc_reg[g_ethernet_device->curr_reg], packet_len);
+    outdw((uint16_t)g_ethernet_device->io_base + g_tc_reg[g_ethernet_device->curr_reg], packet_len);
     
     // only 4 elements in array
     g_ethernet_device->curr_reg = (++(g_ethernet_device->curr_reg)) > 3 ? 0 : g_ethernet_device->curr_reg; 
