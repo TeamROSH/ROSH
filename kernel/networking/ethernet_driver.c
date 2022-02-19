@@ -3,6 +3,7 @@
 ethernet_device* g_ethernet_device;
 uint8_t g_ts_reg[] = {0x20, 0x24, 0x28, 0x2C};
 uint8_t g_tc_reg[] = {0x10, 0x14, 0x18, 0x1C};
+uint32_t g_curr_rx = 0; 
 void initialize_ethernet_driver();
 void network_handler(registers_t* registers);
 void send_packet(void* content, uint32_t packet_len);
@@ -39,6 +40,7 @@ void initialize_ethernet_driver()
     
     // setting buffer for input packets
     outdw(io_base + IO_RBSTART_OFFSET, (uint32_t)virtual_input_buffer);
+    g_ethernet_device->rx_buff = virtual_input_buffer;
 
     // setting flags for interrupts
     outw(io_base + IO_IMR_OFFSET, 0x0005);
@@ -65,7 +67,22 @@ void network_handler(registers_t* registers)
     // if packet recived (ROK bit set)
     if(isr_value & 1)
     {
+        // getting the packet len
+        uint32_t packet_length = *((uint16_t*)(g_ethernet_device->rx_buff + g_curr_rx) + 1);
+
+        // copying the packet data
+        uint32_t packet_data = (uint32_t)kmalloc(packet_length);
+        memcpy((void*)packet_data, ((uint16_t*)(g_ethernet_device->rx_buff + g_curr_rx) + 2), packet_length);
+
+        //parse_ethernet
+
+        // calculating the next rx buffer address
+        g_curr_rx = (g_curr_rx + packet_length + 7) & ~3 > RX_BUFFER_LEN ? 
+        ((g_curr_rx + packet_length + 7) & ~3 ) - RX_BUFFER_LEN : 
+        (g_curr_rx + packet_length + 7) & ~3;
         
+        // setting the new rx buffer address
+        outdw(g_ethernet_device->io_base + IO_CAPR, g_curr_rx - 16);      
     }
 }
 
