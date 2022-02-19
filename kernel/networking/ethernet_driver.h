@@ -4,7 +4,7 @@
 #include "pci.h"
 #include "../IDT/idt.h"
 #include "../../libc/memory.h"
-
+#include "ethernet.h"
 // device registers offsets
 #define IO_MAC_OFFSET 0
 #define IO_MAR_OFFSET 0x08

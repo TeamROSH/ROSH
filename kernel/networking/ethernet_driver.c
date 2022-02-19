@@ -4,6 +4,8 @@ ethernet_device* g_ethernet_device;
 uint8_t g_ts_reg[] = {0x20, 0x24, 0x28, 0x2C};
 uint8_t g_tc_reg[] = {0x10, 0x14, 0x18, 0x1C};
 uint32_t g_curr_rx = 0; 
+uint8_t g_src_mac[6];
+
 void initialize_ethernet_driver();
 void network_handler(registers_t* registers);
 void send_packet(void* content, uint32_t packet_len);
@@ -58,6 +60,9 @@ void initialize_ethernet_driver()
 
     // reading the mac address
     read_mac_address();
+
+    // setting src mac address
+    memcpy(g_src_mac, g_ethernet_device->mac_address, sizeof(uint8_t[6]));
 }
 
 void network_handler(registers_t* registers)
@@ -74,8 +79,9 @@ void network_handler(registers_t* registers)
         uint32_t packet_data = (uint32_t)kmalloc(packet_length);
         memcpy((void*)packet_data, ((uint16_t*)(g_ethernet_device->rx_buff + g_curr_rx) + 2), packet_length);
 
-        //parse_ethernet
-
+        // parsing the packet
+        parse_ethernet_packet((ethernet_packet*)packet_data, packet_length);
+                
         // calculating the next rx buffer address
         g_curr_rx = (g_curr_rx + packet_length + 7) & ~3 > RX_BUFFER_LEN ? 
         ((g_curr_rx + packet_length + 7) & ~3 ) - RX_BUFFER_LEN : 
@@ -112,5 +118,5 @@ void read_mac_address()
     g_ethernet_device->mac_address[3] = inb(g_ethernet_device->io_base + 3); 
     g_ethernet_device->mac_address[4] = inb(g_ethernet_device->io_base + 4); 
     g_ethernet_device->mac_address[5] = inb(g_ethernet_device->io_base + 5);   
-	puti(g_ethernet_device->mac_address[0]);
+	
 }
