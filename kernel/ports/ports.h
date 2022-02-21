@@ -23,4 +23,14 @@ unsigned short inw(uint16_t port);
 */
 void outw(uint16_t port, uint16_t data);
 
+
+/*
+	read a dword from port (assembly in)
+*/
+uint32_t indw(uint16_t port);
+
+/*
+	writes a dword to port (assembly out)
+*/
+void outdw(uint16_t port, uint32_t data);
 #endif

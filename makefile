@@ -39,6 +39,8 @@ compile_kernel:
 	@i386-elf-gcc -ffreestanding -c kernel/syscalls/syscalls.c -o objects/syscalls.o
 	@i386-elf-gcc -ffreestanding -c kernel/process/process.c -o objects/process.o
 	@i386-elf-gcc -ffreestanding -c kernel/memory/heap.c -o objects/heap.o
+	@i386-elf-gcc -ffreestanding -c kernel/networking/pci.c -o objects/pci.o
+	@i386-elf-gcc -ffreestanding -c kernel/networking/ethernet_driver.c -o objects/ethernet_driver.o
 	@i386-elf-gcc -ffreestanding -c fs/fs.c -o objects/fs.o
 
 	@nasm kernel/main/kernel_entry.s -f elf -o objects/kernel/kernel_entry.o
@@ -77,8 +79,8 @@ endif
 
 qemu:
 	@echo "Launching..."
-	@qemu-system-i386 -drive file=rosh.bin,index=0,format=raw
+	@qemu-system-i386 -netdev user,id=roshnet0,net=$(shell hostname -I | cut -d ' ' -f1)/24 -device rtl8139,netdev=roshnet0,id=rtl8139 -drive file=rosh.bin,index=0,format=raw
 
 qemu_debug:
 	@echo "Launching Debug..."
-	@qemu-system-i386 -s -S -drive file=rosh.bin,index=0,format=raw
+	@qemu-system-i386 -s -S -netdev user,id=mynet0,net=$(shell hostname -I | cut -d ' ' -f1)/24 -device rtl8139,netdev=roshnet0,id=rtl8139 -drive file=rosh.bin,index=0,format=raw
