@@ -18,7 +18,7 @@ typedef struct ethernet_header{
 typedef struct ethernet_packet
 {
     ethernet_header header;
-    uint8_t content[];
+    uint8_t* content;
 }ethernet_packet;
 
 
@@ -38,5 +38,5 @@ void parse_ethernet_packet(ethernet_packet* packet, uint32_t packet_len);
     @param ethernet_type: the packet type (arp or ip)
     @param dest_mac: the destination mac address 
 */
-void send_ethernet_packet(uint8_t* packet, uint32_t packet_len, uint16_t ethernet_type, uint8_t dest_mac[6]);
+void send_ethernet_packet(uint8_t* packet, uint32_t packet_len, uint16_t ethernet_type, uint8_t* dest_mac);
 #endif

@@ -15,6 +15,7 @@
 		"device.h": "c",
 		"memorylayout.h": "c",
 		"ata_pio.h": "c",
-		"heap.h": "c"
+		"heap.h": "c",
+		"ethernet_driver.h": "c"
 	}
 }

@@ -20,7 +20,7 @@ void parse_ethernet_packet(ethernet_packet* packet, uint32_t packet_len)
     }
 }
 
-void send_ethernet_packet(uint8_t* packet, uint32_t packet_len, uint16_t ethernet_type, uint8_t dest_mac[6])
+void send_ethernet_packet(uint8_t* packet, uint32_t packet_len, uint16_t ethernet_type, uint8_t* dest_mac)
 {
     // allocating sent packet len
     ethernet_packet* sent_packet = (ethernet_packet*)kmalloc(sizeof(ethernet_packet) + packet_len);
@@ -33,9 +33,9 @@ void send_ethernet_packet(uint8_t* packet, uint32_t packet_len, uint16_t etherne
     memcpy(sent_packet->header.destination_address, dest_mac, sizeof(uint8_t[6]));
     
     // setting packet content
-    memcpy(sent_packet->content, packet, packet_len);
+    sent_packet->content = packet;
 
     // sending the packet
-    send_packet(sent_packet, packet_len + sizeof(ethernet_packet));
+    send_packet(sent_packet, packet_len + sizeof(ethernet_header));
     kfree(sent_packet);
 }

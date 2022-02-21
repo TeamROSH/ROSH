@@ -8,6 +8,7 @@
 #include "../process/process.h"
 #include "../../fs/fs.h"
 #include "../networking/drivers/ethernet_driver.h"
+#include "../networking/protocols/ethernet.h"
 
 /*
 	print ROSH logo
@@ -28,6 +29,11 @@ void main() {
 	
 	initConsole();			// init cursor
 	init_fs();				// init file system
+
+	uint8_t msg[6] = "hello";
+	uint8_t destination_address[6] = {255, 255, 255, 255, 255, 255};
+	send_ethernet_packet(msg, 6, 0x806, destination_address);
+
 
 	printLogo();		// print ROSH
 

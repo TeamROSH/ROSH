@@ -107,6 +107,8 @@ void send_packet(void* content, uint32_t packet_len)
     
     // only 4 elements in array
     g_ethernet_device->curr_reg = (++(g_ethernet_device->curr_reg)) > 3 ? 0 : g_ethernet_device->curr_reg; 
+
+	kfree(transmit_buff);
 }
 
 void read_mac_address()
@@ -118,5 +120,4 @@ void read_mac_address()
     g_ethernet_device->mac_address[3] = inb(g_ethernet_device->io_base + 3); 
     g_ethernet_device->mac_address[4] = inb(g_ethernet_device->io_base + 4); 
     g_ethernet_device->mac_address[5] = inb(g_ethernet_device->io_base + 5);   
-	
 }
