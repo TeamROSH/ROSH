@@ -4,12 +4,13 @@
 #include "pci.h"
 #include "../IDT/idt.h"
 #include "../../libc/memory.h"
-
+#include "ethernet.h"
 // device registers offsets
 #define IO_MAC_OFFSET 0
 #define IO_MAR_OFFSET 0x08
 #define IO_RBSTART_OFFSET 0X30
 #define IO_CMD_OFFSET 0x37
+#define IO_CAPR 0x38
 #define IO_IMR_OFFSET 0X3C
 #define IO_ISR_OFFSET 0x3E
 #define IO_CONFIG1_OFFSET 0X52
