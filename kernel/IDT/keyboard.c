@@ -1,5 +1,6 @@
 #include "keyboard.h"
 #include "../../libc/memory.h"
+#include "../process/process.h"
 #define BUFFER_SIZE 100
 #define FALSE 0
 #define TRUE !FALSE
@@ -158,7 +159,9 @@ char getchar()
 void getline(char* pStr, int size)
 {
 	pending = TRUE;
+	release_mutex();		// allow context switch
 	while (!enterPress){}		// wait until enter
+	lock_mutex();			// prevent context switch
 	for (int i = 0; i < size - 1; i++)
 		pStr[i] = pop_buffer();
 	pStr[size - 1] = 0;

@@ -3,7 +3,7 @@
 ; from irq.c:
 [extern irq_handler]
 
-global jump_usermode
+global context_jump
 
 isr_main:
 	pushad			; Save State
@@ -53,37 +53,19 @@ irq_main:
 	add esp, 8		; clean pushed bytes (error, IRQ number)
 	iret			; pop and return
 
-jump_usermode:
+context_jump:
 	add esp, 4		; clear return address
+	pop eax
+	mov esp, eax
 
-	add esp, 8		; get registers
-	popad
-	pushad
-
-	sub esp, 8		; save eax, ebp
-	push eax
-	push ebp
-	mov ebp, esp
-
-	mov ax, 0x20 | 3 ; user data segment
-	mov ds, ax
-	mov es, ax 
-	mov fs, ax 
+	pop eax
+	mov ds, ax		; update registers
+	mov es, ax
+	mov fs, ax
 	mov gs, ax
- 
-	mov eax, [ebp + 8]
-	push 0x20 | 3 ; user data segment
-	push eax ; current esp
-	pushf
-	push 0x18 | 3 ; user code segment
-
-	mov eax, [ebp + 12]
-	push eax ; jump usermode
-
-	mov eax, [ebp + 4]
-	mov ebp, [ebp]
-
-	iret
+	popad			; Restore state
+	add esp, 8		; clean pushed bytes (error, IRQ number)
+	iret			; pop and return
 
 %include "kernel/IDT/defines.s"
 %include "kernel/IDT/isr_handlers.s"

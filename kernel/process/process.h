@@ -79,6 +79,11 @@ void load_process_code(process_context_block* pcb, char* file_name);
 */
 void kill_process(process_context_block* pcb);
 
+/*
+    kill running process
+*/
+void kill_running_process();
+
 
 /*
     This function schedules the process in a fixed time
@@ -103,3 +108,7 @@ int context_switch(process_context_block* next_process);
     @param registers: the saved registers
 */
 void save_registers(process_context_block* pcb, registers_t* registers);
+
+void lock_mutex();
+
+void release_mutex();

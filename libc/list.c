@@ -51,6 +51,7 @@ node* insert_head(list* list, void* data)
 
     // making nodes pointing to each other
     new_node->next = list->head;
+	new_node->prev = NULL;
 
 	if (list->head != NULL)
  	   list->head->prev = new_node;
@@ -90,6 +91,8 @@ node* insert_tail(list* list, void* data)
 
     // making nodes pointing to each other
     new_node->prev = list->tail;
+	new_node->next = NULL;
+
 	if (list->tail != NULL)
     	list->tail->next = new_node;
 
@@ -244,12 +247,12 @@ void delete_node_by_data(list* list, void* data)
 		if (curr_node->data == data)
 		{
 			if (curr_node->prev == NULL)
-				list->head = curr_node;
+				list->head = curr_node->next;
 			else
 				curr_node->prev->next = curr_node->next;
 
 			if (curr_node->next == NULL)
-				list->tail = curr_node;
+				list->tail = curr_node->prev;
 			else
 				curr_node->next->prev = curr_node->prev;
 			break;
