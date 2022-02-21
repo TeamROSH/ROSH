@@ -493,7 +493,9 @@ void exec(char* argv, int argc)
 			memcpy(path + strlen_dir, rel, strlen(rel) + 1);
 		}
 
-		unew_process(path);
+		int size = ufile_size(path);
+		if (size > 0)
+			unew_process(path);
 	}
 	else
 		uputs("Invalid syntax. Try \'help exec\'.");

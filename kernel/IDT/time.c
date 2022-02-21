@@ -3,6 +3,7 @@
  uint32_t g_seconds_count = 0;
  uint32_t g_ms_counter = 0;
  callback_function g_scheduler;
+ uint32_t last_call = 0;
 
 void print_time_seconds();
 void sleep(uint32_t sleep_ms);
@@ -19,8 +20,9 @@ void time_handler(registers_t* registers)
 
     i = g_ms_counter / 100;
     // cals the scheduler function every 200 ms 
-    if(i % 2 == 0)
+    if(i != last_call && i % 10 == 0)
     {
+		last_call = i;
         g_scheduler(registers);
     } 
 }

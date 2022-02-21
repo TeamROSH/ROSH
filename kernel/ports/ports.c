@@ -22,10 +22,10 @@ void outw(uint16_t port, uint16_t data) {
 
 uint32_t indw(uint16_t port){
     uint32_t result;
-    asm("in %%dx, %%ax" : "=a" (result) : "d" (port));
+    asm("inl %%dx, %%eax" : "=a" (result) : "d" (port));
     return result;
 }
 
 void outdw(uint16_t port, uint32_t data){
-    asm volatile("out %%ax, %%dx" : : "a" (data), "d" (port));
+    asm volatile("outl %%eax, %%dx" : : "a" (data), "d" (port));
 }

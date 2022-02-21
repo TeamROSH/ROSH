@@ -10,29 +10,23 @@ void read_device_bars(pci_header_data* header, uint8_t bus, uint8_t device);
 
 uint16_t read_word_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset)
 {
-    uint32_t data_address = (((uint32_t)bus) << 16 |    // aligning bus 
-    ((uint32_t)device << 11) |                         // aligning device
-    ((uint32_t)func) << 8 |                            // aliging func
-    (register_ofset & 0xFC)                            // and func other than 2 first bits
-    );
+    uint32_t address = (uint32_t)(((uint32_t)bus << 16) | ((uint32_t)device << 11) |
+              ((uint32_t)func << 8) | ((uint32_t)register_ofset & 0xFC) | ((uint32_t)0x80000000));
 
     // sending the data address to the pci config io register 
-    outdw(CONFIG_ADDRESS, data_address);
+    outdw(CONFIG_ADDRESS, address);
 
     // returning 16 bit result
-    return (indw(CONFIG_DATA) >> ((register_ofset & 2) * 8)) & 0xFFFF;    
+    return (uint16_t)((indw(0xCFC) >> ((register_ofset & 2) * 8)) & 0xFFFF);
 }
 
 uint32_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset)
 {
-    uint32_t data_address = (((uint32_t)bus) << 16 |    // aligning bus 
-    ((uint32_t)device << 11) |                         // aligning device
-    ((uint32_t)func) << 8 |                            // aliging func
-    (register_ofset & 0xFC)                            // and func other than 2 first bits
-    );
+    uint32_t address = (uint32_t)(((uint32_t)bus << 16) | ((uint32_t)device << 11) |
+              ((uint32_t)func << 8) | ((uint32_t)register_ofset & 0xFC) | ((uint32_t)0x80000000));
 
     // sending the data address to the pci config io register 
-    outdw(CONFIG_ADDRESS, data_address);
+    outdw(CONFIG_ADDRESS, address);
 
     // returning 32 bit result
     return indw(CONFIG_DATA) ;    
@@ -45,7 +39,6 @@ pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device)
 
     // if device is valid
 	header->vendor_id = read_word_from_pci(bus, device, 0, 0);
-	puti(header->vendor_id); putc('\n');
     if (header->vendor_id == 0xFFFF) {
 		kfree(header);
         return NULL;
@@ -53,23 +46,21 @@ pci_header_data* get_pci_device_data(uint8_t bus, uint8_t device)
 
     // reading the pci header into the struct
     header->device_id = read_word_from_pci(bus, device, 0, 2);
-    header->command = read_word_from_pci(bus, device, 1, 4);
-    header->status = read_word_from_pci(bus, device, 1, 6);
-    header->revision_id = read_word_from_pci(bus, device, 2, 8) & 0xFF;
-    header->prog_if = read_word_from_pci(bus, device, 2, 8) >> 8;
-    header->subclass = read_word_from_pci(bus, device, 2, 10) & 0xFF;
-    header->class_code = read_word_from_pci(bus, device, 2, 10) >> 8;
-    header->cache_line_size = read_word_from_pci(bus, device, 3, 0XC) & 0xFF;
-    header->latency_timer = read_word_from_pci(bus, device, 3, 0XC) >> 8;
-    header->header_type = read_word_from_pci(bus, device, 3, 0XE) & 0xFF;
-    header->bist = read_word_from_pci(bus, device, 3, 0XE) >> 8;
-
-	if (header->device_id != 0) {puti(header->device_id); putc('\n');}
+    header->command = read_word_from_pci(bus, device, 0, 4);
+    header->status = read_word_from_pci(bus, device, 0, 6);
+    header->revision_id = read_word_from_pci(bus, device, 0, 8) & 0xFF;
+    header->prog_if = read_word_from_pci(bus, device, 0, 8) >> 8;
+    header->subclass = read_word_from_pci(bus, device, 0, 10) & 0xFF;
+    header->class_code = read_word_from_pci(bus, device, 0, 10) >> 8;
+    header->cache_line_size = read_word_from_pci(bus, device, 0, 0xC) & 0xFF;
+    header->latency_timer = read_word_from_pci(bus, device, 0, 0xC) >> 8;
+    header->header_type = read_word_from_pci(bus, device, 0, 0xE) & 0xFF;
+    header->bist = read_word_from_pci(bus, device, 0, 0xE) >> 8;
 
     // reading device bars
     if(header->header_type == HEADER_DEFUALT)
     {
-        header->interrupt_line = read_word_from_pci(bus, device, 0XF, 0x3C) & 0xFF;
+        header->interrupt_line = read_word_from_pci(bus, device, 0, 0x3C) & 0xFF;
         read_device_bars(header, bus, device); 
     }
     return header;   
@@ -97,10 +88,11 @@ device_data* get_pci_device(uint16_t device_id, uint16_t vendor_id)
                     data->bus_num = bus;
                     data->device_num = device;
                     data->device_header = header;
+					kfree(header);
                     return data;
                 }
+				kfree(header);
             }
-			kfree(header);
         }
     }
     // device wasn't found
@@ -109,7 +101,7 @@ device_data* get_pci_device(uint16_t device_id, uint16_t vendor_id)
 
 device_data* get_ethernet_controller()
 {
-    return get_pci_device(RTL8139_DEVICE_ID, RTL8139_VENDOR_ID);   
+    return get_pci_device(RTL8139_DEVICE_ID, RTL8139_VENDOR_ID);
 }
 
 void read_device_bars(pci_header_data* header, uint8_t bus, uint8_t device)
@@ -119,18 +111,18 @@ void read_device_bars(pci_header_data* header, uint8_t bus, uint8_t device)
     for(int i = 0; i < BAR_NUM; i++)
     {
         // getting the bar type
-        header->bars[i].type = read_dword_from_pci(bus, device, 4 + i, 0x10 + 4 * i) & 1;
+        header->bars[i].type = read_dword_from_pci(bus, device, 0, 0x10 + 4 * i) & 1;
         
         // if IO bar
-        if (header->bars[i].type == 1)
+        if (header->bars[i].type)
         {
-            header->bars[i].value.io_address = read_dword_from_pci(bus, device, 4 + i, 0x10 + 4 * i) >> 2;
+            header->bars[i].value.io_address = read_dword_from_pci(bus, device, 0, 0x10 + 4 * i) & 0xFFFFFFF0;
         }
 
         // if memory address bar
         else
         {
-            header->bars[0].value.address = read_dword_from_pci(bus, device, 4 + i, 0x10 + 4 * i) >> 4;
+            header->bars[i].value.address = read_dword_from_pci(bus, device, 0, 0x10 + 4 * i) & 0xFFFFFFFC;
         }
     }
 }
