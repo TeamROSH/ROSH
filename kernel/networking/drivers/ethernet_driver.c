@@ -1,4 +1,5 @@
 #include "ethernet_driver.h"
+#include "../protocols/ethernet.h"
 
 ethernet_device* g_ethernet_device;
 uint8_t g_ts_reg[] = {0x20, 0x24, 0x28, 0x2C};

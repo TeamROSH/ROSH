@@ -1,5 +1,5 @@
 #include "pci.h"
-#include "../../libc/screen.h"
+#include "../../../libc/screen.h"
 
 uint16_t read_word_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset);
 uint32_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset);

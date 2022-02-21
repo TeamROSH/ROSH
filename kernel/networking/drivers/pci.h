@@ -2,8 +2,8 @@
 #define PCI_H
 
 #include <stdint.h>
-#include "../ports/ports.h"
-#include "../memory/heap.h"
+#include "../../ports/ports.h"
+#include "../../memory/heap.h"
 
 // physical address of io ports of pci
 #define CONFIG_ADDRESS 0XCF8

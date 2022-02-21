@@ -2,9 +2,9 @@
 #define ETHERNET_H
 
 #include <stdint.h>
-#include "../memory/heap.h"
-#include "../../libc/memory.h"
-#include "ethernet_driver.h"
+#include "../../memory/heap.h"
+#include "../../../libc/memory.h"
+#include "../drivers/ethernet_driver.h"
 
 #define HEADER_TYPE_IP  0x0800
 #define HEADER_TYPE_ARP 0x0806

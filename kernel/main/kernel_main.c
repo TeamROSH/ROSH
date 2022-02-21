@@ -7,7 +7,7 @@
 #include "../memory/heap.h"
 #include "../process/process.h"
 #include "../../fs/fs.h"
-#include "../networking/ethernet_driver.h"
+#include "../networking/drivers/ethernet_driver.h"
 
 /*
 	print ROSH logo
