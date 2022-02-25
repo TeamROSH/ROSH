@@ -8,6 +8,7 @@ extern uint32_t g_self_ip;
 void parse_arp_packet(arp_packet* packet, uint32_t packet_len);
 int find_arp_device(device_address* device);
 void create_and_send_arp(uint32_t src_ip, uint32_t dest_ip, uint8_t src_mac[6], uint8_t dst_mac[6], uint16_t opcode);
+void send_arp(uint32_t dst_ip);
 
 void parse_arp_packet(arp_packet* packet, uint32_t packet_len)
 {
@@ -102,4 +103,13 @@ void create_and_send_arp(uint32_t src_ip, uint32_t dest_ip, uint8_t src_mac[6], 
 
     // sending arp packet
     send_ethernet_packet((uint8_t*)packet, sizeof(arp_packet), HEADER_TYPE_ARP, dst_mac);
+}
+
+void send_arp(uint32_t dst_ip)
+{
+    // brodcast dst mac
+    uint8_t dst_mac[6] = {255, 255, 255, 255, 255, 255};
+    
+    // sending the arp requst
+    create_and_send_arp(g_self_ip, dst_ip, g_src_mac, dst_mac, OPERATION_ARP_REQUEST);
 }
