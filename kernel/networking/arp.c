@@ -36,9 +36,10 @@ void parse_arp_packet(arp_packet* packet, uint32_t packet_len)
             }
         } 
 
+        // sending the result if found device in the arp cache
         if(request_device->ip_address != NULL)
         {
-            
+            create_and_send_arp(dst_ip, src_ip, g_src_mac, src_mac, OPERATION_ARP_REPLAY);
         }
     }
 
