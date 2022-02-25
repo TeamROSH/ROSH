@@ -5,7 +5,6 @@
 #include "../../memory/heap.h"
 #include "../../../libc/memory.h"
 #include "../drivers/ethernet_driver.h"
-#include "arp.h"
 
 #define HEADER_TYPE_IP  0x0800
 #define HEADER_TYPE_ARP 0x0806
