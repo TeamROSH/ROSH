@@ -5,6 +5,7 @@
 #include "../memory/heap.h"
 #include "../../libc/memory.h"
 #include "../../libc/string.h"
+#include "ethernet.h"
 
 #define ETHERNET_HLEN 6
 #define IPV4_PLEN 4
@@ -41,6 +42,15 @@ typedef struct device_address{
 */
 void parse_arp_packet(arp_packet* packet, uint32_t packet_len);
 
+/*
+    This function finds the index of device in the arp cache
+    @param device : the device address
+    returns the index pf the device if found and -1 if not
+*/
+int find_arp_device(device_address* device);
 
-device_address* find_device_in_cache()
+/*
+
+*/
+void create_and_send_arp();
 #endif
