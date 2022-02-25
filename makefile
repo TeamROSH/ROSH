@@ -1,10 +1,18 @@
 interface:=$(shell ip addr | awk '/state UP/ {print $$2}' | head -n 1 | awk '{print substr($$0, 1, length($$0)-1)}')
 
-run: clean_output compile_boot compile_libc compile_kernel compile_user build create_network qemu clean_network
-debug: clean_output compile_boot compile_libc compile_kernel compile_user build create_network qemu_debug clean_network
+run: check_libs clean_output compile_boot compile_libc compile_kernel compile_user build create_network qemu clean_network
+debug: check_libs clean_output compile_boot compile_libc compile_kernel compile_user build create_network qemu_debug clean_network
+
+check_libs:
+	@sudo echo "Switched to root..."
+	@bash -c "[[ \$$(command -v i386-elf-gcc) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
+	@bash -c "[[ \$$(command -v nasm) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
+	@bash -c "[[ \$$(command -v i386-elf-ld) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
+	@bash -c "[[ \$$(command -v brctl) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
+	@bash -c "[[ \$$(command -v tunctl) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
+	@bash -c "[[ \$$(command -v dhclient) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
 
 clean_output:
-	@sudo echo "Switched to root..."
 	@rm -rf compiled/
 	@mkdir compiled/
 	@rm -rf objects/
