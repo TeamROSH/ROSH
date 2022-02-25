@@ -73,12 +73,11 @@ void initialize_ethernet_driver()
 
 void network_handler(registers_t* registers)
 {
-    uint16_t isr_value= inw(g_ethernet_device->io_base + IO_ISR_OFFSET);
+    uint16_t isr_value = inw(g_ethernet_device->io_base + IO_ISR_OFFSET);
 
     // if packet recived (ROK bit set)
     if(isr_value & 1)
     {
-		putc('1');
         // getting the packet len
         uint32_t packet_length = *((uint16_t*)(g_ethernet_device->rx_buff + g_curr_rx) + 1);
 

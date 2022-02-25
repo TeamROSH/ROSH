@@ -1,7 +1,10 @@
-run: clean_output compile_boot compile_libc compile_kernel compile_user build qemu
-debug: clean_output compile_boot compile_libc compile_kernel compile_user build qemu_debug
+interface:=$(shell ip addr | awk '/state UP/ {print $$2}' | head -n 1 | awk '{print substr($$0, 1, length($$0)-1)}')
+
+run: clean_output compile_boot compile_libc compile_kernel compile_user build create_network qemu clean_network
+debug: clean_output compile_boot compile_libc compile_kernel compile_user build create_network qemu_debug clean_network
 
 clean_output:
+	@sudo echo "Switched to root..."
 	@rm -rf compiled/
 	@mkdir compiled/
 	@rm -rf objects/
@@ -78,10 +81,32 @@ endif
 	@dd conv=notrunc bs=1 seek=512 status=none if=compiled/kernel_main.bin of=rosh.bin
 	@dd conv=notrunc bs=1 seek=41472 status=none if=compiled/user_main.bin of=rosh.bin
 
+create_network:
+	@echo "Setting up networking..."
+	@sudo brctl addbr roshbr0
+	@sudo ip addr flush dev $(interface)
+	@sudo brctl addif roshbr0 $(interface)
+	@sudo tunctl -t roshtap0 -u root > /dev/null
+	@sudo brctl addif roshbr0 roshtap0
+	@sudo ifconfig $(interface) up
+	@sudo ifconfig roshtap0 up
+	@sudo ifconfig roshbr0 up
+	@sudo dhclient roshbr0
+
+clean_network:
+	@echo "Restoring networking..."
+	@sudo brctl delif roshbr0 roshtap0
+	@sudo tunctl -d roshtap0 > /dev/null
+	@sudo brctl delif roshbr0 $(interface)
+	@sudo ifconfig roshbr0 down
+	@sudo brctl delbr roshbr0
+	@sudo ifconfig $(interface) up
+	@sudo dhclient $(interface)
+
 qemu:
 	@echo "Launching..."
-	@qemu-system-i386 -netdev user,id=roshnet0,net=$(shell hostname -I | cut -d ' ' -f1)/24 -device rtl8139,netdev=roshnet0,id=rtl8139 -drive file=rosh.bin,index=0,format=raw
+	@sudo qemu-system-i386 -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139 -drive file=rosh.bin,index=0,format=raw
 
 qemu_debug:
 	@echo "Launching Debug..."
-	@qemu-system-i386 -netdev user,id=mynet0,net=$(shell hostname -I | cut -d ' ' -f1)/24 -device rtl8139,netdev=roshnet0,id=rtl8139 -object filter-dump,id=f1,netdev=roshnet0,file=dump.dat -drive file=rosh.bin,index=0,format=raw
+	@sudo qemu-system-i386 -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139 -object filter-dump,id=f1,netdev=roshnet0,file=dump.dat -drive file=rosh.bin,index=0,format=raw
