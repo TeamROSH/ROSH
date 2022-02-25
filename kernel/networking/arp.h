@@ -50,7 +50,12 @@ void parse_arp_packet(arp_packet* packet, uint32_t packet_len);
 int find_arp_device(device_address* device);
 
 /*
-
+    This function creates an arp packet according to the parameters and sends it
+    @param src_ip : the source ip
+    @param dst_ip : the destination ip
+    @param src_mac: the source mac
+    @param dst_mac: the destination mac
+    @param opcode : the packet opcode
 */
-void create_and_send_arp();
+void create_and_send_arp(uint32_t src_ip, uint32_t dest_ip, uint8_t src_mac[6], uint8_t dst_mac[6], uint16_t opcode);
 #endif

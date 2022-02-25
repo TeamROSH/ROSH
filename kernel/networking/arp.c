@@ -3,9 +3,11 @@
 device_address g_address_cache[ARP_CACHE_LEN];
 
 extern uint8_t g_src_mac[6];
+extern uint32_t g_self_ip;
 
 void parse_arp_packet(arp_packet* packet, uint32_t packet_len);
 int find_arp_device(device_address* device);
+void create_and_send_arp(uint32_t src_ip, uint32_t dest_ip, uint8_t src_mac[6], uint8_t dst_mac[6], uint16_t opcode);
 
 void parse_arp_packet(arp_packet* packet, uint32_t packet_len)
 {
@@ -70,4 +72,33 @@ int find_arp_device(device_address* device)
 
     // device wasn't found
     return -1;
+}
+
+void create_and_send_arp(uint32_t src_ip, uint32_t dest_ip, uint8_t src_mac[6], uint8_t dst_mac[6], uint16_t opcode)
+{
+    arp_packet* packet = (arp_packet*)kmalloc(sizeof(arp_packet));
+
+    // setting ethernet and ip
+    packet->hlen = ETHERNET_HLEN;
+    packet->plen = IPV4_PLEN;
+
+    // setting ethernet hardware type
+    packet->htype = 1;
+
+    // setting ipv4 protocol
+    packet->ptype = 4;
+
+    // setting arp opcode
+    packet->opcode = opcode;
+
+    // setting mac addresses
+    memcpy(packet->srchw, src_mac, 6);
+    memcpy(packet->dsthw, dst_mac, 6); 
+
+    // setting ip addresses
+    packet->srcpr = src_ip;
+    packet->dstpr = dest_ip;
+
+    // sending arp packet
+    send_ethernet_packet((uint8_t*)packet, sizeof(arp_packet), HEADER_TYPE_ARP, dst_mac);
 }
