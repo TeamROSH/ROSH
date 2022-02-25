@@ -6,8 +6,8 @@
 #include "../../../libc/memory.h"
 #include "../drivers/ethernet_driver.h"
 
-#define HEADER_TYPE_IP  0x0800
-#define HEADER_TYPE_ARP 0x0806
+#define HEADER_TYPE_IP  0x0008
+#define HEADER_TYPE_ARP 0x0608
 
 typedef struct ethernet_header{
     uint8_t destination_address[6];

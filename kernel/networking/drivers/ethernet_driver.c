@@ -9,7 +9,7 @@ uint8_t g_src_mac[6];
 
 void initialize_ethernet_driver();
 void network_handler(registers_t* registers);
-void send_packet(void* content, uint16_t packet_len);
+void send_packet(void* content, uint32_t packet_len);
 void read_mac_address();
 
 
@@ -35,7 +35,7 @@ void initialize_ethernet_driver()
     outb(io_base + IO_CONFIG1_OFFSET, 0);
 
     // reseting ethernet device
-    outb(io_base + IO_CMD_OFFSET, 0x10);
+    // outb(io_base + IO_CMD_OFFSET, 0x10);
 
     // waiting for reseting to finish
     // while(inb(io_base + IO_CMD_OFFSET) & 0x10 !=0){}
@@ -78,6 +78,7 @@ void network_handler(registers_t* registers)
     // if packet recived (ROK bit set)
     if(isr_value & 1)
     {
+		putc('1');
         // getting the packet len
         uint32_t packet_length = *((uint16_t*)(g_ethernet_device->rx_buff + g_curr_rx) + 1);
 
@@ -96,9 +97,10 @@ void network_handler(registers_t* registers)
         // setting the new rx buffer address
         outdw(g_ethernet_device->io_base + IO_CAPR, g_curr_rx - 16);      
     }
+	outw(g_ethernet_device->io_base + IO_ISR_OFFSET, 0x5);
 }
 
-void send_packet(void* content, uint16_t packet_len)
+void send_packet(void* content, uint32_t packet_len)
 {
     uint32_t transmit_buff = (uint32_t)kmalloc(packet_len);
 
@@ -109,10 +111,10 @@ void send_packet(void* content, uint16_t packet_len)
     outdw((uint16_t)g_ethernet_device->io_base + g_ts_reg[g_ethernet_device->curr_reg], transmit_buff);
     
     // sending packet len
-    outw((uint16_t)g_ethernet_device->io_base + g_tc_reg[g_ethernet_device->curr_reg], packet_len);
+    outdw((uint16_t)g_ethernet_device->io_base + g_tc_reg[g_ethernet_device->curr_reg], packet_len);
     
     // only 4 elements in array
-    g_ethernet_device->curr_reg = (++(g_ethernet_device->curr_reg)) > 3 ? 0 : g_ethernet_device->curr_reg; 
+    g_ethernet_device->curr_reg = (g_ethernet_device->curr_reg + 1) % 4; 
 
 	kfree((void*)transmit_buff);
 }

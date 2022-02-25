@@ -84,4 +84,4 @@ qemu:
 
 qemu_debug:
 	@echo "Launching Debug..."
-	@qemu-system-i386 -s -S -netdev user,id=mynet0,net=$(shell hostname -I | cut -d ' ' -f1)/24 -device rtl8139,netdev=roshnet0,id=rtl8139 -drive file=rosh.bin,index=0,format=raw
+	@qemu-system-i386 -netdev user,id=mynet0,net=$(shell hostname -I | cut -d ' ' -f1)/24 -device rtl8139,netdev=roshnet0,id=rtl8139 -object filter-dump,id=f1,netdev=roshnet0,file=dump.dat -drive file=rosh.bin,index=0,format=raw

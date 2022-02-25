@@ -44,7 +44,7 @@ void network_handler(registers_t* registers);
     @param content: the packet content
     @param packet_len: the packet len
 */
-void send_packet(void* content, uint16_t packet_len);
+void send_packet(void* content, uint32_t packet_len);
 /*
     This function reads the mac address and updates the g_ethernet_device 
 */
