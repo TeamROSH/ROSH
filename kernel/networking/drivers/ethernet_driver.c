@@ -9,7 +9,7 @@ uint8_t g_src_mac[6];
 
 void initialize_ethernet_driver();
 void network_handler(registers_t* registers);
-void send_packet(void* content, uint32_t packet_len);
+void send_packet(void* content, uint16_t packet_len);
 void read_mac_address();
 
 
@@ -24,6 +24,12 @@ void initialize_ethernet_driver()
     g_ethernet_device->io_base = g_ethernet_device->ethernet_device_data->device_header->bars[0].value.io_address;
 
     uint32_t io_base = g_ethernet_device->io_base;
+
+	// enable PCI bus mastering
+	g_ethernet_device->ethernet_device_data->device_header->command |= 0b100;		// set bit
+	uint32_t new_command = ((uint32_t)g_ethernet_device->ethernet_device_data->device_header->status) << 16;		// add status register
+	new_command += g_ethernet_device->ethernet_device_data->device_header->command;		// add command register
+	write_dword_to_pci(g_ethernet_device->ethernet_device_data->bus_num, g_ethernet_device->ethernet_device_data->device_num, 0, 4, new_command);
 
     // turning on the ethernet device
     outb(io_base + IO_CONFIG1_OFFSET, 0);
@@ -92,7 +98,7 @@ void network_handler(registers_t* registers)
     }
 }
 
-void send_packet(void* content, uint32_t packet_len)
+void send_packet(void* content, uint16_t packet_len)
 {
     uint32_t transmit_buff = (uint32_t)kmalloc(packet_len);
 
@@ -103,12 +109,12 @@ void send_packet(void* content, uint32_t packet_len)
     outdw((uint16_t)g_ethernet_device->io_base + g_ts_reg[g_ethernet_device->curr_reg], transmit_buff);
     
     // sending packet len
-    outdw((uint16_t)g_ethernet_device->io_base + g_tc_reg[g_ethernet_device->curr_reg], packet_len);
+    outw((uint16_t)g_ethernet_device->io_base + g_tc_reg[g_ethernet_device->curr_reg], packet_len);
     
     // only 4 elements in array
     g_ethernet_device->curr_reg = (++(g_ethernet_device->curr_reg)) > 3 ? 0 : g_ethernet_device->curr_reg; 
 
-	kfree(transmit_buff);
+	kfree((void*)transmit_buff);
 }
 
 void read_mac_address()
