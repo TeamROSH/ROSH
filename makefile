@@ -10,7 +10,6 @@ check_libs:
 	@bash -c "[[ \$$(command -v i386-elf-ld) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
 	@bash -c "[[ \$$(command -v brctl) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
 	@bash -c "[[ \$$(command -v tunctl) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
-	@bash -c "[[ \$$(command -v dhclient) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
 
 clean_output:
 	@rm -rf compiled/
@@ -99,7 +98,6 @@ create_network:
 	@sudo ifconfig $(interface) up
 	@sudo ifconfig roshtap0 up
 	@sudo ifconfig roshbr0 up
-	@sudo dhclient roshbr0
 
 clean_network:
 	@echo "Restoring networking..."
@@ -109,7 +107,6 @@ clean_network:
 	@sudo ifconfig roshbr0 down
 	@sudo brctl delbr roshbr0
 	@sudo ifconfig $(interface) up
-	@sudo dhclient $(interface)
 
 qemu:
 	@echo "Launching..."

@@ -5,7 +5,7 @@ ethernet_device* g_ethernet_device;
 uint8_t g_ts_reg[] = {0x20, 0x24, 0x28, 0x2C};
 uint8_t g_tc_reg[] = {0x10, 0x14, 0x18, 0x1C};
 uint32_t g_curr_rx = 0; 
-uint8_t g_src_mac[6];
+uint8_t g_src_mac[6] = {0};
 
 void initialize_ethernet_driver();
 void network_handler(registers_t* registers);
@@ -15,6 +15,7 @@ void read_mac_address();
 
 void initialize_ethernet_driver()
 {
+	g_curr_rx = 0; 
     g_ethernet_device = (ethernet_device*)kmalloc(sizeof(ethernet_device));
     
     // getting ethernet device data
@@ -54,7 +55,7 @@ void initialize_ethernet_driver()
     outw(io_base + IO_IMR_OFFSET, 0x0005);
 
     // configure recive buffer
-    outw(io_base + IO_RCR_CONFIGURE, 0x8F);
+    outdw(io_base + IO_RCR_CONFIGURE, 0x8F);
 
     // setting recive and transmits
     outb(io_base + IO_CMD_OFFSET, 0x0C);
@@ -79,7 +80,7 @@ void network_handler(registers_t* registers)
     if(isr_value & 1)
     {
         // getting the packet len
-        uint32_t packet_length = *((uint16_t*)(g_ethernet_device->rx_buff + g_curr_rx) + 1);
+        uint16_t packet_length = *((uint16_t*)(g_ethernet_device->rx_buff + g_curr_rx) + 1);
 
         // copying the packet data
         uint32_t packet_data = (uint32_t)kmalloc(packet_length);
@@ -87,14 +88,15 @@ void network_handler(registers_t* registers)
 
         // parsing the packet
         parse_ethernet_packet((ethernet_packet*)packet_data, packet_length);
+
+		kfree((void*)packet_data);
                 
         // calculating the next rx buffer address
-        g_curr_rx = (g_curr_rx + packet_length + 7) & ~3 > RX_BUFFER_LEN ? 
-        ((g_curr_rx + packet_length + 7) & ~3 ) - RX_BUFFER_LEN : 
-        (g_curr_rx + packet_length + 7) & ~3;
+        g_curr_rx = (g_curr_rx + packet_length + 7) & (~3);
+		g_curr_rx -= g_curr_rx > RX_BUFFER_SIZE ? RX_BUFFER_SIZE : 0;
         
         // setting the new rx buffer address
-        outdw(g_ethernet_device->io_base + IO_CAPR, g_curr_rx - 16);      
+        outw(g_ethernet_device->io_base + IO_CAPR, g_curr_rx - 16);
     }
 	outw(g_ethernet_device->io_base + IO_ISR_OFFSET, 0x5);
 }

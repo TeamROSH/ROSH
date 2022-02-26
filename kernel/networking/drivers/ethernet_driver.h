@@ -16,7 +16,8 @@
 #define IO_RCR_CONFIGURE 0X44
 
 // input packet buffer
-#define RX_BUFFER_LEN 9708
+#define RX_BUFFER_SIZE 0x2000
+#define RX_BUFFER_LEN RX_BUFFER_SIZE + 0x5EC
 
 
 typedef struct ethernet_device{
