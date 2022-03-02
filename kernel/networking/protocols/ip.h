@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define IPV4_VERSION 4
+
 // ipv4 protocols types
 #define IPV4_UDP_TYPE 0X11
 #define IPV4_TCP_TYPE 0x6
