@@ -2,9 +2,9 @@
 #define IP_H
 
 #include <stdint.h>
-#include "../memory/heap.h"
-#include "../../libc/memory.h"
-#include "../../libc/string.h"
+#include "../../memory/heap.h"
+#include "../../../libc/memory.h"
+#include "../../../libc/string.h"
 #include "../arp.h"
 
 #define IPV4_VERSION 4

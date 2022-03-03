@@ -55,12 +55,12 @@ uint16_t calculate_ip_checksum(ip_packet* packet)
 {
     // the ihl contains the number of 32 bits of header size, converting it to number of bytes
     uint32_t packet_header_length = packet->ihl << 2;
-    uiint32_t checksum = 0;
+    uint32_t checksum = 0;
 
     // increasing the checksum  with each byte of the ip header
     for(uint32_t i = 0; i + 1 < packet_header_length; i += 2)
     {
-        checksum += *packet
+        checksum += *(uint8_t*)packet;
         packet += 1;
     }
     
@@ -68,7 +68,7 @@ uint16_t calculate_ip_checksum(ip_packet* packet)
     if(packet_header_length %  2 == 1)
     {
         // adding just last byte value
-        checksum += *packet &0xFF00
+        checksum += *(uint8_t*)packet & 0xFF00;
     }
 
     // shifting the result into 16 bits

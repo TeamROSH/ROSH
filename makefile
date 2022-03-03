@@ -43,6 +43,7 @@ compile_kernel:
 	@i386-elf-gcc -ffreestanding -c kernel/networking/ethernet_driver.c -o objects/ethernet_driver.o
 	@i386-elf-gcc -ffreestanding -c kernel/networking/ethernet.c -o objects/ethernet.o
 	@i386-elf-gcc -ffreestanding -c kernel/networking/arp.c -o objects/arp.o
+	@i386-elf-gcc -ffreestanding -c kernel/networking/protocols/ip.c -o objects/ip.o
 	@i386-elf-gcc -ffreestanding -c fs/fs.c -o objects/fs.o
 
 	@nasm kernel/main/kernel_entry.s -f elf -o objects/kernel/kernel_entry.o
