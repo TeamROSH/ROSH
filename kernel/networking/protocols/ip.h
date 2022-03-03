@@ -37,5 +37,12 @@ typedef struct ip_packet{
 */
 void parse_ip(ip_packet* packet, int packet_length);
 
+/*
+    This function calculates the packet ip header checksum
+    @param packet: a pointer to the ip packet
+    returns the newely calculated checksum 
+*/
+uint16_t calculate_ip_checksum(ip_packet* packet);
+
 
 #endif
