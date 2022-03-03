@@ -6,7 +6,11 @@
 #include "../../libc/memory.h"
 #include "../../libc/string.h"
 #include "../arp.h"
+
 #define IPV4_VERSION 4
+
+// created ip packet header size * 4
+#define IPV4_IHL 5
 
 // ipv4 protocols types
 #define IPV4_UDP_TYPE 0X11
@@ -43,6 +47,14 @@ void parse_ip(ip_packet* packet, int packet_length);
     returns the newely calculated checksum 
 */
 uint16_t calculate_ip_checksum(ip_packet* packet);
+
+/*
+    This function sends an ip packet to with the supplied data
+    @param packet_content: the packet content(tcp or udp) 
+    @param packet_length: the packet content length
+    @param destination ip: the packet destination
+*/
+void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t destination_ip);
 
 
 #endif

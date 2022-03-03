@@ -4,6 +4,7 @@ extern uint32_t g_self_ip;
 
 void parse_ip(ip_packet* packet, int packet_length);
 uint16_t calculate_ip_checksum(ip_packet* packet);
+void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t destination_ip);
 
 
 void parse_ip(ip_packet* packet, int packet_length)
@@ -21,7 +22,7 @@ void parse_ip(ip_packet* packet, int packet_length)
         kfree(packet);
         return;
     }
-    
+
     // if packet is corrupted
     if(calculate_ip_checksum(packet) != packet->checksum)
     {
@@ -77,4 +78,26 @@ uint16_t calculate_ip_checksum(ip_packet* packet)
     }
 
     return (uint16_t)~checksum;
+}
+
+void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t destination_ip)
+{
+    ip_packet* packet = (ip_packet*)kmalloc(sizeof(ip_packet));
+
+    packet->version = IPV4_VERSION;
+
+    packet->ihl =IPV4_IHL;
+
+    packet->dscp = 0;
+
+    packet->ecn = 0;
+
+    packet->total_length = sizeof(ip_packet) + packet_length;
+
+    packet->identification = 0;
+
+    packet->src_ip = g_self_ip;
+    packet->dst_ip = destination_ip;
+
+    packet->checksum = calculate_ip_checksum(packet);
 }
