@@ -10,6 +10,7 @@ uint32_t g_self_ip;
 
 void parse_arp_packet(arp_packet* packet, uint32_t packet_len);
 int find_arp_device(device_address* device);
+uint8_t* find_mac_via_ip(uint32_t ip_address);
 void create_and_send_arp(uint32_t src_ip, uint32_t dest_ip, uint8_t src_mac[6], uint8_t dst_mac[6], uint16_t opcode);
 void send_arp(uint32_t dst_ip);
 
@@ -53,13 +54,16 @@ void parse_arp_packet(arp_packet* packet, uint32_t packet_len)
         // going through the arp cache
         for(int i = 0; i < ARP_CACHE_LEN; i++)
         {  
+            char* temp = (char*)kmalloc(sizeof(device_address));
             // if saving the device address
-            if(strncmp((char*)&(g_address_cache[i]), (char*)kmalloc(sizeof(device_address)), sizeof(device_address)) == 0)
+            if(strncmp((char*)&(g_address_cache[i]), temp, sizeof(device_address)) == 0)
             {
                 g_address_cache[i].ip_address = packet->srcpr;
                 memcpy(g_address_cache[i].mac_address, packet->srchw, sizeof(uint8_t[6]));
+                kfree(temp);
                 break;
             }
+            kfree(temp);
         }
     }
 }
@@ -77,6 +81,21 @@ int find_arp_device(device_address* device)
 
     // device wasn't found
     return -1;
+}
+
+uint8_t* find_mac_via_ip(uint32_t ip_address)
+{
+    for(int i = 0; i < ARP_CACHE_LEN; i++)
+    {   
+        // if device found via ip address
+        if(g_address_cache[i].ip_address == ip_address && ip_address != NULL)
+        {
+            return g_address_cache[i].mac_address;
+        }
+    }
+
+    // device wasn't found
+    return NULL;
 }
 
 void create_and_send_arp(uint32_t src_ip, uint32_t dest_ip, uint8_t src_mac[6], uint8_t dst_mac[6], uint16_t opcode)
@@ -106,6 +125,12 @@ void create_and_send_arp(uint32_t src_ip, uint32_t dest_ip, uint8_t src_mac[6], 
 
     // sending arp packet
     send_ethernet_packet((uint8_t*)packet, sizeof(arp_packet), HEADER_TYPE_ARP, dst_mac);
+
+    for(int i = 0; i < 3; i++)
+    {
+        find_arp_device()
+        send_arp(dest_ip);
+    }
 }
 
 void send_arp(uint32_t dst_ip)

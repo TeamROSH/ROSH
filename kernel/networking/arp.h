@@ -50,6 +50,13 @@ void parse_arp_packet(arp_packet* packet, uint32_t packet_len);
 int find_arp_device(device_address* device);
 
 /*
+    This finds the mac address of network device in the arp cache
+    @param ip_address: the device ip address
+    retruns the mac address or null if not found
+*/
+uint8_t* find_mac_via_ip(uint32_t ip_address);
+
+/*
     This function creates an arp packet according to the parameters and sends it
     @param src_ip : the source ip
     @param dst_ip : the destination ip

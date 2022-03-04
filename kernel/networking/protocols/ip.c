@@ -4,7 +4,7 @@ extern uint32_t g_self_ip;
 
 void parse_ip(ip_packet* packet, int packet_length);
 uint16_t calculate_ip_checksum(ip_packet* packet);
-void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t destination_ip);
+void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t destination_ip, uint8_t protocol);
 
 
 void parse_ip(ip_packet* packet, int packet_length)
@@ -80,24 +80,41 @@ uint16_t calculate_ip_checksum(ip_packet* packet)
     return (uint16_t)~checksum;
 }
 
-void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t destination_ip)
+void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t destination_ip, uint8_t protocol)
 {
-    ip_packet* packet = (ip_packet*)kmalloc(sizeof(ip_packet));
+    // allocating spcae for the packet header and content
+    ip_packet* packet = (ip_packet*)kmalloc(sizeof(ip_packet) + packet_length);
 
+    // setting correct ip protocol version
     packet->version = IPV4_VERSION;
 
+    // setting the ip header size 
     packet->ihl =IPV4_IHL;
 
+    // not relavent to our protocol type
     packet->dscp = 0;
-
     packet->ecn = 0;
 
+    // setting the ip packet + content
     packet->total_length = sizeof(ip_packet) + packet_length;
 
+    // not relavent
     packet->identification = 0;
 
+    // our os don't support fragmantation
+    packet->flags = 0;
+    packet->fragmantation_offset = 0;
+
+    // setting packet time to live
+    packet->ttl = IPV4_TTL;
+    
+    // setting source and destination
     packet->src_ip = g_self_ip;
     packet->dst_ip = destination_ip;
 
+    // copying the packet content
+    memcpy(packet + packet->ihl * 4, packet_content, packet_length);
+
+    // calculating the packet checksum
     packet->checksum = calculate_ip_checksum(packet);
 }

@@ -12,6 +12,9 @@
 // created ip packet header size * 4
 #define IPV4_IHL 5
 
+// created packet time to live
+#define IPV4_TTL 64
+
 // ipv4 protocols types
 #define IPV4_UDP_TYPE 0X11
 #define IPV4_TCP_TYPE 0x6
@@ -53,8 +56,9 @@ uint16_t calculate_ip_checksum(ip_packet* packet);
     @param packet_content: the packet content(tcp or udp) 
     @param packet_length: the packet content length
     @param destination ip: the packet destination
+    @param protocol: the packet content protocol type(TCP, UDP, ICMP)
 */
-void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t destination_ip);
+void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t destination_ip, uint8_t protocol);
 
 
 #endif
