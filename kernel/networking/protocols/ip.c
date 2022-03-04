@@ -41,7 +41,7 @@ void parse_ip(ip_packet* packet, int packet_length)
     // if udp packet
     else if(packet->protocol == IPV4_UDP_TYPE)
     {
-        // parse_udp((void*)packet + packet->ihl * 4, parsed_packet_length);
+        parse_udp((udp_packet*)(packet + packet->ihl * 4));
     }
 
     // if icmp packet
