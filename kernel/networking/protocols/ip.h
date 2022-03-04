@@ -22,6 +22,8 @@
 #define IPV4_TCP_TYPE 0x6
 #define IPV4_ICMP_TYPE 0x1
 
+#define BROADCAST_IP 4294967295
+
 typedef struct ip_packet{
     uint8_t version : 4; // ip packet version (ipv4=4)
     uint8_t ihl : 4;     // packet length multipllied with 32 bits

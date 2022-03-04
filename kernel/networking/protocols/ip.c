@@ -121,31 +121,47 @@ void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t desti
     // calculating the packet checksum
     packet->checksum = calculate_ip_checksum(packet);
 
-    // searching destnation mac address
-    for(int i = 0; i < 5; i++)
-    {   
-        // looking for device in arp cache
-        dest_mac = find_mac_via_ip(destination_ip);
-        
-        //  if device found
-        if(dest_mac != NULL)
-        {
-            break;
+    if(packet->dst_ip != BROADCAST_IP)
+    {
+
+        // searching destnation mac address
+        for(int i = 0; i < 5; i++)
+        {   
+            // looking for device in arp cache
+            dest_mac = find_mac_via_ip(destination_ip);
+            
+            //  if device found
+            if(dest_mac != NULL)
+            {
+                break;
+            }
+
+            // sending arp request
+            send_arp(destination_ip);
+
+            // sleeping and waiting for result
+            sleep(2000);
         }
 
-        // sending arp request
-        send_arp(destination_ip);
-
-        // sleeping and waiting for result
-        sleep(2000);
+        // device mac address wasn't found
+        if(dest_mac == NULL)
+        {
+            kfree(packet);
+            kfree(packet_content);
+            return;
+        }
     }
 
-    // device mac address wasn't found
-    if(dest_mac == NULL)
+    else
     {
-        kfree(packet);
-        kfree(packet_content);
-        return;
+        // if dhcp request mac address is broadcast
+        dest_mac = (uint8_t*)kmalloc(6);
+        dest_mac[0] = 255;
+        dest_mac[1] = 255;
+        dest_mac[2] = 255;
+        dest_mac[3] = 255;
+        dest_mac[4] = 255;
+        dest_mac[5] = 255;
     }
 
     // sending the packet
