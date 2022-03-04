@@ -82,6 +82,9 @@ uint16_t calculate_ip_checksum(ip_packet* packet)
 
 void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t destination_ip, uint8_t protocol)
 {
+    // the destination mac address
+    uint8_t* dest_mac = NULL;
+
     // allocating spcae for the packet header and content
     ip_packet* packet = (ip_packet*)kmalloc(sizeof(ip_packet) + packet_length);
 
@@ -117,4 +120,34 @@ void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t desti
 
     // calculating the packet checksum
     packet->checksum = calculate_ip_checksum(packet);
+
+    // searching destnation mac address
+    for(int i = 0; i < 5; i++)
+    {   
+        // looking for device in arp cache
+        dest_mac = find_mac_via_ip(destination_ip);
+        
+        //  if device found
+        if(dest_mac != NULL)
+        {
+            break;
+        }
+
+        // sending arp request
+        send_arp(destination_ip);
+
+        // sleeping and waiting for result
+        sleep(2000);
+    }
+
+    // device mac address wasn't found
+    if(dest_mac == NULL)
+    {
+        kfree(packet);
+        kfree(packet_content);
+        return;
+    }
+
+    // sending the packet
+    send_ethernet_packet((uint8_t*)packet, packet->total_length, HEADER_TYPE_IP, dest_mac);
 }

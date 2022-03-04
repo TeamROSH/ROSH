@@ -125,12 +125,6 @@ void create_and_send_arp(uint32_t src_ip, uint32_t dest_ip, uint8_t src_mac[6], 
 
     // sending arp packet
     send_ethernet_packet((uint8_t*)packet, sizeof(arp_packet), HEADER_TYPE_ARP, dst_mac);
-
-    for(int i = 0; i < 3; i++)
-    {
-        find_arp_device()
-        send_arp(dest_ip);
-    }
 }
 
 void send_arp(uint32_t dst_ip)
