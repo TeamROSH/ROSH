@@ -3,9 +3,7 @@
 device_address g_address_cache[ARP_CACHE_LEN];
 
 extern uint8_t g_src_mac[6];
-//extern uint32_t g_self_ip;
-//TODO DELETE LATER
-uint32_t g_self_ip;
+extern uint32_t g_self_ip;
 
 
 void parse_arp_packet(arp_packet* packet, uint32_t packet_len);

@@ -8,7 +8,8 @@
 #include "../arp.h"
 #include "ip.h"
 
-#define DHCP_CLIENT_PORT 68 
+#define DHCP_CLIENT_PORT 68
+#define DHCP_SERVER_PORT 67
 
 
 typedef struct udp_packet{
