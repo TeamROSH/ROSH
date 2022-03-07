@@ -12,10 +12,17 @@
 #define DHCP_MAGIC_COOKIE 0x63825363
 #define DHCP_XID 0x3903F326
 
+// dhcp message type
+#define DHCP_DISCOVER 0X1
+#define DHCP_OFFER 0X2
+#define DHCP_REQUEST 0X3
+#define DHCP_ACK 0X4
+
 // dhcp options 
-#define DHCP_DISCOVER 0X35
+#define DHCP_PACKET_TYPE_OPTION 0X35
 #define DHCP_REQUESTED_IP_ADDRESS 0X32
 #define DHCP_PARAMETER_REQUEST_LIST 0x37
+#define DHCP_SERVER_IP 0X36
 
 typedef struct dhcp_packet{
     // identifing flags of the current dhcp message
@@ -45,5 +52,11 @@ void parse_dhcp(dhcp_packet* packet);
     This function sends an dhcp discovery messages for dhcp servers in lan
 */
 void dhcp_discover();
+
+/*
+    This function recives dhcp offer packet parses it and sends dhcp request
+    @param recived packet: the dhcp offer packet
+*/
+void dhcp_request(dhcp_packet* recived_packet);
 
 #endif
