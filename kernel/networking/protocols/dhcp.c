@@ -20,7 +20,7 @@ void dhcp_request(dhcp_packet* recived_packet);
 void parse_dhcp(dhcp_packet* packet)
 {
     // if recived ip address offer
-    if(g_reived_offer == false && packet->options[2] == DHCP_OFFER)
+    if(g_is_ip == false && g_reived_offer == false && packet->options[2] == DHCP_OFFER)
     {
         g_reived_offer = true;
         dhcp_request(packet);
@@ -31,7 +31,10 @@ void parse_dhcp(dhcp_packet* packet)
     {
         // getting the computer ip address
         g_self_ip = packet->yiaddr;
+        g_is_ip = true;
     }
+
+    kfree(packet);
 
 }
 
