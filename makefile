@@ -2,6 +2,7 @@ interface:=$(shell ip addr | awk '/state UP/ {print $$2}' | head -n 1 | awk '{pr
 
 run: check_libs clean_output compile_boot compile_libc compile_kernel compile_user build create_network qemu clean_network
 debug: check_libs clean_output compile_boot compile_libc compile_kernel compile_user build create_network qemu_debug clean_network
+offline: check_libs clean_output compile_boot compile_libc compile_kernel compile_user build qemu
 
 check_libs:
 	@sudo echo "Switched to root..."
@@ -113,4 +114,4 @@ qemu:
 
 qemu_debug:
 	@echo "Launching Debug..."
-	@sudo qemu-system-i386 -d int -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139,mac=de:ad:be:ef:12:34 -object filter-dump,id=f1,netdev=roshnet0,file=dump.dat -drive file=rosh.bin,index=0,format=raw
+	@sudo qemu-system-i386 -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139,mac=de:ad:be:ef:12:34 -object filter-dump,id=f1,netdev=roshnet0,file=dump.dat -drive file=rosh.bin,index=0,format=raw

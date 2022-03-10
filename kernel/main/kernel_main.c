@@ -26,10 +26,6 @@ void main() {
 	initialize_paging();	// init paging
 	keyboard_initialize();	// initializing keyboard
 	initialize_ethernet_driver();
-
-	char msg[] = "hello";
-	uint8_t dst[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-	send_ethernet_packet(msg, 6, 0x608, dst);
 	
 	initConsole();			// init cursor
 	init_fs();				// init file system
