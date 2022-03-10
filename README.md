@@ -1,7 +1,5 @@
 # ROSH Operating System
 
----
-
 _ROSH_ is an operating system developed by Roei Aviad and Yoav Shaham from scratch.
 
 The system includes:
@@ -18,8 +16,6 @@ The system includes:
 - Process manager and scheduling
 - Networking system
 
----
-
 ## Requirements
 - [QEmu](https://www.qemu.org/download/) emulator on a linux machine.
 - Cross Compiler. See [crosscompiler.md](/crosscompiler.md) for more information.
@@ -28,17 +24,14 @@ The system includes:
 ---
 
 ## Run
-- In order to launch the OS, navigate to the projects main folder, and run `make`.
+- In order to launch the OS, navigate to the project's main folder, and run `make`.
 - Debug the OS using `make debug`.
 - Offline run using `make offline`.
-\
 **Notice:**
 > The OS uses a tap interface in order to connect to the real network. Therefore, it might shut the host machine's network access.
-> If the network does not go back up after _ROSH_ is down, you can restore it manually:
+> If the network does not go back up after _ROSH_ is down, it can be restored manually:
 > 1. run `make clean_network`.
-> 2. restart the host's networking interface manually.
-
----
+> 2. restart the host's networking interface.
 
 ## Shell Commands
 
@@ -57,13 +50,9 @@ The system includes:
 - test - test several key features of the OS.
 - exec - run binary file from base64 file. run `./assembler asm_code` and enter the output to a _ROSH_ file.
 
----
-
 ## Screenshots
 ![Alt text](/images/s1.png)
 ![Alt text](/images/s2.png)
-
----
 
 ## LICENSE
 
