@@ -7,6 +7,7 @@ extern uint8_t g_src_mac[6];
 
 void parse_ethernet_packet(ethernet_packet* packet, uint32_t packet_len)
 {
+	puti(packet_len); putc(',');
     // if arp packet 
     if(packet->header.ethernet_type == HEADER_TYPE_ARP)
     {

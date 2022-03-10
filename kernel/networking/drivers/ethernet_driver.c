@@ -6,16 +6,15 @@ uint8_t g_ts_reg[] = {0x20, 0x24, 0x28, 0x2C};
 uint8_t g_tc_reg[] = {0x10, 0x14, 0x18, 0x1C};
 uint32_t g_curr_rx = 0; 
 uint8_t g_src_mac[6] = {0};
+uint8_t rx_buffer_copy[0x600];
 
 void initialize_ethernet_driver();
-void network_handler(registers_t* registers);
 void send_packet(void* content, uint32_t packet_len);
 void read_mac_address();
 
 
 void initialize_ethernet_driver()
 {
-	g_curr_rx = 0; 
     g_ethernet_device = (ethernet_device*)kmalloc(sizeof(ethernet_device));
     
     // getting ethernet device data
@@ -45,7 +44,7 @@ void initialize_ethernet_driver()
     // make sure that setting the virt and not phys address is ok
     //TODO
     // allocating packet input buffer 
-    uint32_t virtual_input_buffer = (uint32_t)kmalloc(RX_BUFFER_LEN);
+    uint32_t virtual_input_buffer = (uint32_t)NET_RX;
     
     // setting buffer for input packets
     outdw(io_base + IO_RBSTART_OFFSET, (uint32_t)virtual_input_buffer);
@@ -57,44 +56,41 @@ void initialize_ethernet_driver()
     // configure recive buffer
     outdw(io_base + IO_RCR_CONFIGURE, 0x8F);
 
-    // setting recive and transmits
-    outb(io_base + IO_CMD_OFFSET, 0x0C);
-
     g_ethernet_device->curr_reg = 0;
+
+	// reading the mac address
+    read_mac_address();
+
+    // setting src mac address
+    memcpy(g_src_mac, g_ethernet_device->mac_address, 6);
 
     // setting interrupt handler
     set_interrupt(g_ethernet_device->ethernet_device_data->device_header->interrupt_line + IRQ0, network_handler);
 
-    // reading the mac address
-    read_mac_address();
-
-    // setting src mac address
-    memcpy(g_src_mac, g_ethernet_device->mac_address, sizeof(uint8_t[6]));
+	// setting recive and transmits
+    outb(io_base + IO_CMD_OFFSET, 0x0C);
 }
 
 void network_handler(registers_t* registers)
 {
     uint16_t isr_value = inw(g_ethernet_device->io_base + IO_ISR_OFFSET);
-
     // if packet recived (ROK bit set)
     if(isr_value & 1)
     {
+		uint16_t* temp = (uint16_t*)(g_ethernet_device->rx_buff + g_curr_rx);
+
         // getting the packet len
-        uint16_t packet_length = *((uint16_t*)(g_ethernet_device->rx_buff + g_curr_rx) + 1);
+        uint16_t packet_length = *(temp + 1) - 4;
 
-        // copying the packet data
-        uint32_t packet_data = (uint32_t)kmalloc(packet_length);
-        memcpy((void*)packet_data, ((uint16_t*)(g_ethernet_device->rx_buff + g_curr_rx) + 2), packet_length);
+		temp += 2;
 
-        // parsing the packet
-        parse_ethernet_packet((ethernet_packet*)packet_data, packet_length);
+		memcpy(rx_buffer_copy, temp, packet_length);
 
-		kfree((void*)packet_data);
-                
-        // calculating the next rx buffer address
-        g_curr_rx = (g_curr_rx + packet_length + 7) & (~3);
+		parse_ethernet_packet((ethernet_packet*)rx_buffer_copy, packet_length);
+
+        g_curr_rx = (g_curr_rx + packet_length + 0xb) & (~3);
 		g_curr_rx -= g_curr_rx > RX_BUFFER_SIZE ? RX_BUFFER_SIZE : 0;
-        
+
         // setting the new rx buffer address
         outw(g_ethernet_device->io_base + IO_CAPR, g_curr_rx - 16);
     }

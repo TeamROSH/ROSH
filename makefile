@@ -84,6 +84,7 @@ ifeq (,$(wildcard ./rosh.bin))
 else
 	@echo "Drive found."
 endif
+	@dd conv=notrunc bs=1 seek=0 count=65536 status=none if=/dev/zero of=rosh.bin
 	@dd conv=notrunc bs=1 seek=0 status=none if=compiled/boot_sect.bin of=rosh.bin
 	@dd conv=notrunc bs=1 seek=512 status=none if=compiled/kernel_main.bin of=rosh.bin
 	@dd conv=notrunc bs=1 seek=41472 status=none if=compiled/user_main.bin of=rosh.bin
@@ -91,7 +92,6 @@ endif
 create_network:
 	@echo "Setting up networking..."
 	@sudo brctl addbr roshbr0
-	@sudo ip addr flush dev $(interface)
 	@sudo brctl addif roshbr0 $(interface)
 	@sudo tunctl -t roshtap0 -u root > /dev/null
 	@sudo brctl addif roshbr0 roshtap0
@@ -101,17 +101,16 @@ create_network:
 
 clean_network:
 	@echo "Restoring networking..."
-	@sudo brctl delif roshbr0 roshtap0
-	@sudo tunctl -d roshtap0 > /dev/null
-	@sudo brctl delif roshbr0 $(interface)
-	@sudo ifconfig roshbr0 down
-	@sudo brctl delbr roshbr0
-	@sudo ifconfig $(interface) up
+	@-sudo brctl delif roshbr0 roshtap0
+	@-sudo tunctl -d roshtap0 > /dev/null
+	@-sudo brctl delif roshbr0 $(interface)
+	@-sudo ifconfig roshbr0 down
+	@-sudo brctl delbr roshbr0
 
 qemu:
 	@echo "Launching..."
-	@sudo qemu-system-i386 -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139 -drive file=rosh.bin,index=0,format=raw
+	@sudo qemu-system-i386 -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139,mac=de:ad:be:ef:12:34 -drive file=rosh.bin,index=0,format=raw
 
 qemu_debug:
 	@echo "Launching Debug..."
-	@sudo qemu-system-i386 -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139 -object filter-dump,id=f1,netdev=roshnet0,file=dump.dat -drive file=rosh.bin,index=0,format=raw
+	@sudo qemu-system-i386 -d int -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139,mac=de:ad:be:ef:12:34 -object filter-dump,id=f1,netdev=roshnet0,file=dump.dat -drive file=rosh.bin,index=0,format=raw

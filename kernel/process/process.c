@@ -7,7 +7,7 @@
 extern page_directory* g_page_directory;
 
 int g_highest_pid = 1;
-process_context_block* g_curr_process; 
+process_context_block* g_curr_process = NULL; 
 
 list* g_process_list;
 list* g_ready_processes_list;
@@ -268,7 +268,7 @@ void new_process(char* process_name)
 
 void kill_running_process()
 {
-	if (g_curr_process->pid == 1)		// if usermain process dead
+	if (g_curr_process == NULL || g_curr_process->pid == 1)		// if usermain process dead
 	{
 		cli();		// hlt the cpu
 		hlt();
