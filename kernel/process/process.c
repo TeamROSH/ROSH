@@ -71,16 +71,15 @@ process_context_block* create_process(int is_kernel, char* process_name)
 	}
 
     //mapping stack
-    pcb->process_pages[0] = page_to_address(page_alloc());
-    pcb->process_pages[1] = page_to_address(page_alloc());
+    pcb->process_pages[0] = page_to_address(rand_page_alloc(2));
+    pcb->process_pages[1] = pcb->process_pages[0] + PAGE_SIZE;
     pcb->stack_base = PROCESS_STACK + PROCESS_STACK_SIZE * PAGE_SIZE;
 	pcb->reg.esp = pcb->process_pages[1] + PAGE_SIZE - 4;
 
     // allocating apace for heap
-    for(int i =2; i < 5; i ++)
-    {
-        pcb->process_pages[i] = page_to_address(page_alloc());
-    }
+    pcb->process_pages[2] = page_to_address(rand_page_alloc(3));
+	pcb->process_pages[3] = pcb->process_pages[2] + PAGE_SIZE;
+	pcb->process_pages[4] = pcb->process_pages[3] + PAGE_SIZE;;
     
     // crating heap object 
     heap_init(&(pcb->process_heap), pcb->process_pages[2], PAGE_SIZE * 3);
@@ -166,7 +165,8 @@ void load_process_code(process_context_block* pcb, char* file_name)
 
 	for (int i = 0; i < size / PAGE_SIZE + 1; i++)
 	{
-		pcb->process_pages[i + 5] = page_to_address(page_alloc());
+		// only works if codeis 
+		pcb->process_pages[i + 5] = page_to_address(rand_page_alloc(1));
 		memcpy((void*)pcb->process_pages[i + 5], code + i * PAGE_SIZE, (i == size / PAGE_SIZE) ? (size % PAGE_SIZE) : PAGE_SIZE);
 	}
 	kfree(code);
@@ -298,3 +298,4 @@ void release_mutex()
 {
 	g_mutex = 0;
 }
+
