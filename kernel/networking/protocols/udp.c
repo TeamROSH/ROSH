@@ -1,4 +1,6 @@
 #include "udp.h"
+#include "arp.h"
+#include "ip.h"
 
 void parse_udp(udp_packet* packet);
 void send_udp(uint16_t source_port, uint16_t destination_port, uint32_t content_length, void* packet_content, uint32_t destination_ip);

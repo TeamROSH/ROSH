@@ -1,6 +1,7 @@
 #include "arp.h"
+#include "ethernet.h"
 
-device_address g_address_cache[ARP_CACHE_LEN];
+device_address g_address_cache[ARP_CACHE_LEN] = {0};
 
 extern uint8_t g_src_mac[6];
 extern uint32_t g_self_ip;
@@ -21,20 +22,20 @@ void parse_arp_packet(arp_packet* packet, uint32_t packet_len)
     uint8_t dst_mac[6] = {0};
 
     // setting mac addresses
-    memcpy(src_mac, packet->srchw, sizeof(uint8_t[6]));
-    memcpy(dst_mac, packet->dsthw, sizeof(uint8_t[6]));
+    memcpy(src_mac, packet->srchw, 6);
+    memcpy(dst_mac, packet->dsthw, 6);
 
     if(packet->opcode == OPERATION_ARP_REQUEST)
     {
-        
         device_address* request_device = (device_address*)kmalloc(sizeof(device_address));
+		memset(request_device, 0, sizeof(device_address));
         for(int i = 0; i < ARP_CACHE_LEN; i++)
         {   
             // if requested device found
             if(g_address_cache[i].ip_address == dst_ip)
             {
                 request_device->ip_address = dst_ip;
-                memcpy(request_device->mac_address, g_address_cache[i].mac_address, sizeof(uint8_t[6]));
+                memcpy(request_device->mac_address, g_address_cache[i].mac_address, 6);
                 break;
             }
         } 
@@ -42,8 +43,9 @@ void parse_arp_packet(arp_packet* packet, uint32_t packet_len)
         // sending the result if found device in the arp cache
         if(request_device->ip_address != NULL)
         {
-            create_and_send_arp(dst_ip, src_ip, g_src_mac, src_mac, OPERATION_ARP_REPLAY);
+            create_and_send_arp(dst_ip, src_ip, request_device->mac_address, src_mac, OPERATION_ARP_REPLAY);
         }
+		kfree(request_device);
     }
 
     // if arp replay to our previous arp request 
@@ -52,16 +54,13 @@ void parse_arp_packet(arp_packet* packet, uint32_t packet_len)
         // going through the arp cache
         for(int i = 0; i < ARP_CACHE_LEN; i++)
         {  
-            char* temp = (char*)kmalloc(sizeof(device_address));
             // if saving the device address
-            if(strncmp((char*)&(g_address_cache[i]), temp, sizeof(device_address)) == 0)
+            if(g_address_cache[i].ip_address == 0)
             {
                 g_address_cache[i].ip_address = packet->srcpr;
-                memcpy(g_address_cache[i].mac_address, packet->srchw, sizeof(uint8_t[6]));
-                kfree(temp);
+                memcpy(g_address_cache[i].mac_address, packet->srchw, 6);
                 break;
             }
-            kfree(temp);
         }
     }
 }
@@ -105,10 +104,10 @@ void create_and_send_arp(uint32_t src_ip, uint32_t dest_ip, uint8_t src_mac[6], 
     packet->plen = IPV4_PLEN;
 
     // setting ethernet hardware type
-    packet->htype = 1;
+    packet->htype = 0x0100;
 
     // setting ipv4 protocol
-    packet->ptype = 4;
+    packet->ptype = 0x0008;
 
     // setting arp opcode
     packet->opcode = opcode;

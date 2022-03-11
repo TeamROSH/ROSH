@@ -5,8 +5,6 @@
 #include "../../memory/heap.h"
 #include "../../../libc/memory.h"
 #include "../../../libc/string.h"
-#include "arp.h"
-#include "ip.h"
 
 #define DHCP_CLIENT_PORT 68
 #define DHCP_SERVER_PORT 67

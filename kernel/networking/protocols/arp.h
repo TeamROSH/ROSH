@@ -5,13 +5,12 @@
 #include "../../memory/heap.h"
 #include "../../../libc/memory.h"
 #include "../../../libc/string.h"
-#include "ethernet.h"
 
 #define ETHERNET_HLEN 6
 #define IPV4_PLEN 4
 
-#define OPERATION_ARP_REQUEST 1
-#define OPERATION_ARP_REPLAY 2
+#define OPERATION_ARP_REQUEST 0x0100
+#define OPERATION_ARP_REPLAY 0x0200
 
 #define ARP_CACHE_LEN 256
 
@@ -26,7 +25,7 @@ typedef struct arp_packet
     uint32_t  srcpr; // Source protocol address 
     uint8_t  dsthw[ETHERNET_HLEN]; // Destination hardware address 
     uint32_t  dstpr; // Destination protocol address 
-}arp_packet;
+}__attribute__((packed)) arp_packet;
 
 typedef struct device_address{
     uint8_t mac_address[6];

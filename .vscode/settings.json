@@ -17,6 +17,7 @@
 		"ata_pio.h": "c",
 		"heap.h": "c",
 		"ethernet_driver.h": "c",
-		"ethernet.h": "c"
+		"ethernet.h": "c",
+		"arp.h": "c"
 	}
 }

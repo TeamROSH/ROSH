@@ -8,7 +8,7 @@
 #include "../process/process.h"
 #include "../../fs/fs.h"
 #include "../networking/drivers/ethernet_driver.h"
-#include "../networking/protocols/ethernet.h"
+#include "../networking/protocols/arp.h"
 
 /*
 	print ROSH logo
@@ -26,6 +26,12 @@ void main() {
 	initialize_paging();	// init paging
 	keyboard_initialize();	// initializing keyboard
 	initialize_ethernet_driver();
+
+	uint32_t self_ip = 192 | (168 << 8) | (1 << 16) | (100 << 24);
+	uint32_t dst_ip = 10 | (0 << 8) | (0 << 16) | (1 << 24);
+	uint8_t self_mac[6] = {0xde, 0xad, 0xbe, 0xef, 0x12, 0x34};
+	uint8_t dst_mac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+	create_and_send_arp(self_ip, dst_ip, self_mac, dst_mac, OPERATION_ARP_REQUEST);
 	
 	initConsole();			// init cursor
 	init_fs();				// init file system

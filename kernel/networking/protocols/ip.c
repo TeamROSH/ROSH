@@ -1,4 +1,7 @@
 #include "ip.h"
+#include "arp.h"
+#include "ethernet.h"
+#include "udp.h"
 
 extern uint32_t g_self_ip;
 

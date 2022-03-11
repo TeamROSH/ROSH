@@ -1,4 +1,5 @@
 #include "ethernet.h"
+#include "arp.h"
 
 void parse_ethernet_packet(ethernet_packet* packet, uint32_t packet_len);
 void send_ethernet_packet(uint8_t* packet, uint32_t packet_len, uint16_t ethernet_type, uint8_t dest_mac[6]);
@@ -7,11 +8,10 @@ extern uint8_t g_src_mac[6];
 
 void parse_ethernet_packet(ethernet_packet* packet, uint32_t packet_len)
 {
-	puti(packet_len); putc(',');
     // if arp packet 
     if(packet->header.ethernet_type == HEADER_TYPE_ARP)
     {
-        // parse_arp_packet((arp_packet*)packet + sizeof(ethernet_packet), packet_len - sizeof(ethernet_packet));
+        parse_arp_packet((arp_packet*)((uint32_t)packet + sizeof(ethernet_header)), packet_len - sizeof(ethernet_header));
     }
     
     // if ip packet

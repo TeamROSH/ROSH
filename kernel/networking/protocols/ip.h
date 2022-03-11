@@ -5,9 +5,6 @@
 #include "../../memory/heap.h"
 #include "../../../libc/memory.h"
 #include "../../../libc/string.h"
-#include "arp.h"
-#include "ethernet.h"
-#include "udp.h"
 
 #define IPV4_VERSION 4
 

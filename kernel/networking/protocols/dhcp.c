@@ -1,4 +1,7 @@
 #include "dhcp.h"
+#include "arp.h"
+#include "ethernet.h"
+#include "udp.h"
 
 // computer mac address
 extern uint8_t g_src_mac[6];
