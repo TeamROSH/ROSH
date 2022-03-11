@@ -5,8 +5,8 @@
 #include "../../memory/heap.h"
 #include "../../../libc/memory.h"
 #include "../../../libc/string.h"
-#include "../arp.h"
-#include "../ethernet.h"
+#include "arp.h"
+#include "ethernet.h"
 #include "udp.h"
 
 #define DHCP_MAGIC_COOKIE 0x63825363

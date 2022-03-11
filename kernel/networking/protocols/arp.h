@@ -2,9 +2,9 @@
 #define ARP_H
 
 #include <stdint.h>
-#include "../memory/heap.h"
-#include "../../libc/memory.h"
-#include "../../libc/string.h"
+#include "../../memory/heap.h"
+#include "../../../libc/memory.h"
+#include "../../../libc/string.h"
 #include "ethernet.h"
 
 #define ETHERNET_HLEN 6
