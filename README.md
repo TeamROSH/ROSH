@@ -14,6 +14,7 @@ The system includes:
 - Shell for user commands
 - EXT-2 based file system (self implemented)
 - Process manager and scheduling
+- ASLR (Address space layout randomization)
 - Networking system
 
 ## Requirements
