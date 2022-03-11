@@ -8,7 +8,7 @@
 #include "../process/process.h"
 #include "../../fs/fs.h"
 #include "../networking/drivers/ethernet_driver.h"
-#include "../networking/protocols/arp.h"
+#include "../networking/protocols/ip.h"
 
 /*
 	print ROSH logo
@@ -17,6 +17,7 @@ void printLogo();
 void kernelShutdown();
 
 extern void usermode(void);
+extern uint32_t g_self_ip;
 
 void main() {
 	gdt_initialize();		// initializing gdt
@@ -31,7 +32,9 @@ void main() {
 	uint32_t dst_ip = 10 | (0 << 8) | (0 << 16) | (1 << 24);
 	uint8_t self_mac[6] = {0xde, 0xad, 0xbe, 0xef, 0x12, 0x34};
 	uint8_t dst_mac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-	create_and_send_arp(self_ip, dst_ip, self_mac, dst_mac, OPERATION_ARP_REQUEST);
+	g_self_ip = self_ip;
+	char hello[] = "hello";
+	send_ip_packet(hello, 6, dst_ip, IPV4_UDP_TYPE);
 	
 	initConsole();			// init cursor
 	init_fs();				// init file system
@@ -41,7 +44,7 @@ void main() {
 	getchar();
 	clearConsole();
 
-	process_init();
+	process_init();		// also jumps to userspace
 }
 
 void printLogo()

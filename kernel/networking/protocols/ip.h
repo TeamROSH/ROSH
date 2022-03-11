@@ -22,8 +22,8 @@
 #define BROADCAST_IP 4294967295
 
 typedef struct ip_packet{
-    uint8_t version : 4; // ip packet version (ipv4=4)
     uint8_t ihl : 4;     // packet length multipllied with 32 bits
+    uint8_t version : 4; // ip packet version (ipv4=4)
     uint8_t dscp : 6;    // not relevant used for voip
     uint8_t ecn : 2;     // network congestion without droping packets
     uint16_t total_length;  // packet and header length
@@ -35,7 +35,7 @@ typedef struct ip_packet{
     uint16_t checksum;      // packets checksum (different between tcp and udp)
     uint32_t src_ip;        // packets source ip
     uint32_t dst_ip;        // packets destination ip 
-}ip_packet;
+}__attribute__((packed)) ip_packet;
 
 
 /*

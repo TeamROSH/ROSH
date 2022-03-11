@@ -34,15 +34,10 @@ void parse_ip(ip_packet* packet, int packet_length)
     }
 
     // calculating the packet length
-    int parsed_packet_length = packet->total_length - sizeof(ip_packet);
-
-    if(packet->protocol == IPV4_TCP_TYPE)
-    {
-        // parse_tcp((void*)packet + packet->ihl * 4, parsed_packet_length);
-    }
+    int parsed_packet_length = (uint16_t)num_format_endian(&(packet->total_length), 2) - sizeof(ip_packet);
 
     // if udp packet
-    else if(packet->protocol == IPV4_UDP_TYPE)
+    if(packet->protocol == IPV4_UDP_TYPE)
     {
         parse_udp((udp_packet*)(packet + packet->ihl * 4));
     }
@@ -87,6 +82,7 @@ void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t desti
 {
     // the destination mac address
     uint8_t* dest_mac = NULL;
+	uint8_t malloc_flag = 0;
 
     // allocating spcae for the packet header and content
     ip_packet* packet = (ip_packet*)kmalloc(sizeof(ip_packet) + packet_length);
@@ -103,6 +99,7 @@ void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t desti
 
     // setting the ip packet + content
     packet->total_length = sizeof(ip_packet) + packet_length;
+	packet->total_length = (uint16_t)num_format_endian(&(packet->total_length), 2); 
 
     // not relavent
     packet->identification = 0;
@@ -119,7 +116,7 @@ void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t desti
     packet->dst_ip = destination_ip;
 
     // copying the packet content
-    memcpy(packet + packet->ihl * 4, packet_content, packet_length);
+    memcpy(packet + 1, packet_content, packet_length);
 
     // calculating the packet checksum
     packet->checksum = calculate_ip_checksum(packet);
@@ -127,8 +124,9 @@ void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t desti
     if(packet->dst_ip != BROADCAST_IP)
     {
 
-        // searching destnation mac address
-        for(int i = 0; i < 5; i++)
+        // searching destnation mac address (5 times to 1s delay max)
+        // for(int i = 0; i < 5; i++)
+		while(1)
         {   
             // looking for device in arp cache
             dest_mac = find_mac_via_ip(destination_ip);
@@ -143,7 +141,7 @@ void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t desti
             send_arp(destination_ip);
 
             // sleeping and waiting for result
-            sleep(2000);
+            // sleep(2000);
         }
 
         // device mac address wasn't found
@@ -154,10 +152,10 @@ void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t desti
             return;
         }
     }
-
     else
     {
         // if dhcp request mac address is broadcast
+		malloc_flag = 1;
         dest_mac = (uint8_t*)kmalloc(6);
         dest_mac[0] = 255;
         dest_mac[1] = 255;
@@ -168,5 +166,8 @@ void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t desti
     }
 
     // sending the packet
-    send_ethernet_packet((uint8_t*)packet, packet->total_length, HEADER_TYPE_IP, dest_mac);
+    send_ethernet_packet((uint8_t*)packet, (uint16_t)num_format_endian(&(packet->total_length), 2), HEADER_TYPE_IP, dest_mac);
+	
+	if (malloc_flag)		// if allocated heap space
+		kfree(dest_mac);
 }
