@@ -16,6 +16,7 @@
 		"memorylayout.h": "c",
 		"ata_pio.h": "c",
 		"heap.h": "c",
-		"ethernet_driver.h": "c"
+		"ethernet_driver.h": "c",
+		"ethernet.h": "c"
 	}
 }
