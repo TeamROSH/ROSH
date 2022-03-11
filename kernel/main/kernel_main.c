@@ -8,7 +8,7 @@
 #include "../process/process.h"
 #include "../../fs/fs.h"
 #include "../networking/drivers/ethernet_driver.h"
-#include "../networking/protocols/ip.h"
+#include "../networking/protocols/udp.h"
 
 /*
 	print ROSH logo
@@ -34,7 +34,7 @@ void main() {
 	uint8_t dst_mac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 	g_self_ip = self_ip;
 	char hello[] = "hello";
-	send_ip_packet(hello, 6, dst_ip, IPV4_UDP_TYPE);
+	send_udp(53, 53, 6, hello, dst_ip);
 	
 	initConsole();			// init cursor
 	init_fs();				// init file system

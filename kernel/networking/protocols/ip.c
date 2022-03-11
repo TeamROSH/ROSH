@@ -89,6 +89,7 @@ void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t desti
 
     // setting correct ip protocol version
     packet->version = IPV4_VERSION;
+	packet->protocol = protocol;
 
     // setting the ip header size 
     packet->ihl =IPV4_IHL;

@@ -8,6 +8,7 @@ void send_udp(uint16_t source_port, uint16_t destination_port, uint32_t content_
 
 void parse_udp(udp_packet* packet)
 {
+	packet->length = (uint16_t)num_format_endian(&(packet->length), 2);
     // if recived packet is dhcp
     if(packet->destination_port == DHCP_CLIENT_PORT)
     {
@@ -26,12 +27,13 @@ void send_udp(uint16_t source_port, uint16_t destination_port, uint32_t content_
 
     // setting packet length
     packet->length = content_length + sizeof(udp_packet);
+    packet->length = (uint16_t)num_format_endian(&(packet->length), 2);
 
     // ipv4 doesn't require udp checksum
     packet->checksum = 0; 
 
     // copying content to the new packet
-    memcpy(packet + sizeof(udp_packet), packet_content, content_length);
+    memcpy(packet + 1, packet_content, content_length);
     
     // sending the udp packet
     send_ip_packet((void*)packet, sizeof(udp_packet) + content_length, destination_ip, IPV4_UDP_TYPE);

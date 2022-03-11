@@ -18,6 +18,7 @@
 		"heap.h": "c",
 		"ethernet_driver.h": "c",
 		"ethernet.h": "c",
-		"arp.h": "c"
+		"arp.h": "c",
+		"udp.h": "c"
 	}
 }
