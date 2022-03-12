@@ -36,13 +36,7 @@ void parse_ip(ip_packet* packet, int packet_length)
 
     // if udp packet
     if(packet->protocol == IPV4_UDP_TYPE)
-        parse_udp((udp_packet*)(packet + 1));
-
-    // if icmp packet
-    else if(packet->protocol == IPV4_ICMP_TYPE)
-    {
-        // parse_icmp((void*)packet + packet->ihl * 4, parsed_packet_length);
-    }
+        parse_udp(packet);
 }
 
 uint16_t calculate_ip_checksum(ip_packet* packet)

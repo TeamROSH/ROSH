@@ -8,6 +8,7 @@
 
 #define DHCP_CLIENT_PORT 68
 #define DHCP_SERVER_PORT 67
+#define ROSH_PORT 1234
 
 
 typedef struct udp_packet{
@@ -19,9 +20,9 @@ typedef struct udp_packet{
 
 /*
     This function parses udp packet
-    @param packet: the usp packet
+    @param packet: the ip packet
 */
-void parse_udp(udp_packet* packet);
+void parse_udp(void* packet);
 
 /*
     This function sends a udp packet

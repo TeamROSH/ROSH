@@ -9,6 +9,7 @@
 #include "../../fs/fs.h"
 #include "../networking/drivers/ethernet_driver.h"
 #include "../networking/protocols/dhcp.h"
+#include "../networking/protocols/udp.h"
 
 /*
 	print ROSH logo
@@ -17,7 +18,6 @@ void printLogo();
 void kernelShutdown();
 
 extern void usermode(void);
-extern uint32_t g_self_ip;
 
 void main() {
 	gdt_initialize();		// initializing gdt
@@ -28,13 +28,6 @@ void main() {
 	keyboard_initialize();	// initializing keyboard
 	initialize_ethernet_driver();
 
-	uint32_t self_ip = 192 | (168 << 8) | (1 << 16) | (100 << 24);
-	uint32_t dst_ip = 10 | (0 << 8) | (0 << 16) | (1 << 24);
-	uint8_t self_mac[6] = {0xde, 0xad, 0xbe, 0xef, 0x12, 0x34};
-	uint8_t dst_mac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-	// g_self_ip = self_ip;
-	char hello[] = "hello";
-	// send_udp(53, 53, 6, hello, dst_ip);
 	dhcp_discover();
 	
 	initConsole();			// init cursor

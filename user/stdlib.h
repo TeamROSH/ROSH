@@ -96,4 +96,9 @@ int ufile_size(char* path);
 */
 void unew_process(char* path);
 
+/*
+	print net info
+*/
+void unet_info();
+
 #endif

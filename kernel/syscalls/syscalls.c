@@ -5,6 +5,7 @@
 #include "../memory/heap.h"
 #include "../../fs/fs.h"
 #include "../process/process.h"
+#include "../networking/protocols/dhcp.h"
 
 void syscall_handler(registers_t* registers)
 {
@@ -143,6 +144,16 @@ void syscall_handler(registers_t* registers)
 			if (n == 1)
 			{
 				new_process((char*)params[0]);
+			}
+		}
+	}
+	else if (group == G_NET)
+	{
+		if (function == F_NET_INFO)
+		{
+			if (n == 0)
+			{
+				print_net_info();
 			}
 		}
 	}

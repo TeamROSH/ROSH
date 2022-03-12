@@ -33,6 +33,9 @@
 #define G_PROCESS	4
 	#define F_NEW_PROC	0
 
+#define G_NET		5
+	#define F_NET_INFO	0
+
 /*
 	Syscaller for usermode (Ring 3)
 	@param group: group of functions

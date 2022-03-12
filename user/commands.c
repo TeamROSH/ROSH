@@ -120,6 +120,7 @@ void help(char* argv, int argc)
 			"mkdir - create folder\n"
 			"test - test several key features of the OS.\n"
 			"exec - run binary file.\n"
+			"net - perform network commands.\n"
 		);
 	}
 	else if (argc == 2)		// for specific command
@@ -499,4 +500,28 @@ void exec(char* argv, int argc)
 	}
 	else
 		uputs("Invalid syntax. Try \'help exec\'.");
+}
+
+void net(char* argv, int argc)
+{
+	if (argc >= 2)
+	{
+		const char* function = getArg(argv, argc, 1);		// get the net command
+		if (strncmp(function, "info", 5) == 0)
+		{
+			unet_info();
+		}
+		else if (strncmp(function, "arp", 4) == 0)
+		{
+
+		}
+		else if (strncmp(function, "send", 5) == 0)
+		{
+
+		}
+		else
+			uputs("Invalid syntax. Try \'help net\'.");
+	}
+	else
+		uputs("Invalid syntax. Try \'help net\'.");
 }

@@ -21,6 +21,8 @@
 		"arp.h": "c",
 		"udp.h": "c",
 		"ip.h": "c",
-		"dhcp.h": "c"
+		"dhcp.h": "c",
+		"syscalls.h": "c",
+		"process.h": "c"
 	}
 }

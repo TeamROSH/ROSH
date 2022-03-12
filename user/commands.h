@@ -3,7 +3,7 @@
 
 #define FUN_NAME_SIZE 11
 #define FUN_INFO_SIZE 400
-#define FUNS_NUM 15
+#define FUNS_NUM 16
 
 typedef void (*command)(char* argv, int argc);
 
@@ -42,6 +42,8 @@ void mkdir(char* argv, int argc);
 void test(char* argv, int argc);
 void exec(char* argv, int argc);
 
+void net(char* argv, int argc);
+
 
 // After functions are defined:
 static const char fun_names[FUNS_NUM][FUN_NAME_SIZE] = 
@@ -60,7 +62,8 @@ static const char fun_names[FUNS_NUM][FUN_NAME_SIZE] =
 	"touch",
 	"mkdir",
 	"test",
-	"exec"
+	"exec",
+	"net"
 };
 
 static const command commands[FUNS_NUM] = 
@@ -79,7 +82,8 @@ static const command commands[FUNS_NUM] =
 	touch,
 	mkdir,
 	test,
-	exec
+	exec,
+	net
 };
 
 static const char fun_info[] = 
@@ -173,6 +177,13 @@ static const char fun_info[] =
 
 	"exec - run binary file.\n"
 	"Usage: \'exec <path>\'\n"
+
+	"\0"
+
+	"net - perform network commands.\n"
+	"Usage:\n\'net info\' - print network info\n"
+	"\'net arp <ip>\' - get mac address of ip\n"
+	"\'net send <ip> <msg>\' - send message to another machine\n"
 };
 
 #endif

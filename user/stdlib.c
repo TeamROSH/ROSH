@@ -125,3 +125,8 @@ void unew_process(char* path)
 	params[0] = (uint32_t)path;
 	syscall(G_PROCESS, F_NEW_PROC, params, 1);
 }
+
+void unet_info()
+{
+	syscall(G_NET, F_NET_INFO, 0, 0);
+}

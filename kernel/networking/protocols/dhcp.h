@@ -13,7 +13,7 @@
 #define DHCP_DISCOVER 0X1
 #define DHCP_OFFER 0X2
 #define DHCP_REQUEST 0X3
-#define DHCP_ACK 0X4
+#define DHCP_ACK 0X5
 
 // dhcp options 
 #define DHCP_PACKET_TYPE_OPTION 0X35
@@ -55,5 +55,10 @@ void dhcp_discover();
     @param recived packet: the dhcp offer packet
 */
 void dhcp_request(dhcp_packet* recived_packet);
+
+/*
+	print net info
+*/
+void print_net_info();
 
 #endif
