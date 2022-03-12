@@ -8,7 +8,7 @@
 #include "../process/process.h"
 #include "../../fs/fs.h"
 #include "../networking/drivers/ethernet_driver.h"
-#include "../networking/protocols/udp.h"
+#include "../networking/protocols/dhcp.h"
 
 /*
 	print ROSH logo
@@ -32,9 +32,10 @@ void main() {
 	uint32_t dst_ip = 10 | (0 << 8) | (0 << 16) | (1 << 24);
 	uint8_t self_mac[6] = {0xde, 0xad, 0xbe, 0xef, 0x12, 0x34};
 	uint8_t dst_mac[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-	g_self_ip = self_ip;
+	// g_self_ip = self_ip;
 	char hello[] = "hello";
-	send_udp(53, 53, 6, hello, dst_ip);
+	// send_udp(53, 53, 6, hello, dst_ip);
+	dhcp_discover();
 	
 	initConsole();			// init cursor
 	init_fs();				// init file system

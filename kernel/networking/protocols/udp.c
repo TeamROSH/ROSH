@@ -1,6 +1,8 @@
 #include "udp.h"
 #include "arp.h"
 #include "ip.h"
+#include "dhcp.h"
+#include "../../../libc/screen.h"
 
 void parse_udp(udp_packet* packet);
 void send_udp(uint16_t source_port, uint16_t destination_port, uint32_t content_length, void* packet_content, uint32_t destination_ip);
@@ -9,10 +11,12 @@ void send_udp(uint16_t source_port, uint16_t destination_port, uint32_t content_
 void parse_udp(udp_packet* packet)
 {
 	packet->length = (uint16_t)num_format_endian(&(packet->length), 2);
+	packet->destination_port = (uint16_t)num_format_endian(&(packet->destination_port), 2);
+	packet->source_port = (uint16_t)num_format_endian(&(packet->source_port), 2);
     // if recived packet is dhcp
     if(packet->destination_port == DHCP_CLIENT_PORT)
     {
-        //parse_dhcp(packet + sizeof(udp_packet));
+        parse_dhcp((dhcp_packet*)(packet + 1));
     }
 }
 
@@ -24,6 +28,9 @@ void send_udp(uint16_t source_port, uint16_t destination_port, uint32_t content_
     // assigning source and dest port
     packet->source_port = source_port;
     packet->destination_port = destination_port;
+
+	packet->destination_port = (uint16_t)num_format_endian(&(packet->destination_port), 2);
+	packet->source_port = (uint16_t)num_format_endian(&(packet->source_port), 2);
 
     // setting packet length
     packet->length = content_length + sizeof(udp_packet);

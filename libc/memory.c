@@ -30,6 +30,6 @@ uint32_t num_format_endian(void* pNum, uint32_t bytes)
 		return (*((uint16_t*)pNum) & 0xFF) << 8 | *((uint16_t*)pNum) >> 8;
 	else if (bytes == 4)
 	{
-		return (*((uint32_t*)pNum) & 0xFF) << 24 | (*((uint32_t*)pNum) & 0xFF00) << 16 | (*((uint32_t*)pNum) & 0xFF000000) >> 24 | (*((uint32_t*)pNum) & 0xFF0000) >> 16;
+		return (*((uint32_t*)pNum) & 0xFF) << 24 | (*((uint32_t*)pNum) & 0xFF00) << 8 | (*((uint32_t*)pNum) & 0xFF000000) >> 24 | (*((uint32_t*)pNum) & 0xFF0000) >> 8;
 	}
 }

@@ -1,5 +1,6 @@
 #include "ethernet.h"
 #include "arp.h"
+#include "ip.h"
 
 void parse_ethernet_packet(ethernet_packet* packet, uint32_t packet_len);
 void send_ethernet_packet(uint8_t* packet, uint32_t packet_len, uint16_t ethernet_type, uint8_t dest_mac[6]);
@@ -8,6 +9,10 @@ extern uint8_t g_src_mac[6];
 
 void parse_ethernet_packet(ethernet_packet* packet, uint32_t packet_len)
 {
+	uint8_t broadcast[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+	// if not our mac or broadcast
+	if (strncmp(packet->header.destination_address, g_src_mac, 6) != 0 && strncmp(packet->header.destination_address, broadcast, 6) != 0)
+		return;
     // if arp packet 
     if(packet->header.ethernet_type == HEADER_TYPE_ARP)
     {
@@ -17,7 +22,7 @@ void parse_ethernet_packet(ethernet_packet* packet, uint32_t packet_len)
     // if ip packet
     else if(packet->header.ethernet_type == HEADER_TYPE_IP)
     {
-        // parse_ip_packet((ip_packet*)packet + sizeof(ethernet_packet), packet_len - sizeof(ethernet_packet))
+        parse_ip((ip_packet*)((uint32_t)packet + sizeof(ethernet_header)), packet_len - sizeof(ethernet_header));
     }
 }
 

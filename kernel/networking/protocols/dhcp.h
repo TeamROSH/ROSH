@@ -6,8 +6,8 @@
 #include "../../../libc/memory.h"
 #include "../../../libc/string.h"
 
-#define DHCP_MAGIC_COOKIE 0x63825363
-#define DHCP_XID 0x3903F326
+#define DHCP_MAGIC_COOKIE 0x63538263
+#define DHCP_XID 0x26F30339
 
 // dhcp message type
 #define DHCP_DISCOVER 0X1
@@ -40,8 +40,8 @@ typedef struct dhcp_packet{
     uint32_t chaddr[4]; // client hardwre address
     uint8_t always_0[192];
     uint32_t magic_cookie;  // token for the dhcp packet
-    uint8_t options[64];
-}dhcp_packet;
+    uint8_t options[60];
+}__attribute__((packed)) dhcp_packet;
 
 void parse_dhcp(dhcp_packet* packet);
 

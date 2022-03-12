@@ -15,7 +15,7 @@ typedef struct udp_packet{
     uint16_t destination_port;  // packet reciver port num
     uint16_t length;            // udp header + content length
     uint16_t checksum;          // udp packet checksum (optiona in IPV4 so remain 0)
-}udp_packet;
+}__attribute__((packed)) udp_packet;
 
 /*
     This function parses udp packet
