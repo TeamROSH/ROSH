@@ -109,7 +109,7 @@ void unet_arp(uint32_t ip);
 /*
 	perform rosh msg send
 */
-void unet_send(uint32_t ip, char* msg);
+void unet_send(uint32_t ip, const char* msg);
 
 /*
 	sleep ms

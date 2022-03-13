@@ -145,10 +145,10 @@ void unet_arp(uint32_t ip)
 	syscall(G_NET, F_NET_ARP, params, 1);
 }
 
-void unet_send(uint32_t ip, char* msg)
+void unet_send(uint32_t ip, const char* msg)
 {
 	uint32_t params[2];
 	params[0] = (uint32_t)ip;
-	params[2] = (uint32_t)msg;
+	params[1] = (uint32_t)msg;
 	syscall(G_NET, F_NET_ROSH, params, 2);
 }

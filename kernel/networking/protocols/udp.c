@@ -3,6 +3,7 @@
 #include "ip.h"
 #include "dhcp.h"
 #include "../../../libc/screen.h"
+#include "../../IDT/keyboard.h"
 
 void parse_udp(void* packet);
 void send_udp(uint16_t source_port, uint16_t destination_port, uint32_t content_length, void* packet_content, uint32_t destination_ip);
@@ -24,13 +25,14 @@ void parse_udp(void* packet)
 	if(udp->destination_port == ROSH_PORT)
     {
         char* msg = (char*)(udp + 1);
-		putc('\n');
+		putc('\r');
 		puti(((uint8_t*)&(ip->src_ip))[0]);
 		for (int i = 1; i < 4; i++)
 		{
 			putc('.'); puti(((uint8_t*)&(ip->src_ip))[i]);
 		}
 		puts(": "); puts(msg); putc('\n');
+		print_buffer();
     }
 }
 

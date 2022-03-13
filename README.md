@@ -15,7 +15,7 @@ The system includes:
 - EXT-2 based file system (self implemented)
 - Process manager and scheduling
 - ASLR (Address space layout randomization)
-- Networking system
+- Networking system (Ethernet, ARP, IP, UDP, DHCP)
 
 ## Requirements
 - [QEmu](https://www.qemu.org/download/) emulator on a linux machine.
