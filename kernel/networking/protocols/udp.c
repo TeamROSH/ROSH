@@ -31,7 +31,7 @@ void parse_udp(void* packet)
 		{
 			putc('.'); puti(((uint8_t*)&(ip->src_ip))[i]);
 		}
-		puts(": "); puts(msg); putc('\n');
+		puts(": "); puts(msg); putc('\n'); putc('\n');
 		print_buffer();
     }
 }

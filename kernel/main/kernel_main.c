@@ -26,10 +26,7 @@ void main() {
 	initKernelHeap();		// init kernel heap
 	initialize_paging();	// init paging
 	keyboard_initialize();	// initializing keyboard
-	initialize_ethernet_driver();
 
-	dhcp_discover();
-	
 	initConsole();			// init cursor
 	init_fs();				// init file system
 
@@ -38,6 +35,9 @@ void main() {
 	getchar();
 	clearConsole();
 
+	initialize_ethernet_driver();
+	dhcp_discover();
+	
 	process_init();		// also jumps to userspace
 }
 

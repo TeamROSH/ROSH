@@ -6,6 +6,8 @@
 // computer mac address
 extern uint8_t g_src_mac[6];
 
+extern device_address g_address_cache[ARP_CACHE_LEN];
+
 // contains the computer ip address
 uint32_t g_self_ip = 0;
 
@@ -34,6 +36,18 @@ void parse_dhcp(dhcp_packet* packet)
         // getting the computer ip address
         g_self_ip = packet->yiaddr;
         g_is_ip = 1;
+
+		// saving to arp cache
+        for(int i = 0; i < ARP_CACHE_LEN; i++)
+        {  
+            // if saving the device address
+            if(g_address_cache[i].ip_address == 0)
+            {
+                g_address_cache[i].ip_address = g_self_ip;
+                memcpy(g_address_cache[i].mac_address, g_src_mac, 6);
+                break;
+            }
+        }
     }
 
     kfree(packet);
