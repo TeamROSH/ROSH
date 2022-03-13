@@ -1,5 +1,4 @@
 interface:=$(shell ip addr | awk '/state UP/ {print $$2}' | head -n 1 | awk '{print substr($$0, 1, length($$0)-1)}')
-rosh_mac:=$(shell bash -c "printf 'de:ad:be:ef:%02x:%02x\n' $$(shuf -i 1-255 -n 1) $$(shuf -i 1-255 -n 1)")
 
 run: check_libs clean_output compile_boot compile_libc compile_kernel compile_user build create_network qemu clean_network
 debug: check_libs clean_output compile_boot compile_libc compile_kernel compile_user build create_network qemu_debug clean_network
@@ -115,8 +114,8 @@ clean_network:
 
 qemu:
 	@echo "Launching..."
-	@sudo qemu-system-i386 -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139,mac=$(rosh_mac) -drive file=rosh.bin,index=0,format=raw
+	@sudo qemu-system-i386 -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139,mac=de:ad:be:ef:12:34 -drive file=rosh.bin,index=0,format=raw
 
 qemu_debug:
 	@echo "Launching Debug..."
-	@sudo qemu-system-i386 -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139,mac=$(rosh_mac) -object filter-dump,id=f1,netdev=roshnet0,file=dump.dat -drive file=rosh.bin,index=0,format=raw
+	@sudo qemu-system-i386 -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139,mac=de:ad:be:ef:12:34 -object filter-dump,id=f1,netdev=roshnet0,file=dump.dat -drive file=rosh.bin,index=0,format=raw
