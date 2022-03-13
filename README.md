@@ -30,12 +30,12 @@ The system includes:
 - Offline run using `make offline`.
 
 **:warning: Notice:**
-> - The OS uses a tap interface in order to connect to the real network. Therefore, **it might shut the host machine's network access**.
+> The OS uses a tap interface in order to connect to the real network. Therefore, ***it might shut the host machine's network access***.
 > If the network does not go back up after _ROSH_ is down, it can be restored manually:
->> 1. run `make clean_network`.
->> 2. restart the host's networking interface.
+> 1. run `make clean_network`.
+> 2. restart the host's networking interface.
 
-> - The networking is unstable and may cause _ROSH_ to restart or fault unexpectedly.
+> The networking is unstable and may cause _ROSH_ to restart or fault unexpectedly.
 
 ## Shell Commands
 
