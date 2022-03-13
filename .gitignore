@@ -19,3 +19,4 @@ compiled/
 objects/
 *.bin
 *.o
+*.dat

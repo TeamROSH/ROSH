@@ -76,11 +76,9 @@ void idt_initialize()
 	{
 		set_interrupt(i, general_handler);
 	}
-	for (int i = 32; i < 48; i++)
-	{
-		set_interrupt(i, empty_irq);
-	}
 	
+	set_interrupt(32, empty_irq);
+	set_interrupt(46, empty_irq);
 	set_interrupt(33, keyboard_handler);
 	set_interrupt(0x80, syscall_handler);
     load_idt((uint32_t)&g_idt_pointer);

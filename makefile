@@ -1,5 +1,16 @@
-run: clean_output compile_boot compile_libc compile_kernel compile_user build qemu
-debug: clean_output compile_boot compile_libc compile_kernel compile_user build qemu_debug
+interface:=$(shell ip addr | awk '/state UP/ {print $$2}' | head -n 1 | awk '{print substr($$0, 1, length($$0)-1)}')
+
+run: check_libs clean_output compile_boot compile_libc compile_kernel compile_user build create_network qemu clean_network
+debug: check_libs clean_output compile_boot compile_libc compile_kernel compile_user build create_network qemu_debug clean_network
+offline: check_libs clean_output compile_boot compile_libc compile_kernel compile_user build qemu
+
+check_libs:
+	@sudo echo "Switched to root..."
+	@bash -c "[[ \$$(command -v i386-elf-gcc) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
+	@bash -c "[[ \$$(command -v nasm) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
+	@bash -c "[[ \$$(command -v i386-elf-ld) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
+	@bash -c "[[ \$$(command -v brctl) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
+	@bash -c "[[ \$$(command -v tunctl) ]] || (echo One or more packages are missing. Please follow the instructions in README.md.; exit 1;)"
 
 clean_output:
 	@rm -rf compiled/
@@ -39,8 +50,13 @@ compile_kernel:
 	@i386-elf-gcc -ffreestanding -c kernel/syscalls/syscalls.c -o objects/syscalls.o
 	@i386-elf-gcc -ffreestanding -c kernel/process/process.c -o objects/process.o
 	@i386-elf-gcc -ffreestanding -c kernel/memory/heap.c -o objects/heap.o
-	@i386-elf-gcc -ffreestanding -c kernel/networking/pci.c -o objects/pci.o
-	@i386-elf-gcc -ffreestanding -c kernel/networking/ethernet_driver.c -o objects/ethernet_driver.o
+	@i386-elf-gcc -ffreestanding -c kernel/networking/drivers/pci.c -o objects/pci.o
+	@i386-elf-gcc -ffreestanding -c kernel/networking/drivers/ethernet_driver.c -o objects/ethernet_driver.o
+	@i386-elf-gcc -ffreestanding -c kernel/networking/protocols/ethernet.c -o objects/ethernet.o
+	@i386-elf-gcc -ffreestanding -c kernel/networking/protocols/arp.c -o objects/arp.o
+	@i386-elf-gcc -ffreestanding -c kernel/networking/protocols/ip.c -o objects/ip.o
+	@i386-elf-gcc -ffreestanding -c kernel/networking/protocols/udp.c -o objects/udp.o
+	@i386-elf-gcc -ffreestanding -c kernel/networking/protocols/dhcp.c -o objects/dhcp.o
 	@i386-elf-gcc -ffreestanding -c fs/fs.c -o objects/fs.o
 
 	@nasm kernel/main/kernel_entry.s -f elf -o objects/kernel/kernel_entry.o
@@ -73,14 +89,33 @@ ifeq (,$(wildcard ./rosh.bin))
 else
 	@echo "Drive found."
 endif
+	@dd conv=notrunc bs=1 seek=0 count=65536 status=none if=/dev/zero of=rosh.bin
 	@dd conv=notrunc bs=1 seek=0 status=none if=compiled/boot_sect.bin of=rosh.bin
 	@dd conv=notrunc bs=1 seek=512 status=none if=compiled/kernel_main.bin of=rosh.bin
 	@dd conv=notrunc bs=1 seek=41472 status=none if=compiled/user_main.bin of=rosh.bin
 
+create_network:
+	@echo "Setting up networking..."
+	@sudo brctl addbr roshbr0
+	@sudo brctl addif roshbr0 $(interface)
+	@sudo tunctl -t roshtap0 -u root > /dev/null
+	@sudo brctl addif roshbr0 roshtap0
+	@sudo ifconfig $(interface) up
+	@sudo ifconfig roshtap0 up
+	@sudo ifconfig roshbr0 up
+
+clean_network:
+	@echo "Restoring networking..."
+	@-sudo brctl delif roshbr0 roshtap0
+	@-sudo tunctl -d roshtap0 > /dev/null
+	@-sudo brctl delif roshbr0 $(interface)
+	@-sudo ifconfig roshbr0 down
+	@-sudo brctl delbr roshbr0
+
 qemu:
 	@echo "Launching..."
-	@qemu-system-i386 -netdev user,id=roshnet0,net=$(shell hostname -I | cut -d ' ' -f1)/24 -device rtl8139,netdev=roshnet0,id=rtl8139 -drive file=rosh.bin,index=0,format=raw
+	@sudo qemu-system-i386 -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139,mac=de:ad:be:ef:12:34 -drive file=rosh.bin,index=0,format=raw
 
 qemu_debug:
 	@echo "Launching Debug..."
-	@qemu-system-i386 -s -S -netdev user,id=mynet0,net=$(shell hostname -I | cut -d ' ' -f1)/24 -device rtl8139,netdev=roshnet0,id=rtl8139 -drive file=rosh.bin,index=0,format=raw
+	@sudo qemu-system-i386 -netdev tap,id=roshnet0,ifname=roshtap0,script=no,downscript=no -device rtl8139,netdev=roshnet0,id=rtl8139,mac=de:ad:be:ef:12:34 -object filter-dump,id=f1,netdev=roshnet0,file=dump.dat -drive file=rosh.bin,index=0,format=raw

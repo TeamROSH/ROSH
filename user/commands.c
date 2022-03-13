@@ -120,6 +120,7 @@ void help(char* argv, int argc)
 			"mkdir - create folder\n"
 			"test - test several key features of the OS.\n"
 			"exec - run binary file.\n"
+			"net - perform network commands.\n"
 		);
 	}
 	else if (argc == 2)		// for specific command
@@ -499,4 +500,61 @@ void exec(char* argv, int argc)
 	}
 	else
 		uputs("Invalid syntax. Try \'help exec\'.");
+}
+
+void net(char* argv, int argc)
+{
+	if (argc >= 2)
+	{
+		const char* function = getArg(argv, argc, 1);		// get the net command
+		if (strncmp(function, "info", 5) == 0)
+		{
+			unet_info();
+		}
+		else if (strncmp(function, "arp", 4) == 0)
+		{
+			if (argc == 3)
+			{
+				uint8_t ip[4] = {0};		// parse ip
+				char ipStr[16] = {0};
+				memcpy(ipStr, getArg(argv, argc, 2), strlen(getArg(argv, argc, 2)));
+				int partsCount = strsplit(ipStr, '.');
+				if (partsCount == 4)		// check if valid ip
+				{
+					for (int i = 0; i < 4; i++)
+						ip[i] = (uint8_t)atoi(getArg(ipStr, partsCount, i));
+					unet_arp(*((uint32_t*)ip));		// send arp request
+					usleep(3000);
+				}
+				else
+					uputs("Invalid ip address. Format: xxx.xxx.xxx.xxx");
+			}
+			else
+				uputs("Invalid syntax. Try \'help net\'.");
+		}
+		else if (strncmp(function, "send", 5) == 0)
+		{
+			if (argc == 4)
+			{
+				uint8_t ip[4] = {0};		// parse ip
+				char ipStr[16] = {0};
+				memcpy(ipStr, getArg(argv, argc, 2), strlen(getArg(argv, argc, 2)));
+				int partsCount = strsplit(ipStr, '.');
+				if (partsCount == 4)		// check if valid ip
+				{
+					for (int i = 0; i < 4; i++)
+						ip[i] = (uint8_t)atoi(getArg(ipStr, partsCount, i));
+					unet_send(*((uint32_t*)ip), getArg(argv, argc, 3));		// send udp
+				}
+				else
+					uputs("Invalid ip address. Format: xxx.xxx.xxx.xxx");
+			}
+			else
+				uputs("Invalid syntax. Try \'help net\'.");
+		}
+		else
+			uputs("Invalid syntax. Try \'help net\'.");
+	}
+	else
+		uputs("Invalid syntax. Try \'help net\'.");
 }

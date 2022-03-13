@@ -15,6 +15,14 @@
 		"device.h": "c",
 		"memorylayout.h": "c",
 		"ata_pio.h": "c",
-		"heap.h": "c"
+		"heap.h": "c",
+		"ethernet_driver.h": "c",
+		"ethernet.h": "c",
+		"arp.h": "c",
+		"udp.h": "c",
+		"ip.h": "c",
+		"dhcp.h": "c",
+		"syscalls.h": "c",
+		"process.h": "c"
 	}
 }

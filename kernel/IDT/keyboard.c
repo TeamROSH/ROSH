@@ -168,3 +168,9 @@ void getline(char* pStr, int size)
 	enterPress = FALSE;
 	pending = FALSE;
 }
+
+void print_buffer()
+{
+	for (int i = 0; i < buffer_size; i++)
+		putc(buffer[i]);
+}

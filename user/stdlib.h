@@ -96,4 +96,24 @@ int ufile_size(char* path);
 */
 void unew_process(char* path);
 
+/*
+	print net info
+*/
+void unet_info();
+
+/*
+	perform arp request
+*/
+void unet_arp(uint32_t ip);
+
+/*
+	perform rosh msg send
+*/
+void unet_send(uint32_t ip, const char* msg);
+
+/*
+	sleep ms
+*/
+void usleep(uint32_t ms);
+
 #endif

@@ -125,3 +125,30 @@ void unew_process(char* path)
 	params[0] = (uint32_t)path;
 	syscall(G_PROCESS, F_NEW_PROC, params, 1);
 }
+
+void usleep(uint32_t ms)
+{
+	uint32_t params[1];
+	params[0] = (uint32_t)ms;
+	syscall(G_PROCESS, F_SLEEP, params, 1);
+}
+
+void unet_info()
+{
+	syscall(G_NET, F_NET_INFO, 0, 0);
+}
+
+void unet_arp(uint32_t ip)
+{
+	uint32_t params[1];
+	params[0] = (uint32_t)ip;
+	syscall(G_NET, F_NET_ARP, params, 1);
+}
+
+void unet_send(uint32_t ip, const char* msg)
+{
+	uint32_t params[2];
+	params[0] = (uint32_t)ip;
+	params[1] = (uint32_t)msg;
+	syscall(G_NET, F_NET_ROSH, params, 2);
+}

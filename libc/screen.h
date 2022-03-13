@@ -8,6 +8,8 @@
 #define ROWS 25
 #define COLS 80
 
+#define hex(a) 48 + (a / 10) * 49 + (a % 10)
+
 /*
 	print a char to the screen
 	@param c: char to print

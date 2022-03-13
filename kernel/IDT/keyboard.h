@@ -89,4 +89,9 @@ void getline(char* pStr, int size);
 */
 char key_replacement(char c);
 
+/*
+	print the keyboard buffer
+*/
+void print_buffer();
+
 #endif

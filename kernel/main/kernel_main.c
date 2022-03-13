@@ -7,7 +7,9 @@
 #include "../memory/heap.h"
 #include "../process/process.h"
 #include "../../fs/fs.h"
-#include "../networking/ethernet_driver.h"
+#include "../networking/drivers/ethernet_driver.h"
+#include "../networking/protocols/dhcp.h"
+#include "../networking/protocols/udp.h"
 
 /*
 	print ROSH logo
@@ -24,8 +26,7 @@ void main() {
 	initKernelHeap();		// init kernel heap
 	initialize_paging();	// init paging
 	keyboard_initialize();	// initializing keyboard
-	initialize_ethernet_driver();
-	
+
 	initConsole();			// init cursor
 	init_fs();				// init file system
 
@@ -34,7 +35,10 @@ void main() {
 	getchar();
 	clearConsole();
 
-	process_init();
+	initialize_ethernet_driver();
+	dhcp_discover();
+	
+	process_init();		// also jumps to userspace
 }
 
 void printLogo()

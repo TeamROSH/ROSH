@@ -2,8 +2,8 @@
 #define PCI_H
 
 #include <stdint.h>
-#include "../ports/ports.h"
-#include "../memory/heap.h"
+#include "../../ports/ports.h"
+#include "../../memory/heap.h"
 
 // physical address of io ports of pci
 #define CONFIG_ADDRESS 0XCF8
@@ -87,6 +87,16 @@ uint16_t read_word_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t r
     This function returns the data requested
 */
 uint32_t read_dword_from_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset);
+
+/*
+    This function writes a 32 bit value to the pci register
+    @param bus: the pci bus number
+    @param device: the pci device number
+    @param func: the pci device function
+    @param regiter_offset: the pci register offset 
+    @param value: the 32bit value 
+*/
+void write_dword_to_pci(uint8_t bus, uint8_t device, uint8_t func, uint8_t register_ofset, uint32_t value);
 
 
 /*
