@@ -516,7 +516,7 @@ void net(char* argv, int argc)
 			if (argc == 3)
 			{
 				uint8_t ip[4] = {0};		// parse ip
-				char ipStr[12] = {0};
+				char ipStr[16] = {0};
 				memcpy(ipStr, getArg(argv, argc, 2), strlen(getArg(argv, argc, 2)));
 				int partsCount = strsplit(ipStr, '.');
 				if (partsCount == 4)		// check if valid ip
@@ -537,7 +537,7 @@ void net(char* argv, int argc)
 			if (argc == 4)
 			{
 				uint8_t ip[4] = {0};		// parse ip
-				char ipStr[12] = {0};
+				char ipStr[16] = {0};
 				memcpy(ipStr, getArg(argv, argc, 2), strlen(getArg(argv, argc, 2)));
 				int partsCount = strsplit(ipStr, '.');
 				if (partsCount == 4)		// check if valid ip
