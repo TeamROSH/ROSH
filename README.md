@@ -34,6 +34,7 @@ The system includes:
 > If the network does not go back up after _ROSH_ is down, it can be restored manually:
 >> 1. run `make clean_network`.
 >> 2. restart the host's networking interface.
+
 > - The networking is unstable and may cause _ROSH_ to restart or fault unexpectedly.
 
 ## Shell Commands
@@ -52,7 +53,7 @@ The system includes:
 - mkdir - create folder.
 - test - test several key features of the OS.
 - exec - run binary file from base64 file. run `./assembler asm_code` and enter the output to a _ROSH_ file.
-- net - net - perform network commands.
+- net - perform network commands.
 
 ## Screenshots
 ![Alt text](/images/s1.png)
