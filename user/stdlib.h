@@ -101,4 +101,19 @@ void unew_process(char* path);
 */
 void unet_info();
 
+/*
+	perform arp request
+*/
+void unet_arp(uint32_t ip);
+
+/*
+	perform rosh msg send
+*/
+void unet_send(uint32_t ip, char* msg);
+
+/*
+	sleep ms
+*/
+void usleep(uint32_t ms);
+
 #endif

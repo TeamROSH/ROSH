@@ -513,7 +513,19 @@ void net(char* argv, int argc)
 		}
 		else if (strncmp(function, "arp", 4) == 0)
 		{
-
+			uint8_t ip[4] = {0};		// parse ip
+			char ipStr[12] = {0};
+			memcpy(ipStr, getArg(argv, argc, 2), strlen(getArg(argv, argc, 2)));
+			int partsCount = strsplit(ipStr, '.');
+			if (partsCount == 4)		// check if valid ip
+			{
+				for (int i = 0; i < 4; i++)
+					ip[i] = (uint8_t)atoi(getArg(ipStr, partsCount, i));
+				unet_arp(*((uint32_t*)ip));		// send arp request
+				usleep(3000);
+			}
+			else
+				uputs("Invalid ip address. Format: xxx.xxx.xxx.xxx");
 		}
 		else if (strncmp(function, "send", 5) == 0)
 		{

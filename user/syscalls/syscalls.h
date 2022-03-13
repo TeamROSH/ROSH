@@ -32,9 +32,12 @@
 
 #define G_PROCESS	4
 	#define F_NEW_PROC	0
+	#define F_SLEEP		1
 
 #define G_NET		5
 	#define F_NET_INFO	0
+	#define F_NET_ARP	1
+	#define F_NET_ROSH	2
 
 /*
 	Syscaller for usermode (Ring 3)

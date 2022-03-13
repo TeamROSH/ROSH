@@ -70,4 +70,10 @@ void create_and_send_arp(uint32_t src_ip, uint32_t dest_ip, uint8_t src_mac[6], 
     @param dst_ip: the requested ip
 */
 void send_arp(uint32_t dst_ip);
+
+/*
+    This function sends an arp request for specific ip address
+    @param dst_ip: the requested ip
+*/
+void send_arp_user(uint32_t dst_ip);
 #endif

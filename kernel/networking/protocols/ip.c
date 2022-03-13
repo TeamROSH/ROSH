@@ -115,8 +115,8 @@ void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t desti
     if(packet->dst_ip != BROADCAST_IP)
     {
         // searching destnation mac address (5 times to 1s delay max)
-        // for(int i = 0; i < 5; i++)
-		while(1)
+        for(int i = 0; i < 5; i++)
+		// while(1)
         {   
             // looking for device in arp cache
             dest_mac = find_mac_via_ip(destination_ip);
@@ -131,7 +131,7 @@ void send_ip_packet(void* packet_content, uint32_t packet_length, uint32_t desti
             send_arp(destination_ip);
 
             // sleeping and waiting for result
-            // sleep(2000);
+            sleep(2000);
         }
 
         // device mac address wasn't found

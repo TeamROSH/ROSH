@@ -6,6 +6,7 @@
 #include "../../fs/fs.h"
 #include "../process/process.h"
 #include "../networking/protocols/dhcp.h"
+#include "../networking/protocols/arp.h"
 
 void syscall_handler(registers_t* registers)
 {
@@ -146,6 +147,15 @@ void syscall_handler(registers_t* registers)
 				new_process((char*)params[0]);
 			}
 		}
+		else if (function == F_SLEEP)
+		{
+			if (n == 1)
+			{
+				asm volatile("sti");		// enable interrupts
+				sleep((uint32_t)params[0]);
+				asm volatile("cli");		// disable interrupts
+			}
+		}
 	}
 	else if (group == G_NET)
 	{
@@ -154,6 +164,13 @@ void syscall_handler(registers_t* registers)
 			if (n == 0)
 			{
 				print_net_info();
+			}
+		}
+		else if (function == F_NET_ARP)
+		{
+			if (n == 1)
+			{
+				send_arp_user((uint32_t)params[0]);
 			}
 		}
 	}

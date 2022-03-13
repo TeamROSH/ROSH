@@ -28,11 +28,13 @@ The system includes:
 - In order to launch the OS, navigate to the project's main folder, and run `make`.
 - Debug the OS using `make debug`.
 - Offline run using `make offline`.
-**Notice:**
-> The OS uses a tap interface in order to connect to the real network. Therefore, it might shut the host machine's network access.
+
+**:warning: Notice:**
+> - The OS uses a tap interface in order to connect to the real network. Therefore, **it might shut the host machine's network access**.
 > If the network does not go back up after _ROSH_ is down, it can be restored manually:
-> 1. run `make clean_network`.
-> 2. restart the host's networking interface.
+>> 1. run `make clean_network`.
+>> 2. restart the host's networking interface.
+> - The networking is unstable and may cause _ROSH_ to restart or fault unexpectedly.
 
 ## Shell Commands
 
@@ -50,6 +52,7 @@ The system includes:
 - mkdir - create folder.
 - test - test several key features of the OS.
 - exec - run binary file from base64 file. run `./assembler asm_code` and enter the output to a _ROSH_ file.
+- net - net - perform network commands.
 
 ## Screenshots
 ![Alt text](/images/s1.png)

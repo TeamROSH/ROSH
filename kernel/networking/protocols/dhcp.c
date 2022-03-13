@@ -212,12 +212,10 @@ void print_net_info()
 		putc('.'); puti(((uint8_t*)&(g_self_ip))[i]);
 	}
 
-	char hex[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 	puts("\nMAC address: ");
-	putc(hex[g_src_mac[0] / 16]); putc(hex[g_src_mac[0] % 16]);
+	putc(hex(g_src_mac[0] / 16)); putc(hex(g_src_mac[0] % 16));
 	for (int i = 1; i < 6; i++)
 	{
-		putc(':'); putc(hex[g_src_mac[i] / 16]); putc(hex[g_src_mac[i] % 16]);
+		putc(':'); putc(hex(g_src_mac[i] / 16)); putc(hex(g_src_mac[i] % 16));
 	}
-	putc('\n');
 }
