@@ -19,6 +19,13 @@ void pic_initialize()
 
 void irq_handler(registers_t* registers)
 {   
+	//sending ack to pic master
+    outb(0x20, 0x20);
+	if(registers->interrupt_num > IRQ8)
+    {
+        //sending ack to pic slave
+        outb(0xA0, 0x20);
+    }
     //if there is a handler for the irq
     if(g_interrupt_handlers[registers->interrupt_num] != 0)
     {
@@ -28,13 +35,6 @@ void irq_handler(registers_t* registers)
     else
     {
         puts("invalid irq called: "); puti(registers->interrupt_num);
-    }
-	//sending ack to pic master
-    outb(0x20, 0x20);
-	if(registers->interrupt_num > IRQ8)
-    {
-        //sending ack to pic slave
-        outb(0xA0, 0x20);
     }
 }
 
