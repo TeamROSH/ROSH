@@ -150,7 +150,7 @@ static const char fun_info[] =
 
 	"\0"
 
-	"rm - remove file or folder\n"
+	"rm - remove file\n"
 	"Usage: \'rm <path>\'\n"
 
 

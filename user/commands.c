@@ -115,7 +115,7 @@ void help(char* argv, int argc)
 			"pwd - print working directory\n"
 			"cd - change working directory\n"
 			"cat - print file content\n"
-			"rm - remove file or folder\n"
+			"rm - remove file \n"
 			"touch - create file\n"
 			"mkdir - create folder\n"
 			"test - test several key features of the OS.\n"
